@@ -12,17 +12,17 @@ var prompt = require('prompt');
 var symlinkOrCopySync = require('symlink-or-copy').sync;
 
 // check if language exists
-var languageDir = argv.src + "/" + argv.rootModule + "/" + argv.language
+var languageDir = argv.rootModule + "/" + argv.language
 if (!fs.existsSync(languageDir)) {
     console.error("Root module not found", languageDir);
     process.exit(1);
 }
 
 // check if base dir exists and delete if needed (after prompt)
-var baseDir = argv.src + "/" + argv.rootModule + "/Base"
+var baseDir = argv.src + "/" + argv.rootModule
 if (fs.existsSync(baseDir)) {
     prompt.start();
-    console.log('There already is a base translation at', baseDir);
+    console.log('There already is a translation at', baseDir);
     console.log('Should I continue and replace it with <' + argv.language + '>?');
     console.log("enter 'y' to continue");
 
@@ -46,7 +46,7 @@ function main() {
     symlinkOrCopySync(languageDir, baseDir);
 
     // clean out elm-stuff cache
-    glob("elm-stuff/**/user/project/*/"+argv.rootModule+"-Base*", function (er, files) {
+    glob("elm-stuff/**/user/project/*/"+argv.rootModule+"*", function (er, files) {
         files.forEach(function(file) {
             console.log("clearing out cache at", file);
             fs.removeSync(file);

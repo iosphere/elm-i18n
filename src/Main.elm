@@ -1,7 +1,7 @@
 module Main exposing (..)
 
 import Html exposing (..)
-import Translation.Base.Main as Translation
+import Translation.Main as Translation
 
 
 --import Html.Attributes exposing (..)
@@ -67,6 +67,7 @@ subscriptions model =
 view : Model -> Html Msg
 view model =
     div []
-        [ text Translation.greeting
-        , text (Translation.greetingWithName model)
+        [ p [] [ text Translation.greeting ]
+        , p [] [ text (Translation.greetingWithName model) ]
+        , p [] [ text (Translation.salute) ]
         ]

@@ -1,4 +1,4 @@
-module Translation.Base.Main exposing (..)
+module Translation.Main exposing (..)
 
 
 greeting : String
@@ -9,3 +9,8 @@ greeting =
 greetingWithName : String -> String
 greetingWithName name =
     "Guten Tag, " ++ name
+
+
+salute : String
+salute =
+    "Admiral"
