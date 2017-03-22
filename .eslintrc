@@ -1,0 +1,27 @@
+{
+    "extends": ["eslint:recommended", "google"],
+    "globals": {
+        "console": true,
+        "document": true,
+        "module": true,
+        "process": true,
+        "requestAnimationFrame": true,
+        "require": true
+    },
+    "parserOptions": {
+        "ecmaVersion": 6
+    },
+    "rules": {
+        "indent": [2, 4],
+        "max-len": [2, {
+            "code": 80,
+            "tabWidth": 4,
+            "ignoreStrings": true,
+            "ignoreComments": true,
+            "ignoreUrls": true
+        }],
+        "no-console": [0],
+        "quotes": ["error", "double"],
+        "semi": ["error", "always"]
+    }
+}

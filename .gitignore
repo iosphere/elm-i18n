@@ -1,4 +1,5 @@
 elm-stuff
 node_modules
 out
-src/Translation
+example/src/Translation
+linter-logs

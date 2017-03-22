@@ -10,7 +10,10 @@
     "symlink-or-copy": "^1.1.8",
     "yargs": "^7.0.2"
   },
-  "devDependencies": {},
+  "devDependencies": {
+      "eslint-config-google": "^0.7.1",
+      "eslint": "^3.16.1"
+  },
   "scripts": {},
   "author": "iosphere GmbH",
   "license": "ISC"
