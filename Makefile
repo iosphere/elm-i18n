@@ -13,7 +13,11 @@ lint-js-fix: $(JS_FILES) ## Check javascript file for linter warnings and fix if
 
 
 
+test: ## Run tests 
+	./node_modules/elm-test/bin/elm-test
+
 
 help: ## Prints a help guide
 	@echo "Available tasks:"
 	@grep -E '^[\%a-zA-Z_-]+:.*?## .*$$' $(MAKEFILE_LIST) | sort | awk 'BEGIN {FS = ":.*?## "}; {printf "\033[36m%-30s\033[0m %s\n", $$1, $$2}'
+	.PHONY: test
