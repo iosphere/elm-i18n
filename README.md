@@ -30,3 +30,15 @@ Usage:
 
 - Language is no longer part of your view model and cannot be changed dynamically from within the app.
 - Language selection has to be handled outside of the elm-app (by loading the appropriate js artefact).
+
+
+## Notes
+
+Regex matching quoted strings:
+`quoted = "((?:[^"\\]|\\.)*)"`
+
+Regex for string constants without a comment.
+`const = ([a-z]*) : String$\n([a-z]*) =\n[\s]*{quoted}$`
+
+Regex for string constants including a comment.
+`\{-\| ([^-}]*) -}\n{const}$`
