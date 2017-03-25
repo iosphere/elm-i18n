@@ -54,7 +54,13 @@ parse source =
     in
         List.filterMap
             (\( key, params ) ->
-                findSimpleElementForKey source key
+                case findSimpleElementForKey source key of
+                    Just simple ->
+                        Just simple
+
+                    Nothing ->
+                        -- try format
+                        findFormatElementForKey source key
             )
             stringKeysAndParameters
 
@@ -96,6 +102,37 @@ findSimpleElementForKey source key =
                 |> Maybe.map (.submatches >> List.head)
                 |> Maybe.withDefault Nothing
                 |> Maybe.withDefault Nothing
+    in
+        case maybeValue of
+            Just value ->
+                LocalizedString key (findComment source key) value
+                    |> Simple
+                    |> Just
+
+            Nothing ->
+                Nothing
+
+
+regexFormats : String -> Regex
+regexFormats key =
+    -- myFormat ([^=\n]*) =[\s\n]((?:.+\r?\n)+(?=(\r?\n)?))
+    Regex.regex (key ++ " ([^=\\n]*) =[\\s\\n]((?:.+\\r?\\n)+(?=(\\r?\\n)?))")
+
+
+findFormatElementForKey : String -> String -> Maybe LocalizedElement
+findFormatElementForKey source key =
+    let
+        regex =
+            regexFormats key
+                |> Debug.log "regex"
+
+        maybeValue =
+            Regex.find (Regex.AtMost 1) regex source
+                |> List.head
+                |> Maybe.map (.submatches >> List.head)
+                |> Maybe.withDefault Nothing
+                |> Maybe.withDefault Nothing
+                |> Debug.log "formats"
     in
         case maybeValue of
             Just value ->
