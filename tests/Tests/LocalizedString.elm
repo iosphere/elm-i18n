@@ -8,31 +8,53 @@ import Test exposing (..)
 all : Test
 all =
     describe "Tests.LocalizedString"
-        [ testString ]
+        [ testParse, testStringDeclarations ]
 
 
-testString : Test
-testString =
-    test "Test view" <|
+testParse : Test
+testParse =
+    test "testParse" <|
         \() ->
             LocalizedString.parse sourceString
                 |> Expect.equal expected
 
 
-expected : List LocalizedString
+testStringDeclarations : Test
+testStringDeclarations =
+    test "testStringDeclarations" <|
+        \() ->
+            LocalizedString.stringDeclarations sourceString
+                |> Expect.equal
+                    [ ( "myString", [] )
+                    , ( "myString2", [] )
+                    , ( "myStringC", [] )
+                    , ( "myFormat", [ "String" ] )
+                    ]
+
+
+expected : List LocalizedString.LocalizedElement
 expected =
-    [ { key = "myString"
-      , comment = ""
-      , value = "Value"
-      }
-    , { key = "myString2"
-      , comment = ""
-      , value = "Value2"
-      }
-    , { key = "myStringC"
-      , comment = "My comment"
-      , value = "ValueC"
-      }
+    [ LocalizedString.Simple
+        { key = "myString"
+        , comment = ""
+        , value = "Value"
+        }
+    , LocalizedString.Simple
+        { key = "myString2"
+        , comment = ""
+        , value = "Value2"
+        }
+    , LocalizedString.Simple
+        { key = "myStringC"
+        , comment = "My comment"
+        , value = "ValueC"
+        }
+    , LocalizedString.Format
+        { key = "myFormat"
+        , comment = "My comment"
+        , placeholders = [ "label" ]
+        , value = [ LocalizedString.Value "Prefix: ", LocalizedString.Placeholder "label" ]
+        }
     ]
 
 
@@ -51,4 +73,7 @@ myStringC : String
 myStringC =
     "ValueC"
 
+myFormat : String -> String
+myFormat label=
+    "Prefix: " ++ label
 """
