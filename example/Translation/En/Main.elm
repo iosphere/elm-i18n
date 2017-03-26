@@ -8,7 +8,9 @@ greeting =
 
 greetingWithName : String -> String
 greetingWithName name =
-    "Hello, " ++ name
+    "Hello, "
+        ++ name
+        ++ "test"
 
 
 salute : String

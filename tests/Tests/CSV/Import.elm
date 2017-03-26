@@ -1,15 +1,17 @@
 module Tests.CSV.Import exposing (..)
 
-import Expect
+import Localized.Parser as Localized
+import CSV.Export as Export
 import CSV.Import as CSV
-import Test exposing (..)
 import CSV.Template
+import Expect
+import Test exposing (..)
 
 
 all : Test
 all =
     describe "Tests.CSV.Import"
-        [ testImport ]
+        [ testImport, testFullCircle ]
 
 
 testImport : Test
@@ -17,6 +19,16 @@ testImport =
     test "testImport" <|
         \() ->
             CSV.generate inputCSV
+                |> Expect.equal expectedSource
+
+
+testFullCircle : Test
+testFullCircle =
+    test "testFullCircle" <|
+        \() ->
+            Localized.parse expectedSource
+                |> Export.generate
+                |> CSV.generate
                 |> Expect.equal expectedSource
 
 
@@ -39,4 +51,5 @@ myString =
 myFormat : String -> String
 myFormat label =
     "Prefix: "
-        ++ label"""
+        ++ label
+"""

@@ -10,6 +10,8 @@ generate csv =
         Result.Ok lines ->
             List.filterMap fromLine lines.records
                 |> String.join "\n\n"
+                |> -- append new line at end of file
+                   (flip String.append) "\n"
 
         Result.Err err ->
             Debug.log "Could not parse CSV" err

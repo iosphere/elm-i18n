@@ -31,6 +31,7 @@ testStringDeclarations =
                     , ( "myString2", [] )
                     , ( "myStringC", [] )
                     , ( "myFormat", [ "String" ] )
+                    , ( "myFormat2", [ "String" ] )
                     ]
 
 
@@ -60,6 +61,15 @@ expected =
             , Localized.FormatComponentPlaceholder "label"
             ]
         }
+    , Localized.ElementFormat
+        { key = "myFormat2"
+        , comment = "My formatted comment"
+        , placeholders = [ "argument" ]
+        , components =
+            [ Localized.FormatComponentStatic "Newline after static: "
+            , Localized.FormatComponentPlaceholder "argument"
+            ]
+        }
     ]
 
 
@@ -81,4 +91,10 @@ myStringC =
 myFormat : String -> String
 myFormat label =
     "Prefix: " ++ label
+
+{-| My formatted comment -}
+myFormat2 : String -> String
+myFormat2 argument =
+    "Newline after static: "
+        ++ argument
 """
