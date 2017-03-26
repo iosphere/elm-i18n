@@ -51,9 +51,12 @@ expected =
         }
     , LocalizedString.Format
         { key = "myFormat"
-        , comment = "My comment"
+        , comment = ""
         , placeholders = [ "label" ]
-        , value = [ LocalizedString.Value "Prefix: ", LocalizedString.Placeholder "label" ]
+        , components =
+            [ LocalizedString.FormatComponentStatic "Prefix: "
+            , LocalizedString.FormatComponentPlaceholder "label"
+            ]
         }
     ]
 
@@ -74,6 +77,6 @@ myStringC =
     "ValueC"
 
 myFormat : String -> String
-myFormat label=
+myFormat label =
     "Prefix: " ++ label
 """

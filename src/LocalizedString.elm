@@ -1,6 +1,5 @@
 module LocalizedString exposing (..)
 
-import Dict exposing (Dict)
 import List.Extra as List
 import Regex exposing (Regex)
 
@@ -17,16 +16,16 @@ type alias LocalizedString =
     }
 
 
-type FormatString
-    = Value String
-    | Placeholder String
+type FormatComponent
+    = FormatComponentStatic String
+    | FormatComponentPlaceholder String
 
 
 type alias LocalizedFormat =
     { key : String
     , comment : String
     , placeholders : List String
-    , value : List FormatString
+    , components : List FormatComponent
     }
 
 
@@ -99,9 +98,7 @@ findSimpleElementForKey source key =
         maybeValue =
             Regex.find (Regex.AtMost 1) (regexSimpleStringValue key) source
                 |> List.head
-                |> Maybe.map (.submatches >> List.head)
-                |> Maybe.withDefault Nothing
-                |> Maybe.withDefault Nothing
+                |> submatchAt 0
     in
         case maybeValue of
             Just value ->
@@ -116,7 +113,9 @@ findSimpleElementForKey source key =
 regexFormats : String -> Regex
 regexFormats key =
     -- myFormat ([^=\n]*) =[\s\n]((?:.+\r?\n)+(?=(\r?\n)?))
-    Regex.regex (key ++ " ([^=\\n]*) =[\\s\\n]((?:.+\\r?\\n)+(?=(\\r?\\n)?))")
+    (key ++ " ([^=\\n]*)=[\\s\\n]((?:.+\\r?\\n)+(?=(\\r?\\n)?))")
+        |> Debug.log "regex"
+        |> Regex.regex
 
 
 findFormatElementForKey : String -> String -> Maybe LocalizedElement
@@ -124,24 +123,40 @@ findFormatElementForKey source key =
     let
         regex =
             regexFormats key
-                |> Debug.log "regex"
 
-        maybeValue =
+        match =
             Regex.find (Regex.AtMost 1) regex source
                 |> List.head
-                |> Maybe.map (.submatches >> List.head)
-                |> Maybe.withDefault Nothing
-                |> Maybe.withDefault Nothing
-                |> Debug.log "formats"
-    in
-        case maybeValue of
-            Just value ->
-                LocalizedString key (findComment source key) value
-                    |> Simple
-                    |> Just
 
-            Nothing ->
+        placeholders =
+            case submatchAt 0 match of
+                Just placeholderString ->
+                    String.split " " placeholderString
+                        |> trimmedStrings
+                        |> Debug.log "placeholders"
+
+                Nothing ->
+                    []
+
+        content =
+            case submatchAt 1 match of
+                Just placeholderString ->
+                    String.split "++" placeholderString
+                        |> trimmedStrings
+                        |> List.map formatComponentFromString
+                        |> Debug.log "content"
+
+                Nothing ->
+                    []
+    in
+        case placeholders of
+            [] ->
                 Nothing
+
+            placeholderList ->
+                LocalizedFormat key (findComment source key) placeholderList content
+                    |> Format
+                    |> Just
 
 
 findComment : String -> String -> String
@@ -151,8 +166,30 @@ findComment source key =
             Regex.find (Regex.AtMost 1) (regexStringComment key) source
                 |> List.head
     in
-        match
-            |> Maybe.map (.submatches >> List.head)
-            |> Maybe.withDefault Nothing
-            |> Maybe.withDefault Nothing
+        submatchAt 0 match
             |> Maybe.withDefault ""
+
+
+formatComponentFromString : String -> FormatComponent
+formatComponentFromString value =
+    if String.endsWith "\"" value && String.startsWith "\"" value then
+        -- Remove quotes from value
+        String.dropLeft 1 value
+            |> String.dropRight 1
+            |> FormatComponentStatic
+    else
+        FormatComponentPlaceholder value
+
+
+trimmedStrings : List String -> List String
+trimmedStrings stringList =
+    List.map String.trim stringList
+        |> List.filter (String.isEmpty >> not)
+
+
+submatchAt : Int -> Maybe Regex.Match -> Maybe String
+submatchAt index match =
+    match
+        |> Maybe.map (.submatches >> List.getAt index)
+        |> Maybe.withDefault Nothing
+        |> Maybe.withDefault Nothing
