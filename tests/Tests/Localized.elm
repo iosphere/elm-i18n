@@ -1,7 +1,9 @@
-module Tests.LocalizedString exposing (..)
+module Tests.Localized exposing (..)
 
 import Expect
-import LocalizedString exposing (LocalizedString)
+import Localized
+import Localized.Parser as Parser
+import Localized.Parser.Internal as Parser
 import Test exposing (..)
 
 
@@ -15,7 +17,7 @@ testParse : Test
 testParse =
     test "testParse" <|
         \() ->
-            LocalizedString.parse sourceString
+            Parser.parse sourceString
                 |> Expect.equal expected
 
 
@@ -23,7 +25,7 @@ testStringDeclarations : Test
 testStringDeclarations =
     test "testStringDeclarations" <|
         \() ->
-            LocalizedString.stringDeclarations sourceString
+            Parser.stringDeclarations sourceString
                 |> Expect.equal
                     [ ( "myString", [] )
                     , ( "myString2", [] )
@@ -32,30 +34,30 @@ testStringDeclarations =
                     ]
 
 
-expected : List LocalizedString.LocalizedElement
+expected : List Localized.Element
 expected =
-    [ LocalizedString.Simple
+    [ Localized.ElementStatic
         { key = "myString"
         , comment = ""
         , value = "Value"
         }
-    , LocalizedString.Simple
+    , Localized.ElementStatic
         { key = "myString2"
         , comment = ""
         , value = "Value2"
         }
-    , LocalizedString.Simple
+    , Localized.ElementStatic
         { key = "myStringC"
         , comment = "My comment"
         , value = "ValueC"
         }
-    , LocalizedString.Format
+    , Localized.ElementFormat
         { key = "myFormat"
         , comment = ""
         , placeholders = [ "label" ]
         , components =
-            [ LocalizedString.FormatComponentStatic "Prefix: "
-            , LocalizedString.FormatComponentPlaceholder "label"
+            [ Localized.FormatComponentStatic "Prefix: "
+            , Localized.FormatComponentPlaceholder "label"
             ]
         }
     ]

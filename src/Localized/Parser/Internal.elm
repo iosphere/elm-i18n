@@ -1,32 +1,8 @@
-module LocalizedString exposing (..)
+module Localized.Parser.Internal exposing (..)
 
 import List.Extra as List
+import Localized
 import Regex exposing (Regex)
-
-
-type LocalizedElement
-    = Simple LocalizedString
-    | Format LocalizedFormat
-
-
-type alias LocalizedString =
-    { key : String
-    , comment : String
-    , value : String
-    }
-
-
-type FormatComponent
-    = FormatComponentStatic String
-    | FormatComponentPlaceholder String
-
-
-type alias LocalizedFormat =
-    { key : String
-    , comment : String
-    , placeholders : List String
-    , components : List FormatComponent
-    }
 
 
 regexStringDeclarations : Regex
@@ -44,24 +20,11 @@ regexStringComment key =
     Regex.regex ("\\{-\\| ([^-}]*) -\\}\\n" ++ key ++ "\\s+:")
 
 
-parse : String -> List LocalizedElement
-parse source =
-    let
-        stringKeysAndParameters =
-            stringDeclarations source
-                |> Debug.log "declarations"
-    in
-        List.filterMap
-            (\( key, params ) ->
-                case findSimpleElementForKey source key of
-                    Just simple ->
-                        Just simple
-
-                    Nothing ->
-                        -- try format
-                        findFormatElementForKey source key
-            )
-            stringKeysAndParameters
+regexFormats : String -> Regex
+regexFormats key =
+    -- myFormat ([^=\n]*) =[\s\n]((?:.+\r?\n)+(?=(\r?\n)?))
+    (key ++ " ([^=\\n]*)=[\\s\\n]((?:.+\\r?\\n)+(?=(\\r?\\n)?))")
+        |> Regex.regex
 
 
 {-| Finds all top level string declarations, both constants (`key : String`
@@ -92,8 +55,8 @@ stringDeclarations source =
                 )
 
 
-findSimpleElementForKey : String -> String -> Maybe LocalizedElement
-findSimpleElementForKey source key =
+findStaticElementForKey : String -> String -> Maybe Localized.Element
+findStaticElementForKey source key =
     let
         maybeValue =
             Regex.find (Regex.AtMost 1) (regexSimpleStringValue key) source
@@ -102,23 +65,15 @@ findSimpleElementForKey source key =
     in
         case maybeValue of
             Just value ->
-                LocalizedString key (findComment source key) value
-                    |> Simple
+                Localized.Static key (findComment source key) value
+                    |> Localized.ElementStatic
                     |> Just
 
             Nothing ->
                 Nothing
 
 
-regexFormats : String -> Regex
-regexFormats key =
-    -- myFormat ([^=\n]*) =[\s\n]((?:.+\r?\n)+(?=(\r?\n)?))
-    (key ++ " ([^=\\n]*)=[\\s\\n]((?:.+\\r?\\n)+(?=(\\r?\\n)?))")
-        |> Debug.log "regex"
-        |> Regex.regex
-
-
-findFormatElementForKey : String -> String -> Maybe LocalizedElement
+findFormatElementForKey : String -> String -> Maybe Localized.Element
 findFormatElementForKey source key =
     let
         regex =
@@ -154,8 +109,8 @@ findFormatElementForKey source key =
                 Nothing
 
             placeholderList ->
-                LocalizedFormat key (findComment source key) placeholderList content
-                    |> Format
+                Localized.Format key (findComment source key) placeholderList content
+                    |> Localized.ElementFormat
                     |> Just
 
 
@@ -170,15 +125,15 @@ findComment source key =
             |> Maybe.withDefault ""
 
 
-formatComponentFromString : String -> FormatComponent
+formatComponentFromString : String -> Localized.FormatComponent
 formatComponentFromString value =
     if String.endsWith "\"" value && String.startsWith "\"" value then
         -- Remove quotes from value
         String.dropLeft 1 value
             |> String.dropRight 1
-            |> FormatComponentStatic
+            |> Localized.FormatComponentStatic
     else
-        FormatComponentPlaceholder value
+        Localized.FormatComponentPlaceholder value
 
 
 trimmedStrings : List String -> List String
