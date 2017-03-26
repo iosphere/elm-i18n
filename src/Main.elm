@@ -5,8 +5,10 @@ port module Main exposing (main)
 @docs main
 -}
 
+import CSV.Export
+import CSV.Import
 import Json.Decode
-import LocalizedString exposing (LocalizedString)
+import Localized.Parser as Localized
 import Platform exposing (programWithFlags)
 
 
@@ -18,8 +20,26 @@ type Msg
     = NoOp
 
 
+type Operation
+    = Export
+    | Import
+
+
+port result : String -> Cmd msg
+
+
+operationFromString : String -> Operation
+operationFromString operation =
+    if operation == "import" then
+        Import
+    else
+        Export
+
+
 type alias Flags =
-    { source : String }
+    { source : String
+    , operation : String
+    }
 
 
 {-| Main app
@@ -31,11 +51,28 @@ main =
 
 init : Flags -> ( Model, Cmd Msg )
 init flags =
+    case operationFromString flags.operation of
+        Export ->
+            ( {}, operationExport flags.source )
+
+        Import ->
+            ( {}, operationImport flags.source )
+
+
+operationExport : String -> Cmd Msg
+operationExport source =
     let
-        _ =
-            flags.source |> LocalizedString.parse |> Debug.log "strings"
+        csv =
+            Localized.parse source |> CSV.Export.generate
     in
-        ( {}, Cmd.none )
+        result csv
+
+
+operationImport : String -> Cmd Msg
+operationImport csv =
+    Debug.log "import" csv
+        |> CSV.Import.generate
+        |> result
 
 
 update : Msg -> Model -> ( Model, Cmd Msg )
