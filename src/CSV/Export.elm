@@ -1,22 +1,30 @@
 module CSV.Export exposing (generate)
 
+import CSV.Template
 import Localized
 
 
 generate : List Localized.Element -> String
 generate elements =
     List.map line elements
+        |> List.map
+            (\columns ->
+                List.map (\column -> "\"" ++ column ++ "\"") columns
+                    |> String.join ","
+            )
         |> String.join "\n"
+        |> String.append (CSV.Template.headers ++ "\n")
+        |> (flip String.append) "\n"
 
 
-line : Localized.Element -> String
+line : Localized.Element -> List String
 line element =
     case element of
         Localized.ElementStatic static ->
-            static.key ++ "," ++ static.comment ++ "," ++ static.value
+            [ static.key, static.comment, "", static.value ]
 
         Localized.ElementFormat format ->
-            format.key ++ "," ++ format.comment ++ "," ++ formatString format.components
+            [ format.key, format.comment, String.join " " format.placeholders, formatString format.components ]
 
 
 formatString : List Localized.FormatComponent -> String
@@ -29,6 +37,6 @@ formatString components =
                         value
 
                     Localized.FormatComponentPlaceholder placeholder ->
-                        "{{" ++ placeholder ++ "}}"
+                        CSV.Template.placeholder placeholder
             )
         |> String.join ""

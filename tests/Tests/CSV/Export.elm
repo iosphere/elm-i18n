@@ -4,6 +4,7 @@ import Expect
 import Localized
 import CSV.Export as CSV
 import Test exposing (..)
+import CSV.Template
 
 
 all : Test
@@ -14,7 +15,7 @@ all =
 
 testExport : Test
 testExport =
-    test "testParse" <|
+    test "testExport" <|
         \() ->
             CSV.generate elements
                 |> Expect.equal expectedCSV
@@ -41,5 +42,7 @@ elements =
 
 expectedCSV : String
 expectedCSV =
-    """myString,MyComment,Value
-myFormat,,Prefix: {{label}}"""
+    CSV.Template.headers ++ """
+"myString","MyComment","","Value"
+"myFormat","","label","Prefix: {{label}}"
+"""
