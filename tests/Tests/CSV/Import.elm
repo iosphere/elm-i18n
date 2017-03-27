@@ -19,7 +19,7 @@ testImport =
     test "testImport" <|
         \() ->
             CSV.generate inputCSV
-                |> Expect.equal expectedSource
+                |> Expect.equal [ ( "Translation.Test", expectedSource ) ]
 
 
 testFullCircle : Test
@@ -29,21 +29,23 @@ testFullCircle =
             Localized.parse expectedSource
                 |> Export.generate
                 |> CSV.generate
-                |> Expect.equal expectedSource
+                |> Expect.equal [ ( "Translation.Test", expectedSource ) ]
 
 
 inputCSV : String
 inputCSV =
     CSV.Template.headers
         ++ """
-"myString","My comment","","Value"
-"myFormat","","label","Prefix: {{label}}"
+"Translation.Test","myString","My comment","","Value"
+"Translation.Test","myFormat","","label","Prefix: {{label}}"
 """
 
 
 expectedSource : String
 expectedSource =
-    """{-| My comment -}
+    """module Translation.Test exposing (..)
+
+{-| My comment -}
 myString : String
 myString =
     "Value"

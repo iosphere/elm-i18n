@@ -24,12 +24,14 @@ testExport =
 elements : List Localized.Element
 elements =
     [ Localized.ElementStatic
-        { key = "myString"
+        { moduleName = "Translation.Second"
+        , key = "myString"
         , comment = "MyComment"
         , value = "Value"
         }
     , Localized.ElementFormat
-        { key = "myFormat"
+        { moduleName = "Translation.Test"
+        , key = "myFormat"
         , comment = ""
         , placeholders = [ "label" ]
         , components =
@@ -43,6 +45,6 @@ elements =
 expectedCSV : String
 expectedCSV =
     CSV.Template.headers ++ """
-"myString","MyComment","","Value"
-"myFormat","","label","Prefix: {{label}}"
+"Translation.Second","myString","MyComment","","Value"
+"Translation.Test","myFormat","","label","Prefix: {{label}}"
 """

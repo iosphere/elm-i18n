@@ -5,6 +5,11 @@ import Localized
 import Regex exposing (Regex)
 
 
+regexFindModuleName : Regex
+regexFindModuleName =
+    Regex.regex "module ([^\\s]*) exposing"
+
+
 regexStringDeclarations : Regex
 regexStringDeclarations =
     Regex.regex "([A-Za-z][A-Za-z0-9]*)\\s+:\\s+(.*)String"
@@ -25,6 +30,14 @@ regexFormats key =
     -- myFormat ([^=\n]*) =[\s\n]((?:.+\r?\n)+(?=(\r?\n)?))
     (key ++ " ([^=\\n]*)=[\\s\\n]((?:.+\\r?\\n)+(?=(\\r?\\n)?))")
         |> Regex.regex
+
+
+findModuleName : String -> String
+findModuleName source =
+    Regex.find (Regex.AtMost 1) regexFindModuleName source
+        |> List.head
+        |> submatchAt 0
+        |> Maybe.withDefault "unknown"
 
 
 {-| Finds all top level string declarations, both constants (`key : String`
@@ -55,8 +68,8 @@ stringDeclarations source =
                 )
 
 
-findStaticElementForKey : String -> String -> Maybe Localized.Element
-findStaticElementForKey source key =
+findStaticElementForKey : String -> String -> String -> Maybe Localized.Element
+findStaticElementForKey moduleName source key =
     let
         maybeValue =
             Regex.find (Regex.AtMost 1) (regexSimpleStringValue key) source
@@ -65,7 +78,7 @@ findStaticElementForKey source key =
     in
         case maybeValue of
             Just value ->
-                Localized.Static key (findComment source key) value
+                Localized.Static moduleName key (findComment source key) value
                     |> Localized.ElementStatic
                     |> Just
 
@@ -73,8 +86,8 @@ findStaticElementForKey source key =
                 Nothing
 
 
-findFormatElementForKey : String -> String -> Maybe Localized.Element
-findFormatElementForKey source key =
+findFormatElementForKey : String -> String -> String -> Maybe Localized.Element
+findFormatElementForKey moduleName source key =
     let
         regex =
             regexFormats key
@@ -88,7 +101,6 @@ findFormatElementForKey source key =
                 Just placeholderString ->
                     String.split " " placeholderString
                         |> trimmedStrings
-                        |> Debug.log "placeholders"
 
                 Nothing ->
                     []
@@ -99,7 +111,6 @@ findFormatElementForKey source key =
                     String.split "++" placeholderString
                         |> trimmedStrings
                         |> List.map formatComponentFromString
-                        |> Debug.log "content"
 
                 Nothing ->
                     []
@@ -109,7 +120,7 @@ findFormatElementForKey source key =
                 Nothing
 
             placeholderList ->
-                Localized.Format key (findComment source key) placeholderList content
+                Localized.Format moduleName key (findComment source key) placeholderList content
                     |> Localized.ElementFormat
                     |> Just
 

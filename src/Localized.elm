@@ -11,14 +11,16 @@ type Element
 
 
 type alias Static =
-    { key : String
+    { moduleName : String
+    , key : String
     , comment : String
     , value : String
     }
 
 
 type alias Format =
-    { key : String
+    { moduleName : String
+    , key : String
     , comment : String
     , placeholders : List String
     , components : List FormatComponent

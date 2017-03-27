@@ -11,16 +11,18 @@ parse source =
     let
         stringKeysAndParameters =
             stringDeclarations source
-                |> Debug.log "declarations"
+
+        moduleName =
+            findModuleName source
     in
         List.filterMap
             (\( key, params ) ->
-                case findStaticElementForKey source key of
+                case findStaticElementForKey moduleName source key of
                     Just simple ->
                         Just simple
 
                     Nothing ->
                         -- try format
-                        findFormatElementForKey source key
+                        findFormatElementForKey moduleName source key
             )
             stringKeysAndParameters

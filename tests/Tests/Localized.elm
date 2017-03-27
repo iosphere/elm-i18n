@@ -38,22 +38,26 @@ testStringDeclarations =
 expected : List Localized.Element
 expected =
     [ Localized.ElementStatic
-        { key = "myString"
+        { moduleName = mockModuleName
+        , key = "myString"
         , comment = ""
         , value = "Value"
         }
     , Localized.ElementStatic
-        { key = "myString2"
+        { moduleName = mockModuleName
+        , key = "myString2"
         , comment = ""
         , value = "Value2"
         }
     , Localized.ElementStatic
-        { key = "myStringC"
+        { moduleName = mockModuleName
+        , key = "myStringC"
         , comment = "My comment"
         , value = "ValueC"
         }
     , Localized.ElementFormat
-        { key = "myFormat"
+        { moduleName = mockModuleName
+        , key = "myFormat"
         , comment = ""
         , placeholders = [ "label" ]
         , components =
@@ -62,7 +66,8 @@ expected =
             ]
         }
     , Localized.ElementFormat
-        { key = "myFormat2"
+        { moduleName = mockModuleName
+        , key = "myFormat2"
         , comment = "My formatted comment"
         , placeholders = [ "argument" ]
         , components =
@@ -73,9 +78,15 @@ expected =
     ]
 
 
+mockModuleName : String
+mockModuleName =
+    "Translation.Test"
+
+
 sourceString : String
 sourceString =
-    """
+    """module Translation.Test exposing (..)
+
 myString : String
 myString =
     "Value"
