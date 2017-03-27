@@ -45,8 +45,11 @@ expectedSource : String
 expectedSource =
     """module Translation.Test exposing (..)
 
+{-| -}
 
-{-| My comment -}
+
+{-| My comment
+-}
 myString : String
 myString =
     "Value"

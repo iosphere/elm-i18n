@@ -94,7 +94,8 @@ myString =
 myString2 : String
 myString2 = "Value2"
 
-{-| My comment -}
+{-| My comment
+-}
 myStringC : String
 myStringC =
     "ValueC"
@@ -103,7 +104,8 @@ myFormat : String -> String
 myFormat label =
     "Prefix: " ++ label
 
-{-| My formatted comment -}
+{-| My formatted comment
+-}
 myFormat2 : String -> String
 myFormat2 argument =
     "Newline after static: "

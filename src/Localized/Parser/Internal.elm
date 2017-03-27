@@ -22,7 +22,7 @@ regexSimpleStringValue key =
 
 regexStringComment : String -> Regex
 regexStringComment key =
-    Regex.regex ("\\{-\\| ([^-}]*) -\\}\\n" ++ key ++ "\\s+:")
+    Regex.regex ("\\{-\\| ([^\\-\\}]*)\\n-\\}\\n" ++ key ++ "\\s+:")
 
 
 regexFormats : String -> Regex

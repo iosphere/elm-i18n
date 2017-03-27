@@ -21,7 +21,7 @@ from modules containing translations (where one language can consist of multiple
 modules, but each module only contains one language).
 
 The tool is build using node.js with an Elm-Core. There is no node package yet.
-To build the elm backend of the node.js part: `make elm.js`.  
+To build the elm backend of the node.js part: `make elm.js`.
 
 ### Export: Generate CSV from Elm source
 
@@ -33,9 +33,8 @@ Result:
 
 ```csv
 Module,Key,Comment,Supported Placeholders,Translation
-"Translation.Main","greeting","","","Hallo"
-"Translation.Main","greetingWithName","","name","Guten Tag, {{name}}"
-"Translation.Main","salute","","","Admiral"
+"Translation.Main","greeting","A short greeting.","","Hi"
+"Translation.Main","greetingWithName","A personalized greeting. Use placeholder name for the user's name.","name","Guten Tag, {{name}}"
 ```
 
 ### Import: Generate Elm source code from CSV
@@ -49,21 +48,22 @@ Result in import/DE/Translation/Main.elm:
 ```elm
 module Translation.Main exposing (..)
 
+{-| -}
 
+
+{-| A short greeting.
+-}
 greeting : String
 greeting =
-    "Hallo"
+    "Hi"
 
 
+{-| A personalized greeting. Use placeholder name for the user's name.
+-}
 greetingWithName : String -> String
 greetingWithName name =
     "Guten Tag, "
         ++ name
-
-
-salute : String
-salute =
-    "Admiral"
 ```
 
 ## Advantages

@@ -59,7 +59,7 @@ generateForModule : String -> List (List String) -> String
 generateForModule moduleName lines =
     List.filterMap fromLine lines
         |> String.join "\n\n\n"
-        |> String.append ("module " ++ moduleName ++ " exposing (..)\n\n\n")
+        |> String.append ("module " ++ moduleName ++ " exposing (..)\n\n{-| -}\n\n\n")
         |> -- append new line at end of file
            (flip String.append) "\n"
 
@@ -111,7 +111,7 @@ code key comment placeholderString value =
             if String.isEmpty comment then
                 ""
             else
-                "{-| " ++ comment ++ " -}\n"
+                "{-| " ++ comment ++ "\n-}\n"
 
         tab =
             "    "
