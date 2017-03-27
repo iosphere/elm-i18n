@@ -36,6 +36,7 @@ if (fs.existsSync(baseDir)) {
         prompt.start();
         console.log("There already is a translation at", baseDir);
         console.log("Should I continue and replace it with <" + argv.language + ">?");
+        console.log("(use command line argumen --yes to skip this prompt)");
         console.log("enter 'y' to continue");
 
         prompt.get(["remove"], function(err, result) {

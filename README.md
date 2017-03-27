@@ -1,26 +1,63 @@
 # i18n localization for Elm as a pre-build phase
 
-![Travis](https://travis-ci.org/iosphere/elm-i18n.svg)
+[![Travis](https://travis-ci.org/iosphere/elm-i18n.svg)](https://travis-ci.org/iosphere/elm-i18n)
+[![npm version](https://badge.fury.io/js/elm-i18n.svg)](https://badge.fury.io/js/elm-i18n)
 
-This is a proof of concept to illustrate how to localize an elm app.
+elm-i18n provides tools and a concept for localizing elm apps. The idea is to
+treat localized text as constants (or functions). To achieve this, localized
+content is placed in separate modules. Each language can consist of
+multiple modules, but each module contains only one language.
 
-The concept is to copy (or symlink) a root module for a language from the
-language directory `./Translation/{Language}` to `./src/Translation`. Your code
-imports modules under `./src/Translation` and does not know about languages.
+**The correct set of language modules is symlinked or copied into place before
+compiling the elm app. The result is a localized compiled version of your app.**
+When repeating this process for multiple languages the compuler re-uses the
+cache and only the translation specific modules are cleared from the cache.
 
-The `index.js` script takes care of the copying/symlinking, clears the elm
-artefacts cache, and provides an interface to build a localized version
-of your app.
+Suggested project file structure (*note that the language identifier is excluded
+from the Translation module names*):
 
-Installation:
+```
+project
+├── src/
+│   ├── Main.elm (e.g. imports Translation.Main)
+│   ├── View.elm (e.g. imports Translation.View)
+│   └──>Translation (sym-linked to current directory, e.g. project/Translation/De/)
+└── Translation/
+    ├── De/
+    │   ├── Main.elm (module Translation.Main)
+    │   └── View.elm (module Translation.View)
+    └── En/
+        ├── Main.elm (module Translation.Main)
+        └── View.elm (module Translation.View)
+```
+
+## Installation:
+
+The tool-set is available as a node package and is backed by elm code:
 
 `npm install elm-i18n -g`
 
-Usage:
+## Switch language as a prebuild phase
 
-`cd example && elm-i18n-switch --output out -l En`
+In order to switch the language for compilation to `En`, simply execute the
+following command at the root of your elm app:
 
-## Tools
+`elm-i18n-switch -l En`
+
+To switch the language and compile a localized version of your app (to `dist/en.js`):
+
+`elm-i18n-switch -l En --output dist`
+
+If your code is not stored in `src` or your main app module is not `Main.elm`:
+
+`elm-i18n-switch -l En --output dist --src myDir --elmFile MyMain.elm`
+
+If your root `Translation` module is called `MyTranslation`:
+
+`elm-i18n-switch -l En --rootModule MyTranslation`
+
+
+## Codegen tools
 
 This repository provides a few tools to extract string functions and constants
 from modules containing translations (where one language can consist of multiple
@@ -91,5 +128,5 @@ greetingWithName name =
 
 ## Disadvantages
 
-- Language is no longer part of your view model and cannot be changed dynamically from within the app.
+- Language is no longer part of your view model and cannot be changed dynamically from within the app. *However, you can add a constant with the current language code and have different code paths if that is required.*
 - Language selection has to be handled outside of the elm-app (by loading the appropriate js artefact).
