@@ -63,10 +63,6 @@ This repository provides a few tools to extract string functions and constants
 from modules containing translations (where one language can consist of multiple
 modules, but each module only contains one language).
 
-The tool is build using node.js with an Elm-Core.
-To build the elm backend of the node.js part (if developing locally):
-`make dist`.
-
 ### Export: Generate CSV from Elm source
 
 ```bash
@@ -130,3 +126,9 @@ greetingWithName name =
 
 - Language is no longer part of your view model and cannot be changed dynamically from within the app. *However, you can add a constant with the current language code and have different code paths if that is required.*
 - Language selection has to be handled outside of the elm-app (by loading the appropriate js artefact).
+
+## Building elm-i18n
+
+The tool is built using node.js with an Elm-Core.
+To build the elm backend of the node.js part (if developing locally):
+`make dist`.
