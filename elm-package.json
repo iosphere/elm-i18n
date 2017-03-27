@@ -1,8 +1,8 @@
 {
     "version": "1.0.0",
     "summary": "Get your app translated and generate localized versions of your app",
-    "repository": "https://github.com/user/project.git",
-    "license": "BSD3",
+    "repository": "https://github.com/iosphere/elm-i18n.git",
+    "license": "MIT",
     "source-directories": [
         "src"
     ],
