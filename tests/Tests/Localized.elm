@@ -32,6 +32,7 @@ testStringDeclarations =
                     , ( "myStringC", [] )
                     , ( "myFormat", [ "String" ] )
                     , ( "myFormat2", [ "String" ] )
+                    , ( "stringWithMultiLineComment", [] )
                     ]
 
 
@@ -52,7 +53,7 @@ expected =
     , Localized.ElementStatic
         { moduleName = mockModuleName
         , key = "myStringC"
-        , comment = "My comment"
+        , comment = "My comment with a-hyphen"
         , value = "ValueC"
         }
     , Localized.ElementFormat
@@ -75,6 +76,12 @@ expected =
             , Localized.FormatComponentPlaceholder "argument"
             ]
         }
+    , Localized.ElementStatic
+        { moduleName = mockModuleName
+        , key = "stringWithMultiLineComment"
+        , comment = "My comment over two\nlines."
+        , value = ""
+        }
     ]
 
 
@@ -87,22 +94,29 @@ sourceString : String
 sourceString =
     """module Translation.Test exposing (..)
 
+{-| -}
+
+
 myString : String
 myString =
     "Value"
 
+
 myString2 : String
 myString2 = "Value2"
 
-{-| My comment
+
+{-| My comment with a-hyphen
 -}
 myStringC : String
 myStringC =
     "ValueC"
 
+
 myFormat : String -> String
 myFormat label =
     "Prefix: " ++ label
+
 
 {-| My formatted comment
 -}
@@ -110,4 +124,12 @@ myFormat2 : String -> String
 myFormat2 argument =
     "Newline after static: "
         ++ argument
+
+
+{-| My comment over two
+lines.
+-}
+stringWithMultiLineComment : String
+stringWithMultiLineComment =
+    ""
 """

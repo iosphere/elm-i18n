@@ -8317,6 +8317,131 @@ var _elm_lang$core$Json_Decode$bool = _elm_lang$core$Native_Json.decodePrimitive
 var _elm_lang$core$Json_Decode$string = _elm_lang$core$Native_Json.decodePrimitive('string');
 var _elm_lang$core$Json_Decode$Decoder = {ctor: 'Decoder'};
 
+var _iosphere$elm_i18n$CSV_Template$placeholder = function (placeholder) {
+	return A2(
+		_elm_lang$core$Basics_ops['++'],
+		'{{',
+		A2(_elm_lang$core$Basics_ops['++'], placeholder, '}}'));
+};
+var _iosphere$elm_i18n$CSV_Template$headers = 'Module,Key,Comment,Supported Placeholders,Translation';
+
+var _iosphere$elm_i18n$Localized$Static = F4(
+	function (a, b, c, d) {
+		return {moduleName: a, key: b, comment: c, value: d};
+	});
+var _iosphere$elm_i18n$Localized$Format = F5(
+	function (a, b, c, d, e) {
+		return {moduleName: a, key: b, comment: c, placeholders: d, components: e};
+	});
+var _iosphere$elm_i18n$Localized$ElementFormat = function (a) {
+	return {ctor: 'ElementFormat', _0: a};
+};
+var _iosphere$elm_i18n$Localized$ElementStatic = function (a) {
+	return {ctor: 'ElementStatic', _0: a};
+};
+var _iosphere$elm_i18n$Localized$FormatComponentPlaceholder = function (a) {
+	return {ctor: 'FormatComponentPlaceholder', _0: a};
+};
+var _iosphere$elm_i18n$Localized$FormatComponentStatic = function (a) {
+	return {ctor: 'FormatComponentStatic', _0: a};
+};
+
+var _iosphere$elm_i18n$CSV_Export$formatString = function (components) {
+	return A2(
+		_elm_lang$core$String$join,
+		'',
+		A2(
+			_elm_lang$core$List$map,
+			function (component) {
+				var _p0 = component;
+				if (_p0.ctor === 'FormatComponentStatic') {
+					return _p0._0;
+				} else {
+					return _iosphere$elm_i18n$CSV_Template$placeholder(_p0._0);
+				}
+			},
+			components));
+};
+var _iosphere$elm_i18n$CSV_Export$line = function (element) {
+	var _p1 = element;
+	if (_p1.ctor === 'ElementStatic') {
+		var _p2 = _p1._0;
+		return {
+			ctor: '::',
+			_0: _p2.moduleName,
+			_1: {
+				ctor: '::',
+				_0: _p2.key,
+				_1: {
+					ctor: '::',
+					_0: _p2.comment,
+					_1: {
+						ctor: '::',
+						_0: '',
+						_1: {
+							ctor: '::',
+							_0: _p2.value,
+							_1: {ctor: '[]'}
+						}
+					}
+				}
+			}
+		};
+	} else {
+		var _p3 = _p1._0;
+		return {
+			ctor: '::',
+			_0: _p3.moduleName,
+			_1: {
+				ctor: '::',
+				_0: _p3.key,
+				_1: {
+					ctor: '::',
+					_0: _p3.comment,
+					_1: {
+						ctor: '::',
+						_0: A2(_elm_lang$core$String$join, ' ', _p3.placeholders),
+						_1: {
+							ctor: '::',
+							_0: _iosphere$elm_i18n$CSV_Export$formatString(_p3.components),
+							_1: {ctor: '[]'}
+						}
+					}
+				}
+			}
+		};
+	}
+};
+var _iosphere$elm_i18n$CSV_Export$generate = function (elements) {
+	return A3(
+		_elm_lang$core$Basics$flip,
+		_elm_lang$core$String$append,
+		'\n',
+		A2(
+			_elm_lang$core$String$append,
+			A2(_elm_lang$core$Basics_ops['++'], _iosphere$elm_i18n$CSV_Template$headers, '\n'),
+			A2(
+				_elm_lang$core$String$join,
+				'\n',
+				A2(
+					_elm_lang$core$List$map,
+					function (columns) {
+						return A2(
+							_elm_lang$core$String$join,
+							',',
+							A2(
+								_elm_lang$core$List$map,
+								function (column) {
+									return A2(
+										_elm_lang$core$Basics_ops['++'],
+										'\"',
+										A2(_elm_lang$core$Basics_ops['++'], column, '\"'));
+								},
+								columns));
+					},
+					A2(_elm_lang$core$List$map, _iosphere$elm_i18n$CSV_Export$line, elements)))));
+};
+
 var _periodic$elm_csv$Csv$textData = _Bogdanp$elm_combine$Combine_Char$noneOf(
 	{
 		ctor: '::',
@@ -8457,134 +8582,9 @@ var _periodic$elm_csv$Csv$parse = function (_p2) {
 				_periodic$elm_csv$Csv$addTrailingLineSep(_p2))));
 };
 
-var _user$project$CSV_Template$placeholder = function (placeholder) {
-	return A2(
-		_elm_lang$core$Basics_ops['++'],
-		'{{',
-		A2(_elm_lang$core$Basics_ops['++'], placeholder, '}}'));
-};
-var _user$project$CSV_Template$headers = 'Module,Key,Comment,Supported Placeholders,Translation';
-
-var _user$project$Localized$Static = F4(
-	function (a, b, c, d) {
-		return {moduleName: a, key: b, comment: c, value: d};
-	});
-var _user$project$Localized$Format = F5(
-	function (a, b, c, d, e) {
-		return {moduleName: a, key: b, comment: c, placeholders: d, components: e};
-	});
-var _user$project$Localized$ElementFormat = function (a) {
-	return {ctor: 'ElementFormat', _0: a};
-};
-var _user$project$Localized$ElementStatic = function (a) {
-	return {ctor: 'ElementStatic', _0: a};
-};
-var _user$project$Localized$FormatComponentPlaceholder = function (a) {
-	return {ctor: 'FormatComponentPlaceholder', _0: a};
-};
-var _user$project$Localized$FormatComponentStatic = function (a) {
-	return {ctor: 'FormatComponentStatic', _0: a};
-};
-
-var _user$project$CSV_Export$formatString = function (components) {
-	return A2(
-		_elm_lang$core$String$join,
-		'',
-		A2(
-			_elm_lang$core$List$map,
-			function (component) {
-				var _p0 = component;
-				if (_p0.ctor === 'FormatComponentStatic') {
-					return _p0._0;
-				} else {
-					return _user$project$CSV_Template$placeholder(_p0._0);
-				}
-			},
-			components));
-};
-var _user$project$CSV_Export$line = function (element) {
-	var _p1 = element;
-	if (_p1.ctor === 'ElementStatic') {
-		var _p2 = _p1._0;
-		return {
-			ctor: '::',
-			_0: _p2.moduleName,
-			_1: {
-				ctor: '::',
-				_0: _p2.key,
-				_1: {
-					ctor: '::',
-					_0: _p2.comment,
-					_1: {
-						ctor: '::',
-						_0: '',
-						_1: {
-							ctor: '::',
-							_0: _p2.value,
-							_1: {ctor: '[]'}
-						}
-					}
-				}
-			}
-		};
-	} else {
-		var _p3 = _p1._0;
-		return {
-			ctor: '::',
-			_0: _p3.moduleName,
-			_1: {
-				ctor: '::',
-				_0: _p3.key,
-				_1: {
-					ctor: '::',
-					_0: _p3.comment,
-					_1: {
-						ctor: '::',
-						_0: A2(_elm_lang$core$String$join, ' ', _p3.placeholders),
-						_1: {
-							ctor: '::',
-							_0: _user$project$CSV_Export$formatString(_p3.components),
-							_1: {ctor: '[]'}
-						}
-					}
-				}
-			}
-		};
-	}
-};
-var _user$project$CSV_Export$generate = function (elements) {
-	return A3(
-		_elm_lang$core$Basics$flip,
-		_elm_lang$core$String$append,
-		'\n',
-		A2(
-			_elm_lang$core$String$append,
-			A2(_elm_lang$core$Basics_ops['++'], _user$project$CSV_Template$headers, '\n'),
-			A2(
-				_elm_lang$core$String$join,
-				'\n',
-				A2(
-					_elm_lang$core$List$map,
-					function (columns) {
-						return A2(
-							_elm_lang$core$String$join,
-							',',
-							A2(
-								_elm_lang$core$List$map,
-								function (column) {
-									return A2(
-										_elm_lang$core$Basics_ops['++'],
-										'\"',
-										A2(_elm_lang$core$Basics_ops['++'], column, '\"'));
-								},
-								columns));
-					},
-					A2(_elm_lang$core$List$map, _user$project$CSV_Export$line, elements)))));
-};
-
-var _user$project$CSV_Import$regexTrailingEmptyString = _elm_lang$core$Regex$regex('[\\s\\n]*\\+\\+\\s*\"\"');
-var _user$project$CSV_Import$regexPlaceholder = _elm_lang$core$Regex$regex('\\{\\{([^\\}]*)\\}\\}');
-var _user$project$CSV_Import$code = F4(
+var _iosphere$elm_i18n$CSV_Import$regexTrailingEmptyString = _elm_lang$core$Regex$regex('[\\s\\n]*\\+\\+\\s*\"\"');
+var _iosphere$elm_i18n$CSV_Import$regexPlaceholder = _elm_lang$core$Regex$regex('\\{\\{([^\\}]*)\\}\\}');
+var _iosphere$elm_i18n$CSV_Import$code = F4(
 	function (key, comment, placeholderString, value) {
 		var placeholders = A2(
 			_elm_lang$core$List$filter,
@@ -8608,7 +8608,7 @@ var _user$project$CSV_Import$code = F4(
 		var valueWithPlaceholders = A4(
 			_elm_lang$core$Regex$replace,
 			_elm_lang$core$Regex$All,
-			_user$project$CSV_Import$regexPlaceholder,
+			_iosphere$elm_i18n$CSV_Import$regexPlaceholder,
 			function (match) {
 				var placeholder = A2(
 					_elm_lang$core$Maybe$withDefault,
@@ -8635,7 +8635,7 @@ var _user$project$CSV_Import$code = F4(
 		var implementation = A4(
 			_elm_lang$core$Regex$replace,
 			_elm_lang$core$Regex$All,
-			_user$project$CSV_Import$regexTrailingEmptyString,
+			_iosphere$elm_i18n$CSV_Import$regexTrailingEmptyString,
 			_elm_lang$core$Basics$always(''),
 			A2(
 				_elm_lang$core$Basics_ops['++'],
@@ -8665,16 +8665,16 @@ var _user$project$CSV_Import$code = F4(
 						A2(_elm_lang$core$Basics_ops['++'], functionArgument, ' =\n')),
 					A2(_elm_lang$core$Basics_ops['++'], tab, implementation))));
 	});
-var _user$project$CSV_Import$fromLine = function (columns) {
+var _iosphere$elm_i18n$CSV_Import$fromLine = function (columns) {
 	var _p1 = columns;
 	if ((((((_p1.ctor === '::') && (_p1._1.ctor === '::')) && (_p1._1._1.ctor === '::')) && (_p1._1._1._1.ctor === '::')) && (_p1._1._1._1._1.ctor === '::')) && (_p1._1._1._1._1._1.ctor === '[]')) {
 		return _elm_lang$core$Maybe$Just(
-			A4(_user$project$CSV_Import$code, _p1._1._0, _p1._1._1._0, _p1._1._1._1._0, _p1._1._1._1._1._0));
+			A4(_iosphere$elm_i18n$CSV_Import$code, _p1._1._0, _p1._1._1._0, _p1._1._1._1._0, _p1._1._1._1._1._0));
 	} else {
 		return _elm_lang$core$Maybe$Nothing;
 	}
 };
-var _user$project$CSV_Import$moduleNameForLine = function (columns) {
+var _iosphere$elm_i18n$CSV_Import$moduleNameForLine = function (columns) {
 	var _p2 = columns;
 	if ((((((_p2.ctor === '::') && (_p2._1.ctor === '::')) && (_p2._1._1.ctor === '::')) && (_p2._1._1._1.ctor === '::')) && (_p2._1._1._1._1.ctor === '::')) && (_p2._1._1._1._1._1.ctor === '[]')) {
 		return _elm_lang$core$Maybe$Just(_p2._0);
@@ -8682,21 +8682,21 @@ var _user$project$CSV_Import$moduleNameForLine = function (columns) {
 		return _elm_lang$core$Maybe$Nothing;
 	}
 };
-var _user$project$CSV_Import$linesForModule = F2(
+var _iosphere$elm_i18n$CSV_Import$linesForModule = F2(
 	function (moduleName, lines) {
 		return A2(
 			_elm_lang$core$List$filter,
 			function (line) {
 				return _elm_lang$core$Native_Utils.eq(
-					_user$project$CSV_Import$moduleNameForLine(line),
+					_iosphere$elm_i18n$CSV_Import$moduleNameForLine(line),
 					_elm_lang$core$Maybe$Just(moduleName));
 			},
 			lines);
 	});
-var _user$project$CSV_Import$allModuleNames = function (lines) {
-	return A2(_elm_lang$core$List$filterMap, _user$project$CSV_Import$moduleNameForLine, lines);
+var _iosphere$elm_i18n$CSV_Import$allModuleNames = function (lines) {
+	return A2(_elm_lang$core$List$filterMap, _iosphere$elm_i18n$CSV_Import$moduleNameForLine, lines);
 };
-var _user$project$CSV_Import$generateForModule = F2(
+var _iosphere$elm_i18n$CSV_Import$generateForModule = F2(
 	function (moduleName, lines) {
 		return A3(
 			_elm_lang$core$Basics$flip,
@@ -8711,15 +8711,15 @@ var _user$project$CSV_Import$generateForModule = F2(
 				A2(
 					_elm_lang$core$String$join,
 					'\n\n\n',
-					A2(_elm_lang$core$List$filterMap, _user$project$CSV_Import$fromLine, lines))));
+					A2(_elm_lang$core$List$filterMap, _iosphere$elm_i18n$CSV_Import$fromLine, lines))));
 	});
-var _user$project$CSV_Import$generate = function (csv) {
+var _iosphere$elm_i18n$CSV_Import$generate = function (csv) {
 	var _p3 = _periodic$elm_csv$Csv$parse(csv);
 	if (_p3.ctor === 'Ok') {
 		var _p4 = _p3._0;
 		var modules = _elm_lang$core$Set$toList(
 			_elm_lang$core$Set$fromList(
-				_user$project$CSV_Import$allModuleNames(_p4.records)));
+				_iosphere$elm_i18n$CSV_Import$allModuleNames(_p4.records)));
 		var linesForModules = _elm_lang$core$Dict$fromList(
 			A2(
 				_elm_lang$core$List$map,
@@ -8727,7 +8727,7 @@ var _user$project$CSV_Import$generate = function (csv) {
 					return {
 						ctor: '_Tuple2',
 						_0: name,
-						_1: A2(_user$project$CSV_Import$linesForModule, name, _p4.records)
+						_1: A2(_iosphere$elm_i18n$CSV_Import$linesForModule, name, _p4.records)
 					};
 				},
 				modules));
@@ -8741,7 +8741,7 @@ var _user$project$CSV_Import$generate = function (csv) {
 				return {
 					ctor: '_Tuple2',
 					_0: name,
-					_1: A2(_user$project$CSV_Import$generateForModule, name, linesForThisModule)
+					_1: A2(_iosphere$elm_i18n$CSV_Import$generateForModule, name, linesForThisModule)
 				};
 			},
 			modules);
@@ -8754,7 +8754,7 @@ var _user$project$CSV_Import$generate = function (csv) {
 	}
 };
 
-var _user$project$Localized_Parser_Internal$submatchAt = F2(
+var _iosphere$elm_i18n$Localized_Parser_Internal$submatchAt = F2(
 	function (index, match) {
 		return A2(
 			_elm_lang$core$Maybe$withDefault,
@@ -8774,7 +8774,7 @@ var _user$project$Localized_Parser_Internal$submatchAt = F2(
 					},
 					match)));
 	});
-var _user$project$Localized_Parser_Internal$trimmedStrings = function (stringList) {
+var _iosphere$elm_i18n$Localized_Parser_Internal$trimmedStrings = function (stringList) {
 	return A2(
 		_elm_lang$core$List$filter,
 		function (_p1) {
@@ -8782,40 +8782,40 @@ var _user$project$Localized_Parser_Internal$trimmedStrings = function (stringLis
 		},
 		A2(_elm_lang$core$List$map, _elm_lang$core$String$trim, stringList));
 };
-var _user$project$Localized_Parser_Internal$formatComponentFromString = function (value) {
-	return (A2(_elm_lang$core$String$endsWith, '\"', value) && A2(_elm_lang$core$String$startsWith, '\"', value)) ? _user$project$Localized$FormatComponentStatic(
+var _iosphere$elm_i18n$Localized_Parser_Internal$formatComponentFromString = function (value) {
+	return (A2(_elm_lang$core$String$endsWith, '\"', value) && A2(_elm_lang$core$String$startsWith, '\"', value)) ? _iosphere$elm_i18n$Localized$FormatComponentStatic(
 		A2(
 			_elm_lang$core$String$dropRight,
 			1,
-			A2(_elm_lang$core$String$dropLeft, 1, value))) : _user$project$Localized$FormatComponentPlaceholder(value);
+			A2(_elm_lang$core$String$dropLeft, 1, value))) : _iosphere$elm_i18n$Localized$FormatComponentPlaceholder(value);
 };
-var _user$project$Localized_Parser_Internal$regexFormats = function (key) {
+var _iosphere$elm_i18n$Localized_Parser_Internal$regexFormats = function (key) {
 	return _elm_lang$core$Regex$regex(
 		A2(_elm_lang$core$Basics_ops['++'], key, ' ([^=\\n]*)=[\\s\\n]((?:.+\\r?\\n)+(?=(\\r?\\n)?))'));
 };
-var _user$project$Localized_Parser_Internal$regexStringComment = function (key) {
+var _iosphere$elm_i18n$Localized_Parser_Internal$regexStringComment = function (key) {
 	return _elm_lang$core$Regex$regex(
 		A2(
 			_elm_lang$core$Basics_ops['++'],
-			'\\{-\\| ([^\\-\\}]*)\\n-\\}\\n',
+			'\\{-\\| ([^\\}]*)\\n-\\}\\n',
 			A2(_elm_lang$core$Basics_ops['++'], key, '\\s+:')));
 };
-var _user$project$Localized_Parser_Internal$findComment = F2(
+var _iosphere$elm_i18n$Localized_Parser_Internal$findComment = F2(
 	function (source, key) {
 		var match = _elm_lang$core$List$head(
 			A3(
 				_elm_lang$core$Regex$find,
 				_elm_lang$core$Regex$AtMost(1),
-				_user$project$Localized_Parser_Internal$regexStringComment(key),
+				_iosphere$elm_i18n$Localized_Parser_Internal$regexStringComment(key),
 				source));
 		return A2(
 			_elm_lang$core$Maybe$withDefault,
 			'',
-			A2(_user$project$Localized_Parser_Internal$submatchAt, 0, match));
+			A2(_iosphere$elm_i18n$Localized_Parser_Internal$submatchAt, 0, match));
 	});
-var _user$project$Localized_Parser_Internal$findFormatElementForKey = F3(
+var _iosphere$elm_i18n$Localized_Parser_Internal$findFormatElementForKey = F3(
 	function (moduleName, source, key) {
-		var regex = _user$project$Localized_Parser_Internal$regexFormats(key);
+		var regex = _iosphere$elm_i18n$Localized_Parser_Internal$regexFormats(key);
 		var match = _elm_lang$core$List$head(
 			A3(
 				_elm_lang$core$Regex$find,
@@ -8823,21 +8823,21 @@ var _user$project$Localized_Parser_Internal$findFormatElementForKey = F3(
 				regex,
 				source));
 		var placeholders = function () {
-			var _p2 = A2(_user$project$Localized_Parser_Internal$submatchAt, 0, match);
+			var _p2 = A2(_iosphere$elm_i18n$Localized_Parser_Internal$submatchAt, 0, match);
 			if (_p2.ctor === 'Just') {
-				return _user$project$Localized_Parser_Internal$trimmedStrings(
+				return _iosphere$elm_i18n$Localized_Parser_Internal$trimmedStrings(
 					A2(_elm_lang$core$String$split, ' ', _p2._0));
 			} else {
 				return {ctor: '[]'};
 			}
 		}();
 		var content = function () {
-			var _p3 = A2(_user$project$Localized_Parser_Internal$submatchAt, 1, match);
+			var _p3 = A2(_iosphere$elm_i18n$Localized_Parser_Internal$submatchAt, 1, match);
 			if (_p3.ctor === 'Just') {
 				return A2(
 					_elm_lang$core$List$map,
-					_user$project$Localized_Parser_Internal$formatComponentFromString,
-					_user$project$Localized_Parser_Internal$trimmedStrings(
+					_iosphere$elm_i18n$Localized_Parser_Internal$formatComponentFromString,
+					_iosphere$elm_i18n$Localized_Parser_Internal$trimmedStrings(
 						A2(_elm_lang$core$String$split, '++', _p3._0)));
 			} else {
 				return {ctor: '[]'};
@@ -8848,48 +8848,48 @@ var _user$project$Localized_Parser_Internal$findFormatElementForKey = F3(
 			return _elm_lang$core$Maybe$Nothing;
 		} else {
 			return _elm_lang$core$Maybe$Just(
-				_user$project$Localized$ElementFormat(
+				_iosphere$elm_i18n$Localized$ElementFormat(
 					A5(
-						_user$project$Localized$Format,
+						_iosphere$elm_i18n$Localized$Format,
 						moduleName,
 						key,
-						A2(_user$project$Localized_Parser_Internal$findComment, source, key),
+						A2(_iosphere$elm_i18n$Localized_Parser_Internal$findComment, source, key),
 						_p4,
 						content)));
 		}
 	});
-var _user$project$Localized_Parser_Internal$regexSimpleStringValue = function (key) {
+var _iosphere$elm_i18n$Localized_Parser_Internal$regexSimpleStringValue = function (key) {
 	return _elm_lang$core$Regex$regex(
 		A2(_elm_lang$core$Basics_ops['++'], key, '[\\s|\\n]*=[\\s|\\n]*\"(.*)\"'));
 };
-var _user$project$Localized_Parser_Internal$findStaticElementForKey = F3(
+var _iosphere$elm_i18n$Localized_Parser_Internal$findStaticElementForKey = F3(
 	function (moduleName, source, key) {
 		var maybeValue = A2(
-			_user$project$Localized_Parser_Internal$submatchAt,
+			_iosphere$elm_i18n$Localized_Parser_Internal$submatchAt,
 			0,
 			_elm_lang$core$List$head(
 				A3(
 					_elm_lang$core$Regex$find,
 					_elm_lang$core$Regex$AtMost(1),
-					_user$project$Localized_Parser_Internal$regexSimpleStringValue(key),
+					_iosphere$elm_i18n$Localized_Parser_Internal$regexSimpleStringValue(key),
 					source)));
 		var _p5 = maybeValue;
 		if (_p5.ctor === 'Just') {
 			return _elm_lang$core$Maybe$Just(
-				_user$project$Localized$ElementStatic(
+				_iosphere$elm_i18n$Localized$ElementStatic(
 					A4(
-						_user$project$Localized$Static,
+						_iosphere$elm_i18n$Localized$Static,
 						moduleName,
 						key,
-						A2(_user$project$Localized_Parser_Internal$findComment, source, key),
+						A2(_iosphere$elm_i18n$Localized_Parser_Internal$findComment, source, key),
 						_p5._0)));
 		} else {
 			return _elm_lang$core$Maybe$Nothing;
 		}
 	});
-var _user$project$Localized_Parser_Internal$regexStringDeclarations = _elm_lang$core$Regex$regex('([A-Za-z][A-Za-z0-9]*)\\s+:\\s+(.*)String');
-var _user$project$Localized_Parser_Internal$stringDeclarations = function (source) {
-	var stringDeclarations = A3(_elm_lang$core$Regex$find, _elm_lang$core$Regex$All, _user$project$Localized_Parser_Internal$regexStringDeclarations, source);
+var _iosphere$elm_i18n$Localized_Parser_Internal$regexStringDeclarations = _elm_lang$core$Regex$regex('([A-Za-z][A-Za-z0-9]*)\\s+:\\s+(.*)String');
+var _iosphere$elm_i18n$Localized_Parser_Internal$stringDeclarations = function (source) {
+	var stringDeclarations = A3(_elm_lang$core$Regex$find, _elm_lang$core$Regex$All, _iosphere$elm_i18n$Localized_Parser_Internal$regexStringDeclarations, source);
 	return A2(
 		_elm_lang$core$List$filterMap,
 		function (match) {
@@ -8913,56 +8913,56 @@ var _user$project$Localized_Parser_Internal$stringDeclarations = function (sourc
 		},
 		stringDeclarations);
 };
-var _user$project$Localized_Parser_Internal$regexFindModuleName = _elm_lang$core$Regex$regex('module ([^\\s]*) exposing');
-var _user$project$Localized_Parser_Internal$findModuleName = function (source) {
+var _iosphere$elm_i18n$Localized_Parser_Internal$regexFindModuleName = _elm_lang$core$Regex$regex('module ([^\\s]*) exposing');
+var _iosphere$elm_i18n$Localized_Parser_Internal$findModuleName = function (source) {
 	return A2(
 		_elm_lang$core$Maybe$withDefault,
 		'unknown',
 		A2(
-			_user$project$Localized_Parser_Internal$submatchAt,
+			_iosphere$elm_i18n$Localized_Parser_Internal$submatchAt,
 			0,
 			_elm_lang$core$List$head(
 				A3(
 					_elm_lang$core$Regex$find,
 					_elm_lang$core$Regex$AtMost(1),
-					_user$project$Localized_Parser_Internal$regexFindModuleName,
+					_iosphere$elm_i18n$Localized_Parser_Internal$regexFindModuleName,
 					source))));
 };
 
-var _user$project$Localized_Parser$parse = function (source) {
-	var moduleName = _user$project$Localized_Parser_Internal$findModuleName(source);
-	var stringKeysAndParameters = _user$project$Localized_Parser_Internal$stringDeclarations(source);
+var _iosphere$elm_i18n$Localized_Parser$parse = function (source) {
+	var moduleName = _iosphere$elm_i18n$Localized_Parser_Internal$findModuleName(source);
+	var stringKeysAndParameters = _iosphere$elm_i18n$Localized_Parser_Internal$stringDeclarations(source);
 	return A2(
 		_elm_lang$core$List$filterMap,
 		function (_p0) {
 			var _p1 = _p0;
 			var _p3 = _p1._0;
-			var _p2 = A3(_user$project$Localized_Parser_Internal$findStaticElementForKey, moduleName, source, _p3);
+			var _p2 = A3(_iosphere$elm_i18n$Localized_Parser_Internal$findStaticElementForKey, moduleName, source, _p3);
 			if (_p2.ctor === 'Just') {
 				return _elm_lang$core$Maybe$Just(_p2._0);
 			} else {
-				return A3(_user$project$Localized_Parser_Internal$findFormatElementForKey, moduleName, source, _p3);
+				return A3(_iosphere$elm_i18n$Localized_Parser_Internal$findFormatElementForKey, moduleName, source, _p3);
 			}
 		},
 		stringKeysAndParameters);
 };
 
-var _user$project$Main$update = F2(
+var _iosphere$elm_i18n$Main$update = F2(
 	function (msg, model) {
 		return {ctor: '_Tuple2', _0: model, _1: _elm_lang$core$Platform_Cmd$none};
 	});
-var _user$project$Main$exportResult = _elm_lang$core$Native_Platform.outgoingPort(
+var _iosphere$elm_i18n$Main$exportResult = _elm_lang$core$Native_Platform.outgoingPort(
 	'exportResult',
 	function (v) {
 		return v;
 	});
-var _user$project$Main$operationExport = function (source) {
-	var csv = _user$project$CSV_Export$generate(
+var _iosphere$elm_i18n$Main$operationExport = function (source) {
+	var csv = _iosphere$elm_i18n$CSV_Export$generate(
 		_elm_lang$core$List$concat(
-			A2(_elm_lang$core$List$map, _user$project$Localized_Parser$parse, source)));
-	return _user$project$Main$exportResult(csv);
+			A2(_elm_lang$core$List$map, _iosphere$elm_i18n$Localized_Parser$parse, source)));
+	return _iosphere$elm_i18n$Main$exportResult(csv);
 };
-var _user$project$Main$importResult = _elm_lang$core$Native_Platform.outgoingPort(
+var _iosphere$elm_i18n$Main$importResult = _elm_lang$core$Native_Platform.outgoingPort(
 	'importResult',
 	function (v) {
 		return _elm_lang$core$Native_List.toArray(v).map(
@@ -8970,8 +8970,8 @@ var _user$project$Main$importResult = _elm_lang$core$Native_Platform.outgoingPor
 				return [v._0, v._1];
 			});
 	});
-var _user$project$Main$operationImport = function (csv) {
-	return _user$project$Main$importResult(
+var _iosphere$elm_i18n$Main$operationImport = function (csv) {
+	return _iosphere$elm_i18n$Main$importResult(
 		A2(
 			_elm_lang$core$List$map,
 			_elm_lang$core$Tuple$mapFirst(
@@ -8981,43 +8981,43 @@ var _user$project$Main$operationImport = function (csv) {
 						'/',
 						A2(_elm_lang$core$String$split, '.', _p0));
 				}),
-			_user$project$CSV_Import$generate(
+			_iosphere$elm_i18n$CSV_Import$generate(
 				A2(
 					_elm_lang$core$Maybe$withDefault,
 					'',
 					_elm_lang$core$List$head(csv)))));
 };
-var _user$project$Main$Model = {};
-var _user$project$Main$Flags = F2(
+var _iosphere$elm_i18n$Main$Model = {};
+var _iosphere$elm_i18n$Main$Flags = F2(
 	function (a, b) {
 		return {sources: a, operation: b};
 	});
-var _user$project$Main$NoOp = {ctor: 'NoOp'};
-var _user$project$Main$Import = {ctor: 'Import'};
-var _user$project$Main$Export = {ctor: 'Export'};
-var _user$project$Main$operationFromString = function (operation) {
-	return _elm_lang$core$Native_Utils.eq(operation, 'import') ? _user$project$Main$Import : _user$project$Main$Export;
+var _iosphere$elm_i18n$Main$NoOp = {ctor: 'NoOp'};
+var _iosphere$elm_i18n$Main$Import = {ctor: 'Import'};
+var _iosphere$elm_i18n$Main$Export = {ctor: 'Export'};
+var _iosphere$elm_i18n$Main$operationFromString = function (operation) {
+	return _elm_lang$core$Native_Utils.eq(operation, 'import') ? _iosphere$elm_i18n$Main$Import : _iosphere$elm_i18n$Main$Export;
 };
-var _user$project$Main$init = function (flags) {
-	var _p1 = _user$project$Main$operationFromString(flags.operation);
+var _iosphere$elm_i18n$Main$init = function (flags) {
+	var _p1 = _iosphere$elm_i18n$Main$operationFromString(flags.operation);
 	if (_p1.ctor === 'Export') {
 		return {
 			ctor: '_Tuple2',
 			_0: {},
-			_1: _user$project$Main$operationExport(flags.sources)
+			_1: _iosphere$elm_i18n$Main$operationExport(flags.sources)
 		};
 	} else {
 		return {
 			ctor: '_Tuple2',
 			_0: {},
-			_1: _user$project$Main$operationImport(flags.sources)
+			_1: _iosphere$elm_i18n$Main$operationImport(flags.sources)
 		};
 	}
 };
-var _user$project$Main$main = _elm_lang$core$Platform$programWithFlags(
+var _iosphere$elm_i18n$Main$main = _elm_lang$core$Platform$programWithFlags(
 	{
-		init: _user$project$Main$init,
-		update: _user$project$Main$update,
+		init: _iosphere$elm_i18n$Main$init,
+		update: _iosphere$elm_i18n$Main$update,
 		subscriptions: _elm_lang$core$Basics$always(_elm_lang$core$Platform_Sub$none)
 	})(
 	A2(
@@ -9038,8 +9038,8 @@ var _user$project$Main$main = _elm_lang$core$Platform$programWithFlags(
 
 var Elm = {};
 Elm['Main'] = Elm['Main'] || {};
-if (typeof _user$project$Main$main !== 'undefined') {
-    _user$project$Main$main(Elm['Main'], 'Main', undefined);
+if (typeof _iosphere$elm_i18n$Main$main !== 'undefined') {
+    _iosphere$elm_i18n$Main$main(Elm['Main'], 'Main', undefined);
 }
 
 if (typeof define === "function" && define['amd'])

@@ -36,7 +36,7 @@ if (fs.existsSync(baseDir)) {
         prompt.start();
         console.log("There already is a translation at", baseDir);
         console.log("Should I continue and replace it with <" + argv.language + ">?");
-        console.log("(use command line argumen --yes to skip this prompt)");
+        console.log("(use command line argument --yes to skip this prompt)");
         console.log("enter 'y' to continue");
 
         prompt.get(["remove"], function(err, result) {
@@ -61,7 +61,10 @@ if (fs.existsSync(baseDir)) {
  */
 function main() {
     console.log("Will create symlink from " + languageDir + " to " + baseDir);
-    symlinkOrCopySync(languageDir, baseDir);
+    let relativeLanguageDir = path.relative(currentDir, languageDir);
+    let relativeBaseDir = path.relative(currentDir, baseDir);
+    console.log("Using relative paths " + relativeLanguageDir + " to " + relativeBaseDir);
+    symlinkOrCopySync(relativeLanguageDir, relativeBaseDir);
 
     // clean out elm-stuff cache
     glob(path.join(currentDir, "/elm-stuff/**/user/project/*/"+argv.rootModule+"*"), function(er, files) {
