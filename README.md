@@ -69,7 +69,6 @@ modules, but each module only contains one language).
 elm-i18n-generator --root example/Translation --language De --export
 ```
 
-
 Result:
 
 ```csv
@@ -84,7 +83,7 @@ Module,Key,Comment,Supported Placeholders,Translation
 elm-i18n-generator -l De --import export.csv
 ```
 
-Result in import/DE/Translation/Main.elm:
+Result in import/De/Translation/Main.elm:
 
 ```elm
 module Translation.Main exposing (..)
@@ -128,7 +127,9 @@ greetingWithName name =
 
 ## Disadvantages
 
-- Language is no longer part of your view model and cannot be changed dynamically from within the app. *However, you can add a constant with the current language code and have different code paths if that is required.*
+- Language is no longer part of your view model and cannot be changed dynamically from within the app.
+  *However, you can add a constant with the current language code and have different code paths if that
+  is required.*
 - Language selection has to be handled outside of the elm-app (by loading the appropriate js artefact).
 
 ## Building elm-i18n
