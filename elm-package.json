@@ -1,0 +1,19 @@
+{
+    "version": "1.0.0",
+    "summary": "Get your app translated and generate localized versions of your app",
+    "repository": "https://github.com/user/project.git",
+    "license": "BSD3",
+    "source-directories": [
+        "src"
+    ],
+    "exposed-modules": [
+        "Main"
+    ],
+    "dependencies": {
+        "elm-community/list-extra": "6.0.0 <= v < 7.0.0",
+        "elm-lang/core": "5.0.0 <= v < 6.0.0",
+        "elm-lang/html": "2.0.0 <= v < 3.0.0",
+        "periodic/elm-csv": "1.0.3 <= v < 2.0.0"
+    },
+    "elm-version": "0.18.0 <= v < 0.19.0"
+}

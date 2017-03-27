@@ -1,16 +1,18 @@
 module Translation.Main exposing (..)
 
+{-| -}
 
+
+{-| A short greeting.
+-}
 greeting : String
 greeting =
-    "Hallo"
+    "Hi"
 
 
+{-| A personalized greeting. Use placeholder name for the user's name.
+-}
 greetingWithName : String -> String
 greetingWithName name =
-    "Guten Tag, " ++ name
-
-
-salute : String
-salute =
-    "Admiral"
+    "Guten Tag, "
+        ++ name

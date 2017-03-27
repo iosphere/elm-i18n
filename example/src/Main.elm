@@ -69,5 +69,4 @@ view model =
     div []
         [ p [] [ text Translation.greeting ]
         , p [] [ text (Translation.greetingWithName model) ]
-        , p [] [ text (Translation.salute) ]
         ]

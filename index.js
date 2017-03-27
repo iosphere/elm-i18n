@@ -13,9 +13,10 @@ const argv = require("yargs")
     .argv;
 const fs = require("fs-extra");
 const glob = require("glob");
+const path = require("path");
 const prompt = require("prompt");
 const symlinkOrCopySync = require("symlink-or-copy").sync;
-const path = require("path");
+
 const currentDir = process.cwd();
 
 // baseDir is the location of the translation root module as referenced in your elm app
