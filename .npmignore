@@ -2,3 +2,7 @@
 elm-stuff/
 # elm-repl generated files
 repl-temp-*
+tests/
+example/
+Makefile
+src/
