@@ -28,7 +28,7 @@ const currentDir = process.cwd();
 if (argv.export) {
     let fullPath = path.join(currentDir, argv.root, argv.language);
     console.log("Parsing from", fullPath);
-    let fileNames = glob.sync(fullPath + "/**.elm");
+    let fileNames = glob.sync(fullPath + "/**/*.elm");
     console.log("└── Found elm module files for export:", fileNames);
 
     // read all files and store their content in an array
