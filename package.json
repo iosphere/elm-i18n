@@ -1,6 +1,6 @@
 {
     "name": "elm-i18n",
-    "version": "0.5.1",
+    "version": "0.5.2",
     "description": "Get your elm app translated and generate localized versions of your app",
     "keywords": ["elm", "translate", "i18n", "internationalization", "internationalisation", "translation", "tool"],
     "main": "index.js",

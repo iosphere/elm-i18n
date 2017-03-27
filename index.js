@@ -8,7 +8,7 @@ const argv = require("yargs")
     .option("output", {describe: "If set elm-make will be called to compile a localized version of your app which will be placed in the given directory."})
     .option("src", {default: "src", describe: "The location of your elm code base. Only relevant if output is set."})
     .option("elmFile", {default: "Main.elm", describe: "File to be compiled by elm-make. Only relevant if output is set."})
-    .default("rootModule", {default: "Translation", describe: "The name of the root module containing all localization modules."})
+    .option("rootModule", {default: "Translation", describe: "The name of the root module containing all localization modules."})
     .help()
     .demand(["language"])
     .argv;
