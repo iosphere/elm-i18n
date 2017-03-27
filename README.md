@@ -1,5 +1,7 @@
 # i18n localization for Elm as a pre-build phase
 
+![Travis](https://travis-ci.org/iosphere/elm-i18n.svg)
+
 This is a proof of concept to illustrate how to localize an elm app.
 
 The concept is to copy (or symlink) a root module for a language from the
