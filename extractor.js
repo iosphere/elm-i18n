@@ -3,58 +3,77 @@
 "use strict";
 
 const argv = require("yargs")
-    .option("file", {alias: "f"})
-    .option("import", {alias: "i", describe: "The destination to which the csv file (given in f) should be written."})
-    .demand("file")
+    .default("root", "Translation")
+    .option("language", {alias: "l"})
+    .option("export", {alias: "e", describe: "A glob pattern for files to include in the exported CSV. Use this to create exports per module."})
+    .option("exportOutput", {default: "export.csv"})
+    .option("import", {alias: "i", describe: "A CSV file to be imported and to generate code from. Generate elm files will be placed in './import/'"})
+    .option("importOutput", {default: "import"})
+    .demand("language")
+    .conflicts("import", "export")
     .argv;
 const Elm = require("./elm.js");
 const fs = require("fs-extra");
 const path = require("path");
+const glob = require("glob");
+
+if (!argv.export && !argv.import) {
+    console.error("Please provide import or export option");
+    process.exit(403);
+}
 
 const currentDir = process.cwd();
 
-fs.readFile(argv.file, function(err, data) {
-    let filecontent = data.toString();
+if (argv.export) {
+    let fullPath = path.join(currentDir, argv.root, argv.language);
+    console.log("reading from ", fullPath);
+    let fileContents = [];
+    let fileNames = glob.sync(fullPath + "/**.elm");
+    console.log("found files for export: ", fileNames);
+
+    fileNames.forEach(function(file) {
+        let data = fs.readFileSync(file);
+        let content = data.toString();
+        fileContents.push(content);
+    });
+
     let worker = Elm.Main.worker({
-        "source": filecontent,
-        "operation": argv.import?"import":"export",
+        "sources": fileContents,
+        "operation": "export",
     });
 
-    worker.ports.result.subscribe(function(resultString) {
-        if (!argv.import) {
-            handleExport(resultString);
-        } else {
-            handleImport(resultString);
-        }
+    worker.ports.exportResult.subscribe(function(resultString) {
+        handleExport(resultString);
     });
-});
+} else {
+    let fullPath = path.join(currentDir, argv.import);
+    let data = fs.readFileSync(fullPath);
+    let content = data.toString();
 
+    let worker = Elm.Main.worker({
+        "sources": [content],
+        "operation": "import",
+    });
 
-function handleExport(resultString) {
-    fs.writeFile(path.join(currentDir, "export.csv"), resultString, function(err) {
-        if(err) {
-            return console.log(err);
-        }
-
-        console.log("The file was saved!");
+    worker.ports.importResult.subscribe(function(resultString) {
+        handleImport(resultString);
     });
 }
 
-function handleImport(resultString) {
-    let importPath = argv.import;
-    if (!importPath) {
-        console.error("No file found")
-        return;
-    }
 
-    let elmPath = importPath.replace(/\.[^/.]+$/, ".elm");
-    console.log("Writting to ", elmPath);
+function handleExport(resultString) {
+    console.error(resultString);
+    fs.writeFileSync(path.join(currentDir, argv.exportOutput), resultString);
+}
 
-    fs.writeFile(path.join(currentDir, elmPath), resultString, function(err) {
-        if(err) {
-            return console.log(err);
-        }
-
-        console.log("The file was saved!");
+function handleImport(results) {
+    console.error(results);
+    let importDir = path.join(currentDir, argv.importOutput, argv.language);
+    fs.ensureDirSync(importDir);
+    results.forEach(function(result) {
+        let moduleName = result[0];
+        let filePath = path.join(importDir, moduleName + ".elm");
+        fs.ensureDirSync(path.dirname(filePath));
+        fs.writeFileSync(filePath, result[1]);
     });
 }

@@ -58,8 +58,8 @@ generate csv =
 generateForModule : String -> List (List String) -> String
 generateForModule moduleName lines =
     List.filterMap fromLine lines
-        |> String.join "\n\n"
-        |> String.append ("module " ++ moduleName ++ " exposing (..)\n\n")
+        |> String.join "\n\n\n"
+        |> String.append ("module " ++ moduleName ++ " exposing (..)\n\n\n")
         |> -- append new line at end of file
            (flip String.append) "\n"
 

@@ -14,6 +14,56 @@ Usage:
 
 `./index.js --output out -l En`
 
+
+## Tools
+
+This provides a few tools to extract string functions and constants from modules
+containing translations (where one language can consist of multiple modules,
+but each module only contains one language).
+
+### Export: Generate CSV from Elm source
+
+```bash
+./extractor.js --root example/Translation --language De --export
+```
+
+Result:
+
+```csv
+Module,Key,Comment,Supported Placeholders,Translation
+"Translation.Main","greeting","","","Hallo"
+"Translation.Main","greetingWithName","","name","Guten Tag, {{name}}"
+"Translation.Main","salute","","","Admiral"
+```
+
+### Import: Generate Elm source code from CSV
+
+```bash
+./extractor.js -l De --import export.csv
+```
+
+Result in import/DE/Translation/Main.elm:
+
+```elm
+module Translation.Main exposing (..)
+
+
+greeting : String
+greeting =
+    "Hallo"
+
+
+greetingWithName : String -> String
+greetingWithName name =
+    "Guten Tag, "
+        ++ name
+
+
+salute : String
+salute =
+    "Admiral"
+```
+
 ## Advantages
 
 + Each build of your app only contains one language.

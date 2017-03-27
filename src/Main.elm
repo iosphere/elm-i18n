@@ -25,7 +25,10 @@ type Operation
     | Import
 
 
-port result : String -> Cmd msg
+port exportResult : String -> Cmd msg
+
+
+port importResult : List ( String, String ) -> Cmd msg
 
 
 operationFromString : String -> Operation
@@ -37,7 +40,7 @@ operationFromString operation =
 
 
 type alias Flags =
-    { source : String
+    { sources : List String
     , operation : String
     }
 
@@ -53,26 +56,30 @@ init : Flags -> ( Model, Cmd Msg )
 init flags =
     case operationFromString flags.operation of
         Export ->
-            ( {}, operationExport flags.source )
+            ( {}, operationExport flags.sources )
 
         Import ->
-            ( {}, operationImport flags.source )
+            ( {}, operationImport flags.sources )
 
 
-operationExport : String -> Cmd Msg
+operationExport : List String -> Cmd Msg
 operationExport source =
     let
         csv =
-            Localized.parse source |> CSV.Export.generate
+            List.map Localized.parse source
+                |> List.concat
+                |> CSV.Export.generate
     in
-        result csv
+        exportResult csv
 
 
-operationImport : String -> Cmd Msg
+operationImport : List String -> Cmd Msg
 operationImport csv =
-    Debug.log "import" csv
+    List.head csv
+        |> Maybe.withDefault ""
         |> CSV.Import.generate
-        |> result
+        |> List.map (Tuple.mapFirst (String.split "." >> String.join "/"))
+        |> importResult
 
 
 update : Msg -> Model -> ( Model, Cmd Msg )

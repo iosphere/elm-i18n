@@ -45,10 +45,12 @@ expectedSource : String
 expectedSource =
     """module Translation.Test exposing (..)
 
+
 {-| My comment -}
 myString : String
 myString =
     "Value"
+
 
 myFormat : String -> String
 myFormat label =
