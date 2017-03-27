@@ -12,14 +12,16 @@ of your app.
 
 Usage:
 
-`./index.js --output out -l En`
-
+`cd example && ../index.js --output out -l En`
 
 ## Tools
 
-This provides a few tools to extract string functions and constants from modules
-containing translations (where one language can consist of multiple modules,
-but each module only contains one language).
+This repository provides a few tools to extract string functions and constants
+from modules containing translations (where one language can consist of multiple
+modules, but each module only contains one language).
+
+The tool is build using node.js with an Elm-Core. There is no node package yet.
+To build the elm backend of the node.js part: `make elm.js`.  
 
 ### Export: Generate CSV from Elm source
 
@@ -80,15 +82,3 @@ salute =
 
 - Language is no longer part of your view model and cannot be changed dynamically from within the app.
 - Language selection has to be handled outside of the elm-app (by loading the appropriate js artefact).
-
-
-## Notes
-
-Regex matching quoted strings:
-`quoted = "((?:[^"\\]|\\.)*)"`
-
-Regex for string constants without a comment.
-`const = ([a-z]*) : String$\n([a-z]*) =\n[\s]*{quoted}$`
-
-Regex for string constants including a comment.
-`\{-\| ([^-}]*) -}\n{const}$`
