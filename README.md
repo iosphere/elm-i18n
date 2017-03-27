@@ -121,6 +121,10 @@ greetingWithName name =
 + Compile-time errors for incomplete translations.
 + Compile-time errors are limited to the incomplete language, so you can
   continue shipping updates and fixes for the other languages.
++ Get started with a new language quickly by exporting all strings for
+  an existing language, replacing all value in the CSV with "TODO" and then
+  import the CSV for the new language, which will create all `Translation`
+  modules.
 
 ## Disadvantages
 
