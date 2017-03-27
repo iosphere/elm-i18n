@@ -77,6 +77,9 @@ greetingWithName name =
 + For testing you can add a Translation `Test` and set your code base to use
   that before running tests. This way your tests do not change if you change the
   wording of your buttons, labels and fallbacks.
++ Compile-time errors for incomplete translations.
++ Compile-time errors are limited to the incomplete language, so you can
+  continue shipping updates and fixes for the other languages.
 
 ## Disadvantages
 
