@@ -3,12 +3,13 @@
 "use strict";
 
 const argv = require("yargs")
-    .option("language", {alias: "l", describe: "Please provide language code that you wish to make the base language."})
-    .default("rootModule", "Translation")
+    .option("language", {alias: "l", describe: "Please provide the language code that you wish to set as the base language."})
     .option("yes", {describe: "Reply 'yes' to all automated prompts."})
     .option("output", {describe: "If set elm-make will be called to compile a localized version of your app which will be placed in the given directory."})
     .option("src", {default: "src", describe: "The location of your elm code base. Only relevant if output is set."})
-    .option("elmFile", {default: "Main.elm", describe: "File to compiled by elm-make. Only relevant if output is set."})
+    .option("elmFile", {default: "Main.elm", describe: "File to be compiled by elm-make. Only relevant if output is set."})
+    .default("rootModule", {default: "Translation", describe: "The name of the root module containing all localization modules."})
+    .help()
     .demand(["language"])
     .argv;
 const fs = require("fs-extra");

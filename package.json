@@ -1,7 +1,8 @@
 {
     "name": "elm-i18n",
     "version": "0.5.0",
-    "description": "A tool to help localize elm apps",
+    "description": "Get your elm app translated and generate localized versions of your app",
+    "keywords": ["elm", "translate", "i18n", "internationalization", "internationalisation", "translation", "tool"],
     "main": "index.js",
     "dependencies": {
         "elm-test": "^0.18.2",
@@ -15,8 +16,20 @@
         "eslint-config-google": "^0.7.1",
         "eslint": "^3.16.1"
     },
+    "repository": {
+        "type": "git",
+        "url": "https://github.com/iosphere/elm-i18n.git"
+    },
     "scripts": {},
-    "author": "iosphere GmbH",
+    "author": [{
+            "name": "iosphere GmbH",
+            "url": "https://iosphere.de"
+        },
+        {
+            "name": "Felix Lamouroux",
+            "url": "https://github.com/felixLam"
+        }
+    ],
     "license": "MIT",
     "bin": {
         "elm-i18n-generator": "extractor.js",

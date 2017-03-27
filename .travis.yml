@@ -16,5 +16,5 @@ install:
   - elm-package install -y
 
 script:
-  - make elm.js
+  - make dist
   - make test

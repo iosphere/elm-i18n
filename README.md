@@ -12,9 +12,13 @@ The `index.js` script takes care of the copying/symlinking, clears the elm
 artefacts cache, and provides an interface to build a localized version
 of your app.
 
+Installation:
+
+`npm install elm-i18n -g`
+
 Usage:
 
-`cd example && ../index.js --output out -l En`
+`cd example && elm-i18n-switch --output out -l En`
 
 ## Tools
 
@@ -22,14 +26,16 @@ This repository provides a few tools to extract string functions and constants
 from modules containing translations (where one language can consist of multiple
 modules, but each module only contains one language).
 
-The tool is build using node.js with an Elm-Core. There is no node package yet.
-To build the elm backend of the node.js part: `make elm.js`.
+The tool is build using node.js with an Elm-Core.
+To build the elm backend of the node.js part (if developing locally):
+`make dist`.
 
 ### Export: Generate CSV from Elm source
 
 ```bash
-./extractor.js --root example/Translation --language De --export
+elm-i18n-generator --root example/Translation --language De --export
 ```
+
 
 Result:
 
@@ -42,7 +48,7 @@ Module,Key,Comment,Supported Placeholders,Translation
 ### Import: Generate Elm source code from CSV
 
 ```bash
-./extractor.js -l De --import export.csv
+elm-i18n-generator -l De --import export.csv
 ```
 
 Result in import/DE/Translation/Main.elm:
