@@ -45,27 +45,23 @@ and functions returning strings (e.g. `fun : String -> String`).
 -}
 stringDeclarations : String -> List ( String, List String )
 stringDeclarations source =
-    let
-        stringDeclarations =
-            Regex.find Regex.All regexStringDeclarations source
-    in
-        stringDeclarations
-            |> List.filterMap
-                (\match ->
-                    -- The submatches contain the key (at head)
-                    -- and the parameters as string (or empty) at index 1.
-                    case ( List.head match.submatches, List.getAt 1 match.submatches ) of
-                        ( Just (Just key), Just (Just parametersString) ) ->
-                            let
-                                parameters =
-                                    String.split " -> " parametersString
-                                        |> List.filter (String.isEmpty >> not)
-                            in
-                                Just ( key, parameters )
+    Regex.find Regex.All regexStringDeclarations source
+        |> List.filterMap
+            (\match ->
+                -- The submatches contain the key (at head)
+                -- and the parameters as string (or empty) at index 1.
+                case ( List.head match.submatches, List.getAt 1 match.submatches ) of
+                    ( Just (Just key), Just (Just parametersString) ) ->
+                        let
+                            parameters =
+                                String.split " -> " parametersString
+                                    |> List.filter (String.isEmpty >> not)
+                        in
+                            Just ( key, parameters )
 
-                        _ ->
-                            Nothing
-                )
+                    _ ->
+                        Nothing
+            )
 
 
 findStaticElementForKey : String -> String -> String -> Maybe Localized.Element

@@ -3,7 +3,6 @@ module CSV.Import exposing (generate)
 import Csv
 import Dict
 import Localized
-import Regex exposing (Regex)
 import Set
 
 
@@ -43,26 +42,23 @@ generateForCsv lines =
                         )
                     )
                 |> Dict.fromList
-
+    in
         -- Generate the source code for each module based on the lines
         -- grouped in the expression above.
-        souresForModules =
-            List.map
-                (\name ->
-                    let
-                        linesForThisModule =
-                            Dict.get name linesForModules
-                                |> Maybe.withDefault []
-                    in
-                        ( name, generateForModule name linesForThisModule )
-                )
-                modules
-    in
-        souresForModules
+        List.map
+            (\name ->
+                let
+                    linesForThisModule =
+                        Dict.get name linesForModules
+                            |> Maybe.withDefault []
+                in
+                    ( name, generateForModule linesForThisModule )
+            )
+            modules
 
 
-generateForModule : String -> List (List String) -> List Localized.Element
-generateForModule moduleName lines =
+generateForModule : List (List String) -> List Localized.Element
+generateForModule lines =
     List.filterMap fromLine lines
 
 
@@ -74,7 +70,7 @@ allModuleNames lines =
 moduleNameForLine : List String -> Maybe String
 moduleNameForLine columns =
     case columns of
-        [ modulename, key, comment, placeholders, value ] ->
+        [ modulename, _, _, _, _ ] ->
             Just modulename
 
         _ ->
@@ -94,16 +90,6 @@ fromLine columns =
 
         _ ->
             Nothing
-
-
-regexPlaceholder : Regex
-regexPlaceholder =
-    Regex.regex "\\{\\{([^\\}]*)\\}\\}"
-
-
-regexTrailingEmptyString : Regex
-regexTrailingEmptyString =
-    Regex.regex "[\\s\\n]*\\+\\+\\s*\"\""
 
 
 code : String -> String -> String -> String -> String -> Localized.Element

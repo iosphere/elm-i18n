@@ -14,7 +14,7 @@ generate elements =
             )
         |> String.join "\n"
         |> String.append (CSV.Template.headers ++ "\n")
-        |> (flip String.append) "\n"
+        |> flip String.append "\n"
 
 
 line : Localized.Element -> List String

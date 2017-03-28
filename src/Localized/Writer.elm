@@ -19,7 +19,7 @@ moduleImplementation name elements =
         ++ (List.map functionFromElement elements
                 |> String.join "\n\n\n"
                 |> String.trim
-                |> (flip String.append) "\n"
+                |> flip String.append "\n"
            )
 
 
@@ -42,7 +42,7 @@ functionStatic : Localized.Static -> String
 functionStatic staticLocalized =
     comment staticLocalized.comment
         ++ signature staticLocalized.key []
-        ++ ("\n" ++ tab ++ (toString staticLocalized.value))
+        ++ ("\n" ++ tab ++ toString staticLocalized.value)
 
 
 functionFormat : Localized.Format -> String
@@ -82,13 +82,13 @@ signature key placeholders =
             if num == 0 then
                 "String"
             else
-                (String.join " -> " (List.repeat (num + 1) "String"))
+                String.join " -> " (List.repeat (num + 1) "String")
 
         parameters =
             if num == 0 then
                 ""
             else
-                " " ++ (String.join " " placeholders)
+                " " ++ String.join " " placeholders
     in
         (key ++ " : " ++ types ++ "\n")
             ++ (key ++ parameters ++ " =")

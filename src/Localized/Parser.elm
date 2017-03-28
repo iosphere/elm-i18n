@@ -16,7 +16,7 @@ parse source =
             findModuleName source
     in
         List.filterMap
-            (\( key, params ) ->
+            (\( key, _ ) ->
                 case findStaticElementForKey moduleName source key of
                     Just simple ->
                         Just simple

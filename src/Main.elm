@@ -49,7 +49,7 @@ type alias Flags =
 -}
 main : Program Flags Model Msg
 main =
-    programWithFlags { init = init, update = update, subscriptions = (always Sub.none) }
+    programWithFlags { init = init, update = update, subscriptions = always Sub.none }
 
 
 init : Flags -> ( Model, Cmd Msg )
