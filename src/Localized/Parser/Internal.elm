@@ -3,6 +3,7 @@ module Localized.Parser.Internal exposing (..)
 import List.Extra as List
 import Localized
 import Regex exposing (Regex)
+import Utils.Regex as Utils
 
 
 regexFindModuleName : Regex
@@ -36,7 +37,7 @@ findModuleName : String -> String
 findModuleName source =
     Regex.find (Regex.AtMost 1) regexFindModuleName source
         |> List.head
-        |> submatchAt 0
+        |> Utils.submatchAt 0
         |> Maybe.withDefault "unknown"
 
 
@@ -70,7 +71,7 @@ findStaticElementForKey moduleName source key =
         maybeValue =
             Regex.find (Regex.AtMost 1) (regexSimpleStringValue key) source
                 |> List.head
-                |> submatchAt 0
+                |> Utils.submatchAt 0
     in
         case maybeValue of
             Just value ->
@@ -93,7 +94,7 @@ findFormatElementForKey moduleName source key =
                 |> List.head
 
         placeholders =
-            case submatchAt 0 match of
+            case Utils.submatchAt 0 match of
                 Just placeholderString ->
                     String.split " " placeholderString
                         |> trimmedStrings
@@ -102,7 +103,7 @@ findFormatElementForKey moduleName source key =
                     []
 
         content =
-            case submatchAt 1 match of
+            case Utils.submatchAt 1 match of
                 Just placeholderString ->
                     String.split "++" placeholderString
                         |> trimmedStrings
@@ -128,7 +129,7 @@ findComment source key =
             Regex.find (Regex.AtMost 1) (regexStringComment key) source
                 |> List.head
     in
-        submatchAt 0 match
+        Utils.submatchAt 0 match
             |> Maybe.withDefault ""
 
 
@@ -147,11 +148,3 @@ trimmedStrings : List String -> List String
 trimmedStrings stringList =
     List.map String.trim stringList
         |> List.filter (String.isEmpty >> not)
-
-
-submatchAt : Int -> Maybe Regex.Match -> Maybe String
-submatchAt index match =
-    match
-        |> Maybe.map (.submatches >> List.getAt index)
-        |> Maybe.withDefault Nothing
-        |> Maybe.withDefault Nothing
