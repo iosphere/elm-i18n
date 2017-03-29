@@ -6645,6 +6645,763 @@ var _elm_community$list_extra$List_Extra$init = function () {
 var _elm_community$list_extra$List_Extra$last = _elm_community$list_extra$List_Extra$foldl1(
 	_elm_lang$core$Basics$flip(_elm_lang$core$Basics$always));
 
+var _elm_lang$core$Native_Bitwise = function() {
+
+return {
+	and: F2(function and(a, b) { return a & b; }),
+	or: F2(function or(a, b) { return a | b; }),
+	xor: F2(function xor(a, b) { return a ^ b; }),
+	complement: function complement(a) { return ~a; },
+	shiftLeftBy: F2(function(offset, a) { return a << offset; }),
+	shiftRightBy: F2(function(offset, a) { return a >> offset; }),
+	shiftRightZfBy: F2(function(offset, a) { return a >>> offset; })
+};
+
+}();
+
+var _elm_lang$core$Bitwise$shiftRightZfBy = _elm_lang$core$Native_Bitwise.shiftRightZfBy;
+var _elm_lang$core$Bitwise$shiftRightBy = _elm_lang$core$Native_Bitwise.shiftRightBy;
+var _elm_lang$core$Bitwise$shiftLeftBy = _elm_lang$core$Native_Bitwise.shiftLeftBy;
+var _elm_lang$core$Bitwise$complement = _elm_lang$core$Native_Bitwise.complement;
+var _elm_lang$core$Bitwise$xor = _elm_lang$core$Native_Bitwise.xor;
+var _elm_lang$core$Bitwise$or = _elm_lang$core$Native_Bitwise.or;
+var _elm_lang$core$Bitwise$and = _elm_lang$core$Native_Bitwise.and;
+
+var _elm_community$string_extra$String_Extra$nonEmpty = function (string) {
+	return _elm_lang$core$String$isEmpty(string) ? _elm_lang$core$Maybe$Nothing : _elm_lang$core$Maybe$Just(string);
+};
+var _elm_community$string_extra$String_Extra$replacementCodePoint = 65533;
+var _elm_community$string_extra$String_Extra$toCodePoints = function (string) {
+	var allCodeUnits = A2(
+		_elm_lang$core$List$map,
+		_elm_lang$core$Char$toCode,
+		_elm_lang$core$String$toList(string));
+	var combineAndReverse = F2(
+		function (codeUnits, accumulated) {
+			combineAndReverse:
+			while (true) {
+				var _p0 = codeUnits;
+				if (_p0.ctor === '[]') {
+					return accumulated;
+				} else {
+					var _p4 = _p0._0;
+					var _p3 = _p0._1;
+					if ((_elm_lang$core$Native_Utils.cmp(_p4, 0) > -1) && (_elm_lang$core$Native_Utils.cmp(_p4, 55295) < 1)) {
+						var _v1 = _p3,
+							_v2 = {ctor: '::', _0: _p4, _1: accumulated};
+						codeUnits = _v1;
+						accumulated = _v2;
+						continue combineAndReverse;
+					} else {
+						if ((_elm_lang$core$Native_Utils.cmp(_p4, 55296) > -1) && (_elm_lang$core$Native_Utils.cmp(_p4, 56319) < 1)) {
+							var _p1 = _p3;
+							if (_p1.ctor === '[]') {
+								return {ctor: '::', _0: _elm_community$string_extra$String_Extra$replacementCodePoint, _1: accumulated};
+							} else {
+								var _p2 = _p1._0;
+								if ((_elm_lang$core$Native_Utils.cmp(_p2, 56320) > -1) && (_elm_lang$core$Native_Utils.cmp(_p2, 57343) < 1)) {
+									var codePoint = (65536 + ((_p4 - 55296) * 1024)) + (_p2 - 56320);
+									var _v4 = _p1._1,
+										_v5 = {ctor: '::', _0: codePoint, _1: accumulated};
+									codeUnits = _v4;
+									accumulated = _v5;
+									continue combineAndReverse;
+								} else {
+									var _v6 = _p3,
+										_v7 = {ctor: '::', _0: _elm_community$string_extra$String_Extra$replacementCodePoint, _1: accumulated};
+									codeUnits = _v6;
+									accumulated = _v7;
+									continue combineAndReverse;
+								}
+							}
+						} else {
+							if ((_elm_lang$core$Native_Utils.cmp(_p4, 57344) > -1) && (_elm_lang$core$Native_Utils.cmp(_p4, 65535) < 1)) {
+								var _v8 = _p3,
+									_v9 = {ctor: '::', _0: _p4, _1: accumulated};
+								codeUnits = _v8;
+								accumulated = _v9;
+								continue combineAndReverse;
+							} else {
+								var _v10 = _p3,
+									_v11 = {ctor: '::', _0: _elm_community$string_extra$String_Extra$replacementCodePoint, _1: accumulated};
+								codeUnits = _v10;
+								accumulated = _v11;
+								continue combineAndReverse;
+							}
+						}
+					}
+				}
+			}
+		});
+	return _elm_lang$core$List$reverse(
+		A2(
+			combineAndReverse,
+			allCodeUnits,
+			{ctor: '[]'}));
+};
+var _elm_community$string_extra$String_Extra$fromCodePoints = function (allCodePoints) {
+	var splitAndReverse = F2(
+		function (codePoints, accumulated) {
+			splitAndReverse:
+			while (true) {
+				var _p5 = codePoints;
+				if (_p5.ctor === '[]') {
+					return accumulated;
+				} else {
+					var _p7 = _p5._1;
+					var _p6 = _p5._0;
+					if ((_elm_lang$core$Native_Utils.cmp(_p6, 0) > -1) && (_elm_lang$core$Native_Utils.cmp(_p6, 55295) < 1)) {
+						var _v13 = _p7,
+							_v14 = {ctor: '::', _0: _p6, _1: accumulated};
+						codePoints = _v13;
+						accumulated = _v14;
+						continue splitAndReverse;
+					} else {
+						if ((_elm_lang$core$Native_Utils.cmp(_p6, 65536) > -1) && (_elm_lang$core$Native_Utils.cmp(_p6, 1114111) < 1)) {
+							var subtracted = _p6 - 65536;
+							var leading = (subtracted >> 10) + 55296;
+							var trailing = (subtracted & 1023) + 56320;
+							var _v15 = _p7,
+								_v16 = {
+								ctor: '::',
+								_0: trailing,
+								_1: {ctor: '::', _0: leading, _1: accumulated}
+							};
+							codePoints = _v15;
+							accumulated = _v16;
+							continue splitAndReverse;
+						} else {
+							if ((_elm_lang$core$Native_Utils.cmp(_p6, 57344) > -1) && (_elm_lang$core$Native_Utils.cmp(_p6, 65535) < 1)) {
+								var _v17 = _p7,
+									_v18 = {ctor: '::', _0: _p6, _1: accumulated};
+								codePoints = _v17;
+								accumulated = _v18;
+								continue splitAndReverse;
+							} else {
+								var _v19 = _p7,
+									_v20 = {ctor: '::', _0: _elm_community$string_extra$String_Extra$replacementCodePoint, _1: accumulated};
+								codePoints = _v19;
+								accumulated = _v20;
+								continue splitAndReverse;
+							}
+						}
+					}
+				}
+			}
+		});
+	var allCodeUnits = _elm_lang$core$List$reverse(
+		A2(
+			splitAndReverse,
+			allCodePoints,
+			{ctor: '[]'}));
+	return _elm_lang$core$String$fromList(
+		A2(_elm_lang$core$List$map, _elm_lang$core$Char$fromCode, allCodeUnits));
+};
+var _elm_community$string_extra$String_Extra$fromFloat = _elm_lang$core$Basics$toString;
+var _elm_community$string_extra$String_Extra$fromInt = _elm_lang$core$Basics$toString;
+var _elm_community$string_extra$String_Extra$leftOfBack = F2(
+	function (pattern, string) {
+		return A2(
+			_elm_lang$core$Maybe$withDefault,
+			'',
+			A2(
+				_elm_lang$core$Maybe$map,
+				A2(_elm_lang$core$Basics$flip, _elm_lang$core$String$left, string),
+				_elm_lang$core$List$head(
+					_elm_lang$core$List$reverse(
+						A2(_elm_lang$core$String$indexes, pattern, string)))));
+	});
+var _elm_community$string_extra$String_Extra$rightOfBack = F2(
+	function (pattern, string) {
+		return A2(
+			_elm_lang$core$Maybe$withDefault,
+			'',
+			A2(
+				_elm_lang$core$Maybe$map,
+				function (_p8) {
+					return A3(
+						_elm_lang$core$Basics$flip,
+						_elm_lang$core$String$dropLeft,
+						string,
+						A2(
+							F2(
+								function (x, y) {
+									return x + y;
+								}),
+							_elm_lang$core$String$length(pattern),
+							_p8));
+				},
+				_elm_lang$core$List$head(
+					_elm_lang$core$List$reverse(
+						A2(_elm_lang$core$String$indexes, pattern, string)))));
+	});
+var _elm_community$string_extra$String_Extra$firstResultHelp = F2(
+	function ($default, list) {
+		firstResultHelp:
+		while (true) {
+			var _p9 = list;
+			if (_p9.ctor === '[]') {
+				return $default;
+			} else {
+				if (_p9._0.ctor === 'Just') {
+					return _p9._0._0;
+				} else {
+					var _v22 = $default,
+						_v23 = _p9._1;
+					$default = _v22;
+					list = _v23;
+					continue firstResultHelp;
+				}
+			}
+		}
+	});
+var _elm_community$string_extra$String_Extra$firstResult = function (list) {
+	return A2(_elm_community$string_extra$String_Extra$firstResultHelp, '', list);
+};
+var _elm_community$string_extra$String_Extra$leftOf = F2(
+	function (pattern, string) {
+		return A2(
+			_elm_lang$core$String$join,
+			'',
+			A2(
+				_elm_lang$core$List$map,
+				function (_p10) {
+					return _elm_community$string_extra$String_Extra$firstResult(
+						function (_) {
+							return _.submatches;
+						}(_p10));
+				},
+				A3(
+					_elm_lang$core$Regex$find,
+					_elm_lang$core$Regex$AtMost(1),
+					_elm_lang$core$Regex$regex(
+						A2(
+							_elm_lang$core$Basics_ops['++'],
+							'^(.*?)',
+							_elm_lang$core$Regex$escape(pattern))),
+					string)));
+	});
+var _elm_community$string_extra$String_Extra$rightOf = F2(
+	function (pattern, string) {
+		return A2(
+			_elm_lang$core$String$join,
+			'',
+			A2(
+				_elm_lang$core$List$map,
+				function (_p11) {
+					return _elm_community$string_extra$String_Extra$firstResult(
+						function (_) {
+							return _.submatches;
+						}(_p11));
+				},
+				A3(
+					_elm_lang$core$Regex$find,
+					_elm_lang$core$Regex$AtMost(1),
+					_elm_lang$core$Regex$regex(
+						A2(
+							_elm_lang$core$Basics_ops['++'],
+							_elm_lang$core$Regex$escape(pattern),
+							'(.*)$')),
+					string)));
+	});
+var _elm_community$string_extra$String_Extra$pluralize = F3(
+	function (singular, plural, count) {
+		return _elm_lang$core$Native_Utils.eq(count, 1) ? A2(_elm_lang$core$Basics_ops['++'], '1 ', singular) : A2(
+			_elm_lang$core$Basics_ops['++'],
+			_elm_lang$core$Basics$toString(count),
+			A2(_elm_lang$core$Basics_ops['++'], ' ', plural));
+	});
+var _elm_community$string_extra$String_Extra$stripTags = function (string) {
+	return A4(
+		_elm_lang$core$Regex$replace,
+		_elm_lang$core$Regex$All,
+		_elm_lang$core$Regex$regex('<\\/?[^>]+>'),
+		_elm_lang$core$Basics$always(''),
+		string);
+};
+var _elm_community$string_extra$String_Extra$toSentenceHelper = F3(
+	function (lastPart, sentence, list) {
+		toSentenceHelper:
+		while (true) {
+			var _p12 = list;
+			if (_p12.ctor === '[]') {
+				return sentence;
+			} else {
+				if (_p12._1.ctor === '[]') {
+					return A2(
+						_elm_lang$core$Basics_ops['++'],
+						sentence,
+						A2(_elm_lang$core$Basics_ops['++'], lastPart, _p12._0));
+				} else {
+					var _v25 = lastPart,
+						_v26 = A2(
+						_elm_lang$core$Basics_ops['++'],
+						sentence,
+						A2(_elm_lang$core$Basics_ops['++'], ', ', _p12._0)),
+						_v27 = _p12._1;
+					lastPart = _v25;
+					sentence = _v26;
+					list = _v27;
+					continue toSentenceHelper;
+				}
+			}
+		}
+	});
+var _elm_community$string_extra$String_Extra$toSentenceBaseCase = function (list) {
+	var _p13 = list;
+	_v28_2:
+	do {
+		if (_p13.ctor === '::') {
+			if (_p13._1.ctor === '[]') {
+				return _p13._0;
+			} else {
+				if (_p13._1._1.ctor === '[]') {
+					return A2(
+						_elm_lang$core$Basics_ops['++'],
+						_p13._0,
+						A2(_elm_lang$core$Basics_ops['++'], ' and ', _p13._1._0));
+				} else {
+					break _v28_2;
+				}
+			}
+		} else {
+			break _v28_2;
+		}
+	} while(false);
+	return '';
+};
+var _elm_community$string_extra$String_Extra$toSentenceOxford = function (list) {
+	var _p14 = list;
+	if (((_p14.ctor === '::') && (_p14._1.ctor === '::')) && (_p14._1._1.ctor === '::')) {
+		return A3(
+			_elm_community$string_extra$String_Extra$toSentenceHelper,
+			', and ',
+			A2(
+				_elm_lang$core$Basics_ops['++'],
+				_p14._0,
+				A2(_elm_lang$core$Basics_ops['++'], ', ', _p14._1._0)),
+			{ctor: '::', _0: _p14._1._1._0, _1: _p14._1._1._1});
+	} else {
+		return _elm_community$string_extra$String_Extra$toSentenceBaseCase(list);
+	}
+};
+var _elm_community$string_extra$String_Extra$toSentence = function (list) {
+	var _p15 = list;
+	if (((_p15.ctor === '::') && (_p15._1.ctor === '::')) && (_p15._1._1.ctor === '::')) {
+		return A3(
+			_elm_community$string_extra$String_Extra$toSentenceHelper,
+			' and ',
+			A2(
+				_elm_lang$core$Basics_ops['++'],
+				_p15._0,
+				A2(_elm_lang$core$Basics_ops['++'], ', ', _p15._1._0)),
+			{ctor: '::', _0: _p15._1._1._0, _1: _p15._1._1._1});
+	} else {
+		return _elm_community$string_extra$String_Extra$toSentenceBaseCase(list);
+	}
+};
+var _elm_community$string_extra$String_Extra$ellipsisWith = F3(
+	function (howLong, append, string) {
+		return (_elm_lang$core$Native_Utils.cmp(
+			_elm_lang$core$String$length(string),
+			howLong) < 1) ? string : A2(
+			_elm_lang$core$Basics_ops['++'],
+			A2(
+				_elm_lang$core$String$left,
+				howLong - _elm_lang$core$String$length(append),
+				string),
+			append);
+	});
+var _elm_community$string_extra$String_Extra$ellipsis = F2(
+	function (howLong, string) {
+		return A3(_elm_community$string_extra$String_Extra$ellipsisWith, howLong, '...', string);
+	});
+var _elm_community$string_extra$String_Extra$countOccurrences = F2(
+	function (needle, haystack) {
+		return (_elm_lang$core$Native_Utils.eq(
+			_elm_lang$core$String$length(needle),
+			0) || _elm_lang$core$Native_Utils.eq(
+			_elm_lang$core$String$length(haystack),
+			0)) ? 0 : _elm_lang$core$List$length(
+			A2(_elm_lang$core$String$indexes, needle, haystack));
+	});
+var _elm_community$string_extra$String_Extra$unindent = function (multilineSting) {
+	var isNotWhitespace = function ($char) {
+		return (!_elm_lang$core$Native_Utils.eq(
+			$char,
+			_elm_lang$core$Native_Utils.chr(' '))) && (!_elm_lang$core$Native_Utils.eq(
+			$char,
+			_elm_lang$core$Native_Utils.chr('\t')));
+	};
+	var countLeadingWhitespace = F2(
+		function (count, line) {
+			countLeadingWhitespace:
+			while (true) {
+				var _p16 = _elm_lang$core$String$uncons(line);
+				if (_p16.ctor === 'Nothing') {
+					return count;
+				} else {
+					var _p18 = _p16._0._1;
+					var _p17 = _p16._0._0;
+					switch (_p17.valueOf()) {
+						case ' ':
+							var _v33 = count + 1,
+								_v34 = _p18;
+							count = _v33;
+							line = _v34;
+							continue countLeadingWhitespace;
+						case '\t':
+							var _v35 = count + 1,
+								_v36 = _p18;
+							count = _v35;
+							line = _v36;
+							continue countLeadingWhitespace;
+						default:
+							return count;
+					}
+				}
+			}
+		});
+	var lines = _elm_lang$core$String$lines(multilineSting);
+	var minLead = A2(
+		_elm_lang$core$Maybe$withDefault,
+		0,
+		_elm_lang$core$List$minimum(
+			A2(
+				_elm_lang$core$List$map,
+				countLeadingWhitespace(0),
+				A2(
+					_elm_lang$core$List$filter,
+					_elm_lang$core$String$any(isNotWhitespace),
+					lines))));
+	return A2(
+		_elm_lang$core$String$join,
+		'\n',
+		A2(
+			_elm_lang$core$List$map,
+			_elm_lang$core$String$dropLeft(minLead),
+			lines));
+};
+var _elm_community$string_extra$String_Extra$dasherize = function (string) {
+	return _elm_lang$core$String$toLower(
+		A4(
+			_elm_lang$core$Regex$replace,
+			_elm_lang$core$Regex$All,
+			_elm_lang$core$Regex$regex('[_-\\s]+'),
+			_elm_lang$core$Basics$always('-'),
+			A4(
+				_elm_lang$core$Regex$replace,
+				_elm_lang$core$Regex$All,
+				_elm_lang$core$Regex$regex('([A-Z])'),
+				function (_p19) {
+					return A2(
+						_elm_lang$core$String$append,
+						'-',
+						function (_) {
+							return _.match;
+						}(_p19));
+				},
+				_elm_lang$core$String$trim(string))));
+};
+var _elm_community$string_extra$String_Extra$underscored = function (string) {
+	return _elm_lang$core$String$toLower(
+		A4(
+			_elm_lang$core$Regex$replace,
+			_elm_lang$core$Regex$All,
+			_elm_lang$core$Regex$regex('[_-\\s]+'),
+			_elm_lang$core$Basics$always('_'),
+			A4(
+				_elm_lang$core$Regex$replace,
+				_elm_lang$core$Regex$All,
+				_elm_lang$core$Regex$regex('([a-z\\d])([A-Z]+)'),
+				function (_p20) {
+					return A2(
+						_elm_lang$core$String$join,
+						'_',
+						A2(
+							_elm_lang$core$List$filterMap,
+							_elm_lang$core$Basics$identity,
+							function (_) {
+								return _.submatches;
+							}(_p20)));
+				},
+				_elm_lang$core$String$trim(string))));
+};
+var _elm_community$string_extra$String_Extra$unsurround = F2(
+	function (wrap, string) {
+		if (A2(_elm_lang$core$String$startsWith, wrap, string) && A2(_elm_lang$core$String$endsWith, wrap, string)) {
+			var length = _elm_lang$core$String$length(wrap);
+			return A2(
+				_elm_lang$core$String$dropRight,
+				length,
+				A2(_elm_lang$core$String$dropLeft, length, string));
+		} else {
+			return string;
+		}
+	});
+var _elm_community$string_extra$String_Extra$unquote = function (string) {
+	return A2(_elm_community$string_extra$String_Extra$unsurround, '\"', string);
+};
+var _elm_community$string_extra$String_Extra$surround = F2(
+	function (wrap, string) {
+		return A2(
+			_elm_lang$core$Basics_ops['++'],
+			wrap,
+			A2(_elm_lang$core$Basics_ops['++'], string, wrap));
+	});
+var _elm_community$string_extra$String_Extra$quote = function (string) {
+	return A2(_elm_community$string_extra$String_Extra$surround, '\"', string);
+};
+var _elm_community$string_extra$String_Extra$camelize = function (string) {
+	return A4(
+		_elm_lang$core$Regex$replace,
+		_elm_lang$core$Regex$All,
+		_elm_lang$core$Regex$regex('[-_\\s]+(.)?'),
+		function (_p21) {
+			var _p22 = _p21;
+			var _p23 = _p22.submatches;
+			if ((_p23.ctor === '::') && (_p23._0.ctor === 'Just')) {
+				return _elm_lang$core$String$toUpper(_p23._0._0);
+			} else {
+				return '';
+			}
+		},
+		_elm_lang$core$String$trim(string));
+};
+var _elm_community$string_extra$String_Extra$isBlank = function (string) {
+	return A2(
+		_elm_lang$core$Regex$contains,
+		_elm_lang$core$Regex$regex('^\\s*$'),
+		string);
+};
+var _elm_community$string_extra$String_Extra$clean = function (string) {
+	return _elm_lang$core$String$trim(
+		A4(
+			_elm_lang$core$Regex$replace,
+			_elm_lang$core$Regex$All,
+			_elm_lang$core$Regex$regex('\\s\\s+'),
+			_elm_lang$core$Basics$always(' '),
+			string));
+};
+var _elm_community$string_extra$String_Extra$softBreakRegexp = function (width) {
+	return _elm_lang$core$Regex$regex(
+		A2(
+			_elm_lang$core$Basics_ops['++'],
+			'.{1,',
+			A2(
+				_elm_lang$core$Basics_ops['++'],
+				_elm_lang$core$Basics$toString(width),
+				'}(\\s+|$)|\\S+?(\\s+|$)')));
+};
+var _elm_community$string_extra$String_Extra$softEllipsis = F2(
+	function (howLong, string) {
+		return (_elm_lang$core$Native_Utils.cmp(
+			_elm_lang$core$String$length(string),
+			howLong) < 1) ? string : A3(
+			_elm_lang$core$Basics$flip,
+			_elm_lang$core$String$append,
+			'...',
+			A4(
+				_elm_lang$core$Regex$replace,
+				_elm_lang$core$Regex$All,
+				_elm_lang$core$Regex$regex('([\\.,;:\\s])+$'),
+				_elm_lang$core$Basics$always(''),
+				A2(
+					_elm_lang$core$String$join,
+					'',
+					A2(
+						_elm_lang$core$List$map,
+						function (_) {
+							return _.match;
+						},
+						A3(
+							_elm_lang$core$Regex$find,
+							_elm_lang$core$Regex$AtMost(1),
+							_elm_community$string_extra$String_Extra$softBreakRegexp(howLong),
+							string)))));
+	});
+var _elm_community$string_extra$String_Extra$softBreak = F2(
+	function (width, string) {
+		return (_elm_lang$core$Native_Utils.cmp(width, 0) < 1) ? {ctor: '[]'} : A2(
+			_elm_lang$core$List$map,
+			function (_) {
+				return _.match;
+			},
+			A3(
+				_elm_lang$core$Regex$find,
+				_elm_lang$core$Regex$All,
+				_elm_community$string_extra$String_Extra$softBreakRegexp(width),
+				string));
+	});
+var _elm_community$string_extra$String_Extra$softWrapWith = F3(
+	function (width, separator, string) {
+		return A2(
+			_elm_lang$core$String$join,
+			separator,
+			A2(_elm_community$string_extra$String_Extra$softBreak, width, string));
+	});
+var _elm_community$string_extra$String_Extra$softWrap = F2(
+	function (width, string) {
+		return A3(_elm_community$string_extra$String_Extra$softWrapWith, width, '\n', string);
+	});
+var _elm_community$string_extra$String_Extra$breaker = F3(
+	function (width, string, acc) {
+		breaker:
+		while (true) {
+			var _p24 = string;
+			if (_p24 === '') {
+				return _elm_lang$core$List$reverse(acc);
+			} else {
+				var _v40 = width,
+					_v41 = A2(_elm_lang$core$String$dropLeft, width, string),
+					_v42 = {
+					ctor: '::',
+					_0: A3(_elm_lang$core$String$slice, 0, width, string),
+					_1: acc
+				};
+				width = _v40;
+				string = _v41;
+				acc = _v42;
+				continue breaker;
+			}
+		}
+	});
+var _elm_community$string_extra$String_Extra$break = F2(
+	function (width, string) {
+		return (_elm_lang$core$Native_Utils.eq(width, 0) || _elm_lang$core$Native_Utils.eq(string, '')) ? {
+			ctor: '::',
+			_0: string,
+			_1: {ctor: '[]'}
+		} : A3(
+			_elm_community$string_extra$String_Extra$breaker,
+			width,
+			string,
+			{ctor: '[]'});
+	});
+var _elm_community$string_extra$String_Extra$wrapWith = F3(
+	function (width, separator, string) {
+		return A2(
+			_elm_lang$core$String$join,
+			separator,
+			A2(_elm_community$string_extra$String_Extra$break, width, string));
+	});
+var _elm_community$string_extra$String_Extra$wrap = F2(
+	function (width, string) {
+		return A3(_elm_community$string_extra$String_Extra$wrapWith, width, '\n', string);
+	});
+var _elm_community$string_extra$String_Extra$replaceSlice = F4(
+	function (substitution, start, end, string) {
+		return A2(
+			_elm_lang$core$Basics_ops['++'],
+			A3(_elm_lang$core$String$slice, 0, start, string),
+			A2(
+				_elm_lang$core$Basics_ops['++'],
+				substitution,
+				A3(
+					_elm_lang$core$String$slice,
+					end,
+					_elm_lang$core$String$length(string),
+					string)));
+	});
+var _elm_community$string_extra$String_Extra$insertAt = F3(
+	function (insert, pos, string) {
+		return A4(_elm_community$string_extra$String_Extra$replaceSlice, insert, pos, pos, string);
+	});
+var _elm_community$string_extra$String_Extra$replace = F3(
+	function (search, substitution, string) {
+		return A4(
+			_elm_lang$core$Regex$replace,
+			_elm_lang$core$Regex$All,
+			_elm_lang$core$Regex$regex(
+				_elm_lang$core$Regex$escape(search)),
+			function (_p25) {
+				return substitution;
+			},
+			string);
+	});
+var _elm_community$string_extra$String_Extra$changeCase = F2(
+	function (mutator, word) {
+		return A2(
+			_elm_lang$core$Maybe$withDefault,
+			'',
+			A2(
+				_elm_lang$core$Maybe$map,
+				function (_p26) {
+					var _p27 = _p26;
+					return A2(
+						_elm_lang$core$String$cons,
+						mutator(_p27._0),
+						_p27._1);
+				},
+				_elm_lang$core$String$uncons(word)));
+	});
+var _elm_community$string_extra$String_Extra$toSentenceCase = function (word) {
+	return A2(_elm_community$string_extra$String_Extra$changeCase, _elm_lang$core$Char$toUpper, word);
+};
+var _elm_community$string_extra$String_Extra$toTitleCase = function (ws) {
+	var uppercaseMatch = A3(
+		_elm_lang$core$Regex$replace,
+		_elm_lang$core$Regex$All,
+		_elm_lang$core$Regex$regex('\\w+'),
+		function (_p28) {
+			return _elm_community$string_extra$String_Extra$toSentenceCase(
+				function (_) {
+					return _.match;
+				}(_p28));
+		});
+	return A4(
+		_elm_lang$core$Regex$replace,
+		_elm_lang$core$Regex$All,
+		_elm_lang$core$Regex$regex('^([a-z])|\\s+([a-z])'),
+		function (_p29) {
+			return uppercaseMatch(
+				function (_) {
+					return _.match;
+				}(_p29));
+		},
+		ws);
+};
+var _elm_community$string_extra$String_Extra$classify = function (string) {
+	return _elm_community$string_extra$String_Extra$toSentenceCase(
+		A3(
+			_elm_community$string_extra$String_Extra$replace,
+			' ',
+			'',
+			_elm_community$string_extra$String_Extra$camelize(
+				A4(
+					_elm_lang$core$Regex$replace,
+					_elm_lang$core$Regex$All,
+					_elm_lang$core$Regex$regex('[\\W_]'),
+					_elm_lang$core$Basics$always(' '),
+					string))));
+};
+var _elm_community$string_extra$String_Extra$humanize = function (string) {
+	return _elm_community$string_extra$String_Extra$toSentenceCase(
+		_elm_lang$core$String$toLower(
+			_elm_lang$core$String$trim(
+				A4(
+					_elm_lang$core$Regex$replace,
+					_elm_lang$core$Regex$All,
+					_elm_lang$core$Regex$regex('_id$|[-_\\s]+'),
+					_elm_lang$core$Basics$always(' '),
+					A4(
+						_elm_lang$core$Regex$replace,
+						_elm_lang$core$Regex$All,
+						_elm_lang$core$Regex$regex('[A-Z]'),
+						function (_p30) {
+							return A2(
+								_elm_lang$core$String$append,
+								'-',
+								function (_) {
+									return _.match;
+								}(_p30));
+						},
+						string)))));
+};
+var _elm_community$string_extra$String_Extra$decapitalize = function (word) {
+	return A2(_elm_community$string_extra$String_Extra$changeCase, _elm_lang$core$Char$toLower, word);
+};
+
 //import Native.List //
 
 var _elm_lang$core$Native_Array = function() {
@@ -8325,6 +9082,14 @@ var _iosphere$elm_i18n$CSV_Template$placeholder = function (placeholder) {
 };
 var _iosphere$elm_i18n$CSV_Template$headers = 'Module,Key,Comment,Supported Placeholders,Translation';
 
+var _iosphere$elm_i18n$Localized$isEmptyFormatComponent = function (comp) {
+	var _p0 = comp;
+	if (_p0.ctor === 'FormatComponentStatic') {
+		return _elm_lang$core$String$isEmpty(_p0._0);
+	} else {
+		return _elm_lang$core$String$isEmpty(_p0._0);
+	}
+};
 var _iosphere$elm_i18n$Localized$Static = F4(
 	function (a, b, c, d) {
 		return {moduleName: a, key: b, comment: c, value: d};
@@ -8582,102 +9347,68 @@ var _periodic$elm_csv$Csv$parse = function (_p2) {
 				_periodic$elm_csv$Csv$addTrailingLineSep(_p2))));
 };
 
-var _iosphere$elm_i18n$CSV_Import$regexTrailingEmptyString = _elm_lang$core$Regex$regex('[\\s\\n]*\\+\\+\\s*\"\"');
-var _iosphere$elm_i18n$CSV_Import$regexPlaceholder = _elm_lang$core$Regex$regex('\\{\\{([^\\}]*)\\}\\}');
-var _iosphere$elm_i18n$CSV_Import$code = F4(
-	function (key, comment, placeholderString, value) {
+var _iosphere$elm_i18n$CSV_Import$staticElement = F4(
+	function (modulename, key, comment, value) {
+		return _iosphere$elm_i18n$Localized$ElementStatic(
+			{moduleName: modulename, key: key, comment: comment, value: value});
+	});
+var _iosphere$elm_i18n$CSV_Import$formatElement = F5(
+	function (modulename, key, comment, placeholders, value) {
+		var components = _elm_lang$core$List$concat(
+			A2(
+				_elm_lang$core$List$map,
+				function (candidate) {
+					return A2(_elm_lang$core$String$contains, '}}', candidate) ? A2(
+						_elm_lang$core$List$indexedMap,
+						F2(
+							function (index, submatch) {
+								return _elm_lang$core$Native_Utils.eq(
+									A2(_elm_lang$core$Basics_ops['%'], index, 2),
+									0) ? _iosphere$elm_i18n$Localized$FormatComponentPlaceholder(
+									_elm_lang$core$String$trim(submatch)) : _iosphere$elm_i18n$Localized$FormatComponentStatic(candidate);
+							}),
+						A2(
+							_elm_lang$core$List$filter,
+							function (_p0) {
+								return !_elm_lang$core$String$isEmpty(_p0);
+							},
+							A2(_elm_lang$core$String$split, '}}', candidate))) : {
+						ctor: '::',
+						_0: _iosphere$elm_i18n$Localized$FormatComponentStatic(candidate),
+						_1: {ctor: '[]'}
+					};
+				},
+				A2(_elm_lang$core$String$split, '{{', value)));
+		return _iosphere$elm_i18n$Localized$ElementFormat(
+			{moduleName: modulename, key: key, comment: comment, placeholders: placeholders, components: components});
+	});
+var _iosphere$elm_i18n$CSV_Import$code = F5(
+	function (modulename, key, comment, placeholderString, value) {
 		var placeholders = A2(
 			_elm_lang$core$List$filter,
-			function (_p0) {
-				return !_elm_lang$core$String$isEmpty(_p0);
+			function (_p1) {
+				return !_elm_lang$core$String$isEmpty(_p1);
 			},
 			A2(
 				_elm_lang$core$List$map,
 				_elm_lang$core$String$trim,
 				A2(_elm_lang$core$String$split, ' ', placeholderString)));
 		var numPlaceholders = _elm_lang$core$List$length(placeholders);
-		var functionSignature = A2(
-			_elm_lang$core$String$join,
-			'',
-			A2(_elm_lang$core$List$repeat, numPlaceholders, ' -> String'));
-		var functionArgument = _elm_lang$core$Native_Utils.eq(numPlaceholders, 0) ? '' : A2(
-			_elm_lang$core$Basics_ops['++'],
-			' ',
-			A2(_elm_lang$core$String$join, ' ', placeholders));
-		var tab = '    ';
-		var valueWithPlaceholders = A4(
-			_elm_lang$core$Regex$replace,
-			_elm_lang$core$Regex$All,
-			_iosphere$elm_i18n$CSV_Import$regexPlaceholder,
-			function (match) {
-				var placeholder = A2(
-					_elm_lang$core$Maybe$withDefault,
-					'unknown',
-					A2(
-						_elm_lang$core$Maybe$withDefault,
-						_elm_lang$core$Maybe$Nothing,
-						_elm_lang$core$List$head(match.submatches)));
-				return A2(
-					_elm_lang$core$Basics_ops['++'],
-					'\"\n',
-					A2(
-						_elm_lang$core$Basics_ops['++'],
-						A2(_elm_lang$core$Basics_ops['++'], tab, tab),
-						A2(
-							_elm_lang$core$Basics_ops['++'],
-							A2(_elm_lang$core$Basics_ops['++'], '++ ', placeholder),
-							A2(
-								_elm_lang$core$Basics_ops['++'],
-								tab,
-								A2(_elm_lang$core$Basics_ops['++'], tab, '++ \"')))));
-			},
-			value);
-		var implementation = A4(
-			_elm_lang$core$Regex$replace,
-			_elm_lang$core$Regex$All,
-			_iosphere$elm_i18n$CSV_Import$regexTrailingEmptyString,
-			_elm_lang$core$Basics$always(''),
-			A2(
-				_elm_lang$core$Basics_ops['++'],
-				'\"',
-				A2(_elm_lang$core$Basics_ops['++'], valueWithPlaceholders, '\"')));
-		var commentCode = _elm_lang$core$String$isEmpty(comment) ? '' : A2(
-			_elm_lang$core$Basics_ops['++'],
-			'{-| ',
-			A2(_elm_lang$core$Basics_ops['++'], comment, '\n-}\n'));
-		return A2(
-			_elm_lang$core$Basics_ops['++'],
-			commentCode,
-			A2(
-				_elm_lang$core$Basics_ops['++'],
-				A2(
-					_elm_lang$core$Basics_ops['++'],
-					key,
-					A2(
-						_elm_lang$core$Basics_ops['++'],
-						' : String',
-						A2(_elm_lang$core$Basics_ops['++'], functionSignature, '\n'))),
-				A2(
-					_elm_lang$core$Basics_ops['++'],
-					A2(
-						_elm_lang$core$Basics_ops['++'],
-						key,
-						A2(_elm_lang$core$Basics_ops['++'], functionArgument, ' =\n')),
-					A2(_elm_lang$core$Basics_ops['++'], tab, implementation))));
+		return _elm_lang$core$Native_Utils.eq(numPlaceholders, 0) ? A4(_iosphere$elm_i18n$CSV_Import$staticElement, modulename, key, comment, value) : A5(_iosphere$elm_i18n$CSV_Import$formatElement, modulename, key, comment, placeholders, value);
 	});
 var _iosphere$elm_i18n$CSV_Import$fromLine = function (columns) {
-	var _p1 = columns;
-	if ((((((_p1.ctor === '::') && (_p1._1.ctor === '::')) && (_p1._1._1.ctor === '::')) && (_p1._1._1._1.ctor === '::')) && (_p1._1._1._1._1.ctor === '::')) && (_p1._1._1._1._1._1.ctor === '[]')) {
+	var _p2 = columns;
+	if ((((((_p2.ctor === '::') && (_p2._1.ctor === '::')) && (_p2._1._1.ctor === '::')) && (_p2._1._1._1.ctor === '::')) && (_p2._1._1._1._1.ctor === '::')) && (_p2._1._1._1._1._1.ctor === '[]')) {
 		return _elm_lang$core$Maybe$Just(
-			A4(_iosphere$elm_i18n$CSV_Import$code, _p1._1._0, _p1._1._1._0, _p1._1._1._1._0, _p1._1._1._1._1._0));
+			A5(_iosphere$elm_i18n$CSV_Import$code, _p2._0, _p2._1._0, _p2._1._1._0, _p2._1._1._1._0, _p2._1._1._1._1._0));
 	} else {
 		return _elm_lang$core$Maybe$Nothing;
 	}
 };
 var _iosphere$elm_i18n$CSV_Import$moduleNameForLine = function (columns) {
-	var _p2 = columns;
-	if ((((((_p2.ctor === '::') && (_p2._1.ctor === '::')) && (_p2._1._1.ctor === '::')) && (_p2._1._1._1.ctor === '::')) && (_p2._1._1._1._1.ctor === '::')) && (_p2._1._1._1._1._1.ctor === '[]')) {
-		return _elm_lang$core$Maybe$Just(_p2._0);
+	var _p3 = columns;
+	if ((((((_p3.ctor === '::') && (_p3._1.ctor === '::')) && (_p3._1._1.ctor === '::')) && (_p3._1._1._1.ctor === '::')) && (_p3._1._1._1._1.ctor === '::')) && (_p3._1._1._1._1._1.ctor === '[]')) {
+		return _elm_lang$core$Maybe$Just(_p3._0);
 	} else {
 		return _elm_lang$core$Maybe$Nothing;
 	}
@@ -8696,65 +9427,52 @@ var _iosphere$elm_i18n$CSV_Import$linesForModule = F2(
 var _iosphere$elm_i18n$CSV_Import$allModuleNames = function (lines) {
 	return A2(_elm_lang$core$List$filterMap, _iosphere$elm_i18n$CSV_Import$moduleNameForLine, lines);
 };
-var _iosphere$elm_i18n$CSV_Import$generateForModule = F2(
-	function (moduleName, lines) {
-		return A3(
-			_elm_lang$core$Basics$flip,
-			_elm_lang$core$String$append,
-			'\n',
-			A2(
-				_elm_lang$core$String$append,
-				A2(
-					_elm_lang$core$Basics_ops['++'],
-					'module ',
-					A2(_elm_lang$core$Basics_ops['++'], moduleName, ' exposing (..)\n\n{-| -}\n\n\n')),
-				A2(
-					_elm_lang$core$String$join,
-					'\n\n\n',
-					A2(_elm_lang$core$List$filterMap, _iosphere$elm_i18n$CSV_Import$fromLine, lines))));
-	});
-var _iosphere$elm_i18n$CSV_Import$generate = function (csv) {
-	var _p3 = _periodic$elm_csv$Csv$parse(csv);
-	if (_p3.ctor === 'Ok') {
-		var _p4 = _p3._0;
-		var modules = _elm_lang$core$Set$toList(
-			_elm_lang$core$Set$fromList(
-				_iosphere$elm_i18n$CSV_Import$allModuleNames(_p4.records)));
-		var linesForModules = _elm_lang$core$Dict$fromList(
-			A2(
-				_elm_lang$core$List$map,
-				function (name) {
-					return {
-						ctor: '_Tuple2',
-						_0: name,
-						_1: A2(_iosphere$elm_i18n$CSV_Import$linesForModule, name, _p4.records)
-					};
-				},
-				modules));
-		var souresForModules = A2(
+var _iosphere$elm_i18n$CSV_Import$generateForModule = function (lines) {
+	return A2(_elm_lang$core$List$filterMap, _iosphere$elm_i18n$CSV_Import$fromLine, lines);
+};
+var _iosphere$elm_i18n$CSV_Import$generateForCsv = function (lines) {
+	var modules = _elm_lang$core$Set$toList(
+		_elm_lang$core$Set$fromList(
+			_iosphere$elm_i18n$CSV_Import$allModuleNames(lines.records)));
+	var linesForModules = _elm_lang$core$Dict$fromList(
+		A2(
 			_elm_lang$core$List$map,
 			function (name) {
-				var linesForThisModule = A2(
-					_elm_lang$core$Maybe$withDefault,
-					{ctor: '[]'},
-					A2(_elm_lang$core$Dict$get, name, linesForModules));
 				return {
 					ctor: '_Tuple2',
 					_0: name,
-					_1: A2(_iosphere$elm_i18n$CSV_Import$generateForModule, name, linesForThisModule)
+					_1: A2(_iosphere$elm_i18n$CSV_Import$linesForModule, name, lines.records)
 				};
 			},
-			modules);
-		return souresForModules;
+			modules));
+	return A2(
+		_elm_lang$core$List$map,
+		function (name) {
+			var linesForThisModule = A2(
+				_elm_lang$core$Maybe$withDefault,
+				{ctor: '[]'},
+				A2(_elm_lang$core$Dict$get, name, linesForModules));
+			return {
+				ctor: '_Tuple2',
+				_0: name,
+				_1: _iosphere$elm_i18n$CSV_Import$generateForModule(linesForThisModule)
+			};
+		},
+		modules);
+};
+var _iosphere$elm_i18n$CSV_Import$generate = function (csv) {
+	var _p4 = _periodic$elm_csv$Csv$parse(csv);
+	if (_p4.ctor === 'Ok') {
+		return _iosphere$elm_i18n$CSV_Import$generateForCsv(_p4._0);
 	} else {
 		return A2(
 			_elm_lang$core$Basics$always,
 			{ctor: '[]'},
-			A2(_elm_lang$core$Debug$log, 'Could not parse CSV', _p3._0));
+			A2(_elm_lang$core$Debug$log, 'Could not parse CSV', _p4._0));
 	}
 };
 
-var _iosphere$elm_i18n$Localized_Parser_Internal$submatchAt = F2(
+var _iosphere$elm_i18n$Utils_Regex$submatchAt = F2(
 	function (index, match) {
 		return A2(
 			_elm_lang$core$Maybe$withDefault,
@@ -8774,11 +9492,12 @@ var _iosphere$elm_i18n$Localized_Parser_Internal$submatchAt = F2(
 					},
 					match)));
 	});
+
 var _iosphere$elm_i18n$Localized_Parser_Internal$trimmedStrings = function (stringList) {
 	return A2(
 		_elm_lang$core$List$filter,
-		function (_p1) {
-			return !_elm_lang$core$String$isEmpty(_p1);
+		function (_p0) {
+			return !_elm_lang$core$String$isEmpty(_p0);
 		},
 		A2(_elm_lang$core$List$map, _elm_lang$core$String$trim, stringList));
 };
@@ -8811,7 +9530,7 @@ var _iosphere$elm_i18n$Localized_Parser_Internal$findComment = F2(
 		return A2(
 			_elm_lang$core$Maybe$withDefault,
 			'',
-			A2(_iosphere$elm_i18n$Localized_Parser_Internal$submatchAt, 0, match));
+			A2(_iosphere$elm_i18n$Utils_Regex$submatchAt, 0, match));
 	});
 var _iosphere$elm_i18n$Localized_Parser_Internal$findFormatElementForKey = F3(
 	function (moduleName, source, key) {
@@ -8823,28 +9542,28 @@ var _iosphere$elm_i18n$Localized_Parser_Internal$findFormatElementForKey = F3(
 				regex,
 				source));
 		var placeholders = function () {
-			var _p2 = A2(_iosphere$elm_i18n$Localized_Parser_Internal$submatchAt, 0, match);
-			if (_p2.ctor === 'Just') {
+			var _p1 = A2(_iosphere$elm_i18n$Utils_Regex$submatchAt, 0, match);
+			if (_p1.ctor === 'Just') {
 				return _iosphere$elm_i18n$Localized_Parser_Internal$trimmedStrings(
-					A2(_elm_lang$core$String$split, ' ', _p2._0));
+					A2(_elm_lang$core$String$split, ' ', _p1._0));
 			} else {
 				return {ctor: '[]'};
 			}
 		}();
 		var content = function () {
-			var _p3 = A2(_iosphere$elm_i18n$Localized_Parser_Internal$submatchAt, 1, match);
-			if (_p3.ctor === 'Just') {
+			var _p2 = A2(_iosphere$elm_i18n$Utils_Regex$submatchAt, 1, match);
+			if (_p2.ctor === 'Just') {
 				return A2(
 					_elm_lang$core$List$map,
 					_iosphere$elm_i18n$Localized_Parser_Internal$formatComponentFromString,
 					_iosphere$elm_i18n$Localized_Parser_Internal$trimmedStrings(
-						A2(_elm_lang$core$String$split, '++', _p3._0)));
+						A2(_elm_lang$core$String$split, '++', _p2._0)));
 			} else {
 				return {ctor: '[]'};
 			}
 		}();
-		var _p4 = placeholders;
-		if (_p4.ctor === '[]') {
+		var _p3 = placeholders;
+		if (_p3.ctor === '[]') {
 			return _elm_lang$core$Maybe$Nothing;
 		} else {
 			return _elm_lang$core$Maybe$Just(
@@ -8854,7 +9573,7 @@ var _iosphere$elm_i18n$Localized_Parser_Internal$findFormatElementForKey = F3(
 						moduleName,
 						key,
 						A2(_iosphere$elm_i18n$Localized_Parser_Internal$findComment, source, key),
-						_p4,
+						_p3,
 						content)));
 		}
 	});
@@ -8865,7 +9584,7 @@ var _iosphere$elm_i18n$Localized_Parser_Internal$regexSimpleStringValue = functi
 var _iosphere$elm_i18n$Localized_Parser_Internal$findStaticElementForKey = F3(
 	function (moduleName, source, key) {
 		var maybeValue = A2(
-			_iosphere$elm_i18n$Localized_Parser_Internal$submatchAt,
+			_iosphere$elm_i18n$Utils_Regex$submatchAt,
 			0,
 			_elm_lang$core$List$head(
 				A3(
@@ -8873,8 +9592,8 @@ var _iosphere$elm_i18n$Localized_Parser_Internal$findStaticElementForKey = F3(
 					_elm_lang$core$Regex$AtMost(1),
 					_iosphere$elm_i18n$Localized_Parser_Internal$regexSimpleStringValue(key),
 					source)));
-		var _p5 = maybeValue;
-		if (_p5.ctor === 'Just') {
+		var _p4 = maybeValue;
+		if (_p4.ctor === 'Just') {
 			return _elm_lang$core$Maybe$Just(
 				_iosphere$elm_i18n$Localized$ElementStatic(
 					A4(
@@ -8882,36 +9601,35 @@ var _iosphere$elm_i18n$Localized_Parser_Internal$findStaticElementForKey = F3(
 						moduleName,
 						key,
 						A2(_iosphere$elm_i18n$Localized_Parser_Internal$findComment, source, key),
-						_p5._0)));
+						_p4._0)));
 		} else {
 			return _elm_lang$core$Maybe$Nothing;
 		}
 	});
 var _iosphere$elm_i18n$Localized_Parser_Internal$regexStringDeclarations = _elm_lang$core$Regex$regex('([A-Za-z][A-Za-z0-9]*)\\s+:\\s+(.*)String');
 var _iosphere$elm_i18n$Localized_Parser_Internal$stringDeclarations = function (source) {
-	var stringDeclarations = A3(_elm_lang$core$Regex$find, _elm_lang$core$Regex$All, _iosphere$elm_i18n$Localized_Parser_Internal$regexStringDeclarations, source);
 	return A2(
 		_elm_lang$core$List$filterMap,
 		function (match) {
-			var _p6 = {
+			var _p5 = {
 				ctor: '_Tuple2',
 				_0: _elm_lang$core$List$head(match.submatches),
 				_1: A2(_elm_community$list_extra$List_Extra$getAt, 1, match.submatches)
 			};
-			if (((((_p6.ctor === '_Tuple2') && (_p6._0.ctor === 'Just')) && (_p6._0._0.ctor === 'Just')) && (_p6._1.ctor === 'Just')) && (_p6._1._0.ctor === 'Just')) {
+			if (((((_p5.ctor === '_Tuple2') && (_p5._0.ctor === 'Just')) && (_p5._0._0.ctor === 'Just')) && (_p5._1.ctor === 'Just')) && (_p5._1._0.ctor === 'Just')) {
 				var parameters = A2(
 					_elm_lang$core$List$filter,
-					function (_p7) {
-						return !_elm_lang$core$String$isEmpty(_p7);
+					function (_p6) {
+						return !_elm_lang$core$String$isEmpty(_p6);
 					},
-					A2(_elm_lang$core$String$split, ' -> ', _p6._1._0._0));
+					A2(_elm_lang$core$String$split, ' -> ', _p5._1._0._0));
 				return _elm_lang$core$Maybe$Just(
-					{ctor: '_Tuple2', _0: _p6._0._0._0, _1: parameters});
+					{ctor: '_Tuple2', _0: _p5._0._0._0, _1: parameters});
 			} else {
 				return _elm_lang$core$Maybe$Nothing;
 			}
 		},
-		stringDeclarations);
+		A3(_elm_lang$core$Regex$find, _elm_lang$core$Regex$All, _iosphere$elm_i18n$Localized_Parser_Internal$regexStringDeclarations, source));
 };
 var _iosphere$elm_i18n$Localized_Parser_Internal$regexFindModuleName = _elm_lang$core$Regex$regex('module ([^\\s]*) exposing');
 var _iosphere$elm_i18n$Localized_Parser_Internal$findModuleName = function (source) {
@@ -8919,7 +9637,7 @@ var _iosphere$elm_i18n$Localized_Parser_Internal$findModuleName = function (sour
 		_elm_lang$core$Maybe$withDefault,
 		'unknown',
 		A2(
-			_iosphere$elm_i18n$Localized_Parser_Internal$submatchAt,
+			_iosphere$elm_i18n$Utils_Regex$submatchAt,
 			0,
 			_elm_lang$core$List$head(
 				A3(
@@ -8947,6 +9665,555 @@ var _iosphere$elm_i18n$Localized_Parser$parse = function (source) {
 		stringKeysAndParameters);
 };
 
+var _iosphere$elm_i18n$Localized_Writer$comment = function (string) {
+	return _elm_lang$core$String$isEmpty(string) ? '' : A2(
+		_elm_lang$core$Basics_ops['++'],
+		'{-| ',
+		A2(_elm_lang$core$Basics_ops['++'], string, '\n-}\n'));
+};
+var _iosphere$elm_i18n$Localized_Writer$signature = F2(
+	function (key, placeholders) {
+		var num = _elm_lang$core$List$length(placeholders);
+		var types = _elm_lang$core$Native_Utils.eq(num, 0) ? 'String' : A2(
+			_elm_lang$core$String$join,
+			' -> ',
+			A2(_elm_lang$core$List$repeat, num + 1, 'String'));
+		var parameters = _elm_lang$core$Native_Utils.eq(num, 0) ? '' : A2(
+			_elm_lang$core$Basics_ops['++'],
+			' ',
+			A2(_elm_lang$core$String$join, ' ', placeholders));
+		return A2(
+			_elm_lang$core$Basics_ops['++'],
+			A2(
+				_elm_lang$core$Basics_ops['++'],
+				key,
+				A2(
+					_elm_lang$core$Basics_ops['++'],
+					' : ',
+					A2(_elm_lang$core$Basics_ops['++'], types, '\n'))),
+			A2(
+				_elm_lang$core$Basics_ops['++'],
+				key,
+				A2(_elm_lang$core$Basics_ops['++'], parameters, ' =')));
+	});
+var _iosphere$elm_i18n$Localized_Writer$tab = '    ';
+var _iosphere$elm_i18n$Localized_Writer$functionStatic = function (staticLocalized) {
+	return A2(
+		_elm_lang$core$Basics_ops['++'],
+		_iosphere$elm_i18n$Localized_Writer$comment(staticLocalized.comment),
+		A2(
+			_elm_lang$core$Basics_ops['++'],
+			A2(
+				_iosphere$elm_i18n$Localized_Writer$signature,
+				staticLocalized.key,
+				{ctor: '[]'}),
+			A2(
+				_elm_lang$core$Basics_ops['++'],
+				'\n',
+				A2(
+					_elm_lang$core$Basics_ops['++'],
+					_iosphere$elm_i18n$Localized_Writer$tab,
+					_elm_lang$core$Basics$toString(staticLocalized.value)))));
+};
+var _iosphere$elm_i18n$Localized_Writer$formatComponentsImplementation = F2(
+	function (index, component) {
+		var prefix = _elm_lang$core$Native_Utils.eq(index, 0) ? _iosphere$elm_i18n$Localized_Writer$tab : A2(
+			_elm_lang$core$Basics_ops['++'],
+			_iosphere$elm_i18n$Localized_Writer$tab,
+			A2(_elm_lang$core$Basics_ops['++'], _iosphere$elm_i18n$Localized_Writer$tab, '++ '));
+		var _p0 = component;
+		if (_p0.ctor === 'FormatComponentStatic') {
+			return A2(
+				_elm_lang$core$Basics_ops['++'],
+				prefix,
+				_elm_lang$core$Basics$toString(_p0._0));
+		} else {
+			return A2(
+				_elm_lang$core$Basics_ops['++'],
+				prefix,
+				_elm_lang$core$String$trim(_p0._0));
+		}
+	});
+var _iosphere$elm_i18n$Localized_Writer$functionFormat = function (format) {
+	return A2(
+		_elm_lang$core$Basics_ops['++'],
+		_iosphere$elm_i18n$Localized_Writer$comment(format.comment),
+		A2(
+			_elm_lang$core$Basics_ops['++'],
+			A2(_iosphere$elm_i18n$Localized_Writer$signature, format.key, format.placeholders),
+			A2(
+				_elm_lang$core$Basics_ops['++'],
+				'\n',
+				A2(
+					_elm_lang$core$String$join,
+					'\n',
+					A2(_elm_lang$core$List$indexedMap, _iosphere$elm_i18n$Localized_Writer$formatComponentsImplementation, format.components)))));
+};
+var _iosphere$elm_i18n$Localized_Writer$functionFromElement = function (element) {
+	var _p1 = element;
+	if (_p1.ctor === 'ElementStatic') {
+		return _iosphere$elm_i18n$Localized_Writer$functionStatic(_p1._0);
+	} else {
+		return _iosphere$elm_i18n$Localized_Writer$functionFormat(_p1._0);
+	}
+};
+var _iosphere$elm_i18n$Localized_Writer$moduleImplementation = F2(
+	function (name, elements) {
+		return A2(
+			_elm_lang$core$Basics_ops['++'],
+			'module ',
+			A2(
+				_elm_lang$core$Basics_ops['++'],
+				name,
+				A2(
+					_elm_lang$core$Basics_ops['++'],
+					' exposing (..)\n\n{-| -}\n\n\n',
+					A3(
+						_elm_lang$core$Basics$flip,
+						_elm_lang$core$String$append,
+						'\n',
+						_elm_lang$core$String$trim(
+							A2(
+								_elm_lang$core$String$join,
+								'\n\n\n',
+								A2(_elm_lang$core$List$map, _iosphere$elm_i18n$Localized_Writer$functionFromElement, elements)))))));
+	});
+var _iosphere$elm_i18n$Localized_Writer$generate = _elm_lang$core$List$map(
+	function (_p2) {
+		var _p3 = _p2;
+		var _p4 = _p3._0;
+		return {
+			ctor: '_Tuple2',
+			_0: _p4,
+			_1: A2(_iosphere$elm_i18n$Localized_Writer$moduleImplementation, _p4, _p3._1)
+		};
+	});
+
+var _iosphere$elm_i18n$PO_Template$placeholderCommentPrefix = ' i18n: placeholders: ';
+var _iosphere$elm_i18n$PO_Template$placeholder = function (placeholder) {
+	return A2(
+		_elm_lang$core$Basics_ops['++'],
+		'%(',
+		A2(_elm_lang$core$Basics_ops['++'], placeholder, ')s'));
+};
+
+var _iosphere$elm_i18n$PO_Export$formatElement = function (list) {
+	return _elm_lang$core$Basics$toString(
+		A2(
+			_elm_lang$core$String$join,
+			'',
+			A2(
+				_elm_lang$core$List$map,
+				function (element) {
+					var _p0 = element;
+					if (_p0.ctor === 'FormatComponentPlaceholder') {
+						return _iosphere$elm_i18n$PO_Template$placeholder(_p0._0);
+					} else {
+						return _p0._0;
+					}
+				},
+				list)));
+};
+var _iosphere$elm_i18n$PO_Export$staticElement = function (value) {
+	return A2(
+		_elm_lang$core$Basics_ops['++'],
+		'msgstr ',
+		_elm_lang$core$Basics$toString(value));
+};
+var _iosphere$elm_i18n$PO_Export$identifier = F2(
+	function (modulename, key) {
+		return A2(
+			_elm_lang$core$Basics_ops['++'],
+			'msgid \"',
+			A2(
+				_elm_lang$core$Basics_ops['++'],
+				modulename,
+				A2(
+					_elm_lang$core$Basics_ops['++'],
+					'.',
+					A2(_elm_lang$core$Basics_ops['++'], key, '\"'))));
+	});
+var _iosphere$elm_i18n$PO_Export$commentLine = function (comment) {
+	return _elm_lang$core$String$trim(
+		A2(
+			_elm_lang$core$String$append,
+			'#. ',
+			A2(
+				_elm_lang$core$String$join,
+				'\n#. ',
+				A2(_elm_lang$core$String$split, '\n', comment))));
+};
+var _iosphere$elm_i18n$PO_Export$line = function (element) {
+	var _p1 = element;
+	if (_p1.ctor === 'ElementStatic') {
+		var _p2 = _p1._0;
+		return A2(
+			_elm_lang$core$Basics_ops['++'],
+			_iosphere$elm_i18n$PO_Export$commentLine(_p2.comment),
+			A2(
+				_elm_lang$core$Basics_ops['++'],
+				'\n',
+				A2(
+					_elm_lang$core$Basics_ops['++'],
+					A2(_iosphere$elm_i18n$PO_Export$identifier, _p2.moduleName, _p2.key),
+					A2(
+						_elm_lang$core$Basics_ops['++'],
+						'\n',
+						_iosphere$elm_i18n$PO_Export$staticElement(_p2.value)))));
+	} else {
+		var _p3 = _p1._0;
+		return A2(
+			_elm_lang$core$Basics_ops['++'],
+			_iosphere$elm_i18n$PO_Export$commentLine(_p3.comment),
+			A2(
+				_elm_lang$core$Basics_ops['++'],
+				'\n',
+				A2(
+					_elm_lang$core$Basics_ops['++'],
+					_iosphere$elm_i18n$PO_Export$commentLine(
+						A2(
+							_elm_lang$core$Basics_ops['++'],
+							'i18n: placeholders: ',
+							A2(_elm_lang$core$String$join, ' ', _p3.placeholders))),
+					A2(
+						_elm_lang$core$Basics_ops['++'],
+						'\n',
+						A2(
+							_elm_lang$core$Basics_ops['++'],
+							A2(_iosphere$elm_i18n$PO_Export$identifier, _p3.moduleName, _p3.key),
+							A2(
+								_elm_lang$core$Basics_ops['++'],
+								'\n',
+								A2(
+									_elm_lang$core$Basics_ops['++'],
+									'msgstr ',
+									_iosphere$elm_i18n$PO_Export$formatElement(_p3.components))))))));
+	}
+};
+var _iosphere$elm_i18n$PO_Export$generate = function (elements) {
+	return A3(
+		_elm_lang$core$Basics$flip,
+		_elm_lang$core$String$append,
+		'\n',
+		A2(
+			_elm_lang$core$String$join,
+			'\n\n',
+			A2(_elm_lang$core$List$map, _iosphere$elm_i18n$PO_Export$line, elements)));
+};
+
+var _iosphere$elm_i18n$PO_Import_Internal$regexMsgId = _elm_lang$core$Regex$regex('msgid \"([^\"]+)\\.([^\"]+)\"');
+var _iosphere$elm_i18n$PO_Import_Internal$regexForPlaceholder = _elm_lang$core$Regex$regex('%\\(([^\\)]+)\\)s');
+var _iosphere$elm_i18n$PO_Import_Internal$regexForValue = function (key) {
+	return _elm_lang$core$Regex$regex(
+		A2(
+			_elm_lang$core$Basics_ops['++'],
+			'msgid \"',
+			A2(_elm_lang$core$Basics_ops['++'], key, '\"\nmsgstr ((?:.+\\r?\\n)+(?=(\\r?\\n)?))')));
+};
+var _iosphere$elm_i18n$PO_Import_Internal$regexComments = function (key) {
+	return _elm_lang$core$Regex$regex(
+		A2(
+			_elm_lang$core$Basics_ops['++'],
+			'((?:#\\.[^\\n]*\\n)*)msgid ',
+			_elm_lang$core$Basics$toString(key)));
+};
+var _iosphere$elm_i18n$PO_Import_Internal$findPlaceholdersInStaticComponents = F2(
+	function (components, placeholders) {
+		findPlaceholdersInStaticComponents:
+		while (true) {
+			var _p0 = _elm_lang$core$List$head(placeholders);
+			if (_p0.ctor === 'Nothing') {
+				return components;
+			} else {
+				var _p3 = _p0._0;
+				var subcomps = _elm_lang$core$List$concat(
+					A2(
+						_elm_lang$core$List$map,
+						function (component) {
+							var _p1 = component;
+							if (_p1.ctor === 'FormatComponentPlaceholder') {
+								return {
+									ctor: '::',
+									_0: component,
+									_1: {ctor: '[]'}
+								};
+							} else {
+								var subComponents = A2(
+									_elm_lang$core$List$filter,
+									function (_p2) {
+										return !_iosphere$elm_i18n$Localized$isEmptyFormatComponent(_p2);
+									},
+									A2(
+										_elm_lang$core$List$intersperse,
+										_iosphere$elm_i18n$Localized$FormatComponentPlaceholder(_p3),
+										A2(
+											_elm_lang$core$List$map,
+											_iosphere$elm_i18n$Localized$FormatComponentStatic,
+											A2(
+												_elm_lang$core$String$split,
+												_iosphere$elm_i18n$PO_Template$placeholder(_p3),
+												_p1._0))));
+								return subComponents;
+							}
+						},
+						components));
+				var _v2 = subcomps,
+					_v3 = A2(
+					_elm_lang$core$Maybe$withDefault,
+					{ctor: '[]'},
+					_elm_lang$core$List$tail(placeholders));
+				components = _v2;
+				placeholders = _v3;
+				continue findPlaceholdersInStaticComponents;
+			}
+		}
+	});
+var _iosphere$elm_i18n$PO_Import_Internal$formatComponentsFromValue = F2(
+	function (value, placeholders) {
+		return A2(
+			_iosphere$elm_i18n$PO_Import_Internal$findPlaceholdersInStaticComponents,
+			{
+				ctor: '::',
+				_0: _iosphere$elm_i18n$Localized$FormatComponentStatic(value),
+				_1: {ctor: '[]'}
+			},
+			placeholders);
+	});
+var _iosphere$elm_i18n$PO_Import_Internal$placeholdersInValue = function (value) {
+	return A2(
+		_elm_lang$core$List$filterMap,
+		function (match) {
+			return A2(
+				_iosphere$elm_i18n$Utils_Regex$submatchAt,
+				0,
+				_elm_lang$core$Maybe$Just(match));
+		},
+		A3(_elm_lang$core$Regex$find, _elm_lang$core$Regex$All, _iosphere$elm_i18n$PO_Import_Internal$regexForPlaceholder, value));
+};
+var _iosphere$elm_i18n$PO_Import_Internal$placeholdersFromPoComment = function (poComment) {
+	var placeholdersPrefix = ' i18n: placeholders: ';
+	return A2(
+		_elm_lang$core$Maybe$withDefault,
+		{ctor: '[]'},
+		A2(
+			_elm_lang$core$Maybe$map,
+			_elm_lang$core$String$split(' '),
+			_elm_lang$core$List$head(
+				A2(
+					_elm_lang$core$List$filterMap,
+					function (line) {
+						return A2(_elm_lang$core$String$startsWith, placeholdersPrefix, line) ? _elm_lang$core$Maybe$Just(
+							_elm_lang$core$String$trim(
+								A2(
+									_elm_lang$core$String$dropLeft,
+									_elm_lang$core$String$length(placeholdersPrefix),
+									line))) : _elm_lang$core$Maybe$Nothing;
+					},
+					A2(
+						_elm_lang$core$String$split,
+						'#.',
+						_elm_lang$core$String$trim(poComment))))));
+};
+var _iosphere$elm_i18n$PO_Import_Internal$commentFromPoComment = function (poComment) {
+	return _elm_lang$core$String$trim(
+		A2(
+			_elm_lang$core$String$join,
+			'\n',
+			A2(
+				_elm_lang$core$List$filterMap,
+				function (line) {
+					return A2(_elm_lang$core$String$startsWith, ' i18n:', line) ? _elm_lang$core$Maybe$Nothing : _elm_lang$core$Maybe$Just(
+						_elm_lang$core$String$trim(line));
+				},
+				A2(
+					_elm_lang$core$String$split,
+					'#.',
+					_elm_lang$core$String$trim(poComment)))));
+};
+var _iosphere$elm_i18n$PO_Import_Internal$keys = function (poString) {
+	var matches = A3(_elm_lang$core$Regex$find, _elm_lang$core$Regex$All, _iosphere$elm_i18n$PO_Import_Internal$regexMsgId, poString);
+	var moduleAndKeys = A2(
+		_elm_lang$core$List$filterMap,
+		function (maybeTuple) {
+			var _p4 = maybeTuple;
+			if (((_p4.ctor === '_Tuple2') && (_p4._0.ctor === 'Just')) && (_p4._1.ctor === 'Just')) {
+				return _elm_lang$core$Maybe$Just(
+					{ctor: '_Tuple2', _0: _p4._0._0, _1: _p4._1._0});
+			} else {
+				return _elm_lang$core$Maybe$Nothing;
+			}
+		},
+		A2(
+			_elm_lang$core$List$map,
+			function (match) {
+				return {
+					ctor: '_Tuple2',
+					_0: A2(
+						_iosphere$elm_i18n$Utils_Regex$submatchAt,
+						0,
+						_elm_lang$core$Maybe$Just(match)),
+					_1: A2(
+						_iosphere$elm_i18n$Utils_Regex$submatchAt,
+						1,
+						_elm_lang$core$Maybe$Just(match))
+				};
+			},
+			matches));
+	var modules = _elm_lang$core$Set$toList(
+		_elm_lang$core$Set$fromList(
+			A2(_elm_lang$core$List$map, _elm_lang$core$Tuple$first, moduleAndKeys)));
+	return A2(
+		_elm_lang$core$List$map,
+		function (modulename) {
+			return A2(
+				F2(
+					function (v0, v1) {
+						return {ctor: '_Tuple2', _0: v0, _1: v1};
+					}),
+				modulename,
+				A2(
+					_elm_lang$core$List$filterMap,
+					function (_p5) {
+						var _p6 = _p5;
+						return _elm_lang$core$Native_Utils.eq(modulename, _p6._0) ? _elm_lang$core$Maybe$Just(_p6._1) : _elm_lang$core$Maybe$Nothing;
+					},
+					moduleAndKeys));
+		},
+		modules);
+};
+var _iosphere$elm_i18n$PO_Import_Internal$fullKey = F2(
+	function (moduleName, key) {
+		return A2(
+			_elm_lang$core$Basics_ops['++'],
+			moduleName,
+			A2(_elm_lang$core$Basics_ops['++'], '.', key));
+	});
+var _iosphere$elm_i18n$PO_Import_Internal$poComments = F3(
+	function (poString, moduleName, allKeys) {
+		return _elm_lang$core$Dict$fromList(
+			A2(
+				_elm_lang$core$List$map,
+				function (key) {
+					return A2(
+						F2(
+							function (v0, v1) {
+								return {ctor: '_Tuple2', _0: v0, _1: v1};
+							}),
+						key,
+						A2(
+							_elm_lang$core$Maybe$withDefault,
+							'',
+							A2(
+								_iosphere$elm_i18n$Utils_Regex$submatchAt,
+								0,
+								_elm_lang$core$List$head(
+									A3(
+										_elm_lang$core$Regex$find,
+										_elm_lang$core$Regex$AtMost(1),
+										_iosphere$elm_i18n$PO_Import_Internal$regexComments(
+											A2(_iosphere$elm_i18n$PO_Import_Internal$fullKey, moduleName, key)),
+										poString)))));
+				},
+				allKeys));
+	});
+var _iosphere$elm_i18n$PO_Import_Internal$values = F3(
+	function (poString, moduleName, allKeys) {
+		return _elm_lang$core$Dict$fromList(
+			A2(
+				_elm_lang$core$List$map,
+				function (key) {
+					return A2(
+						F2(
+							function (v0, v1) {
+								return {ctor: '_Tuple2', _0: v0, _1: v1};
+							}),
+						key,
+						_elm_lang$core$String$trim(
+							A2(
+								_elm_lang$core$Maybe$withDefault,
+								'',
+								A2(
+									_iosphere$elm_i18n$Utils_Regex$submatchAt,
+									0,
+									_elm_lang$core$List$head(
+										A3(
+											_elm_lang$core$Regex$find,
+											_elm_lang$core$Regex$AtMost(1),
+											_iosphere$elm_i18n$PO_Import_Internal$regexForValue(
+												A2(_iosphere$elm_i18n$PO_Import_Internal$fullKey, moduleName, key)),
+											poString))))));
+				},
+				allKeys));
+	});
+var _iosphere$elm_i18n$PO_Import_Internal$element = F5(
+	function (poString, moduleName, key, value, fullComment) {
+		var unquotedValue = _elm_community$string_extra$String_Extra$unquote(value);
+		var placeholdersC = _iosphere$elm_i18n$PO_Import_Internal$placeholdersFromPoComment(fullComment);
+		var placeholdersV = _iosphere$elm_i18n$PO_Import_Internal$placeholdersInValue(value);
+		var placeholders = (!_elm_lang$core$Native_Utils.eq(
+			placeholdersC,
+			{ctor: '[]'})) ? placeholdersC : ((!_elm_lang$core$Native_Utils.eq(
+			placeholdersV,
+			{ctor: '[]'})) ? A2(_elm_lang$core$Debug$log, 'Did not find placeholder list in comment using placeholders found in msgstr instead. Order might be wrong.', placeholdersV) : {ctor: '[]'});
+		var comment = _iosphere$elm_i18n$PO_Import_Internal$commentFromPoComment(fullComment);
+		return _elm_lang$core$List$isEmpty(placeholders) ? _iosphere$elm_i18n$Localized$ElementStatic(
+			{moduleName: moduleName, key: key, comment: comment, value: unquotedValue}) : _iosphere$elm_i18n$Localized$ElementFormat(
+			{
+				moduleName: moduleName,
+				key: key,
+				comment: comment,
+				placeholders: placeholders,
+				components: A2(_iosphere$elm_i18n$PO_Import_Internal$formatComponentsFromValue, unquotedValue, placeholders)
+			});
+	});
+
+var _iosphere$elm_i18n$PO_Import$generateModule = F3(
+	function (poString, moduleName, allKeys) {
+		var allValues = A3(_iosphere$elm_i18n$PO_Import_Internal$values, poString, moduleName, allKeys);
+		var valueForKey = function (key) {
+			return A2(
+				_elm_lang$core$Maybe$withDefault,
+				'',
+				A2(_elm_lang$core$Dict$get, key, allValues));
+		};
+		var fullComments = A3(_iosphere$elm_i18n$PO_Import_Internal$poComments, poString, moduleName, allKeys);
+		var fullCommentForKey = function (key) {
+			return A2(
+				_elm_lang$core$Maybe$withDefault,
+				'',
+				A2(_elm_lang$core$Dict$get, key, fullComments));
+		};
+		return A2(
+			_elm_lang$core$List$map,
+			function (key) {
+				return A5(
+					_iosphere$elm_i18n$PO_Import_Internal$element,
+					poString,
+					moduleName,
+					key,
+					valueForKey(key),
+					fullCommentForKey(key));
+			},
+			allKeys);
+	});
+var _iosphere$elm_i18n$PO_Import$generate = function (poString) {
+	var keysInModules = _iosphere$elm_i18n$PO_Import_Internal$keys(poString);
+	return A2(
+		_elm_lang$core$List$map,
+		function (_p0) {
+			var _p1 = _p0;
+			var _p2 = _p1._0;
+			return A2(
+				F2(
+					function (v0, v1) {
+						return {ctor: '_Tuple2', _0: v0, _1: v1};
+					}),
+				_p2,
+				A3(_iosphere$elm_i18n$PO_Import$generateModule, poString, _p2, _p1._1));
+		},
+		keysInModules);
+};
+
 var _iosphere$elm_i18n$Main$update = F2(
 	function (msg, model) {
 		return {ctor: '_Tuple2', _0: model, _1: _elm_lang$core$Platform_Cmd$none};
@@ -8956,12 +10223,21 @@ var _iosphere$elm_i18n$Main$exportResult = _elm_lang$core$Native_Platform.outgoi
 	function (v) {
 		return v;
 	});
-var _iosphere$elm_i18n$Main$operationExport = function (source) {
-	var csv = _iosphere$elm_i18n$CSV_Export$generate(
-		_elm_lang$core$List$concat(
-			A2(_elm_lang$core$List$map, _iosphere$elm_i18n$Localized_Parser$parse, source)));
-	return _iosphere$elm_i18n$Main$exportResult(csv);
-};
+var _iosphere$elm_i18n$Main$operationExport = F2(
+	function (source, format) {
+		var exportFunction = function () {
+			var _p0 = format;
+			if (_p0.ctor === 'CSV') {
+				return _iosphere$elm_i18n$CSV_Export$generate;
+			} else {
+				return _iosphere$elm_i18n$PO_Export$generate;
+			}
+		}();
+		var exportValue = exportFunction(
+			_elm_lang$core$List$concat(
+				A2(_elm_lang$core$List$map, _iosphere$elm_i18n$Localized_Parser$parse, source)));
+		return _iosphere$elm_i18n$Main$exportResult(exportValue);
+	});
 var _iosphere$elm_i18n$Main$importResult = _elm_lang$core$Native_Platform.outgoingPort(
 	'importResult',
 	function (v) {
@@ -8970,47 +10246,70 @@ var _iosphere$elm_i18n$Main$importResult = _elm_lang$core$Native_Platform.outgoi
 				return [v._0, v._1];
 			});
 	});
-var _iosphere$elm_i18n$Main$operationImport = function (csv) {
-	return _iosphere$elm_i18n$Main$importResult(
-		A2(
-			_elm_lang$core$List$map,
-			_elm_lang$core$Tuple$mapFirst(
-				function (_p0) {
-					return A2(
-						_elm_lang$core$String$join,
-						'/',
-						A2(_elm_lang$core$String$split, '.', _p0));
-				}),
-			_iosphere$elm_i18n$CSV_Import$generate(
-				A2(
-					_elm_lang$core$Maybe$withDefault,
-					'',
-					_elm_lang$core$List$head(csv)))));
-};
-var _iosphere$elm_i18n$Main$Model = {};
-var _iosphere$elm_i18n$Main$Flags = F2(
-	function (a, b) {
-		return {sources: a, operation: b};
+var _iosphere$elm_i18n$Main$operationImport = F2(
+	function (csv, format) {
+		var importFunction = function () {
+			var _p1 = format;
+			if (_p1.ctor === 'CSV') {
+				return _iosphere$elm_i18n$CSV_Import$generate;
+			} else {
+				return _iosphere$elm_i18n$PO_Import$generate;
+			}
+		}();
+		return _iosphere$elm_i18n$Main$importResult(
+			A2(
+				_elm_lang$core$List$map,
+				_elm_lang$core$Tuple$mapFirst(
+					function (_p2) {
+						return A2(
+							_elm_lang$core$String$join,
+							'/',
+							A2(_elm_lang$core$String$split, '.', _p2));
+					}),
+				_iosphere$elm_i18n$Localized_Writer$generate(
+					importFunction(
+						A2(
+							_elm_lang$core$Maybe$withDefault,
+							'',
+							_elm_lang$core$List$head(csv))))));
 	});
-var _iosphere$elm_i18n$Main$NoOp = {ctor: 'NoOp'};
-var _iosphere$elm_i18n$Main$Import = {ctor: 'Import'};
-var _iosphere$elm_i18n$Main$Export = {ctor: 'Export'};
-var _iosphere$elm_i18n$Main$operationFromString = function (operation) {
-	return _elm_lang$core$Native_Utils.eq(operation, 'import') ? _iosphere$elm_i18n$Main$Import : _iosphere$elm_i18n$Main$Export;
+var _iosphere$elm_i18n$Main$Model = {};
+var _iosphere$elm_i18n$Main$Flags = F3(
+	function (a, b, c) {
+		return {sources: a, operation: b, format: c};
+	});
+var _iosphere$elm_i18n$Main$PO = {ctor: 'PO'};
+var _iosphere$elm_i18n$Main$CSV = {ctor: 'CSV'};
+var _iosphere$elm_i18n$Main$formatFromString = function (maybeFormat) {
+	var formatString = A2(_elm_lang$core$Maybe$map, _elm_lang$core$String$toUpper, maybeFormat);
+	return _elm_lang$core$Native_Utils.eq(
+		formatString,
+		_elm_lang$core$Maybe$Just('PO')) ? _iosphere$elm_i18n$Main$PO : _iosphere$elm_i18n$Main$CSV;
 };
+var _iosphere$elm_i18n$Main$Import = function (a) {
+	return {ctor: 'Import', _0: a};
+};
+var _iosphere$elm_i18n$Main$Export = function (a) {
+	return {ctor: 'Export', _0: a};
+};
+var _iosphere$elm_i18n$Main$operationFromString = F2(
+	function (operation, formatString) {
+		return (_elm_lang$core$Native_Utils.eq(operation, 'import') ? _iosphere$elm_i18n$Main$Import : _iosphere$elm_i18n$Main$Export)(
+			_iosphere$elm_i18n$Main$formatFromString(formatString));
+	});
 var _iosphere$elm_i18n$Main$init = function (flags) {
-	var _p1 = _iosphere$elm_i18n$Main$operationFromString(flags.operation);
-	if (_p1.ctor === 'Export') {
+	var _p3 = A2(_iosphere$elm_i18n$Main$operationFromString, flags.operation, flags.format);
+	if (_p3.ctor === 'Export') {
 		return {
 			ctor: '_Tuple2',
 			_0: {},
-			_1: _iosphere$elm_i18n$Main$operationExport(flags.sources)
+			_1: A2(_iosphere$elm_i18n$Main$operationExport, flags.sources, _p3._0)
 		};
 	} else {
 		return {
 			ctor: '_Tuple2',
 			_0: {},
-			_1: _iosphere$elm_i18n$Main$operationImport(flags.sources)
+			_1: A2(_iosphere$elm_i18n$Main$operationImport, flags.sources, _p3._0)
 		};
 	}
 };
@@ -9022,19 +10321,36 @@ var _iosphere$elm_i18n$Main$main = _elm_lang$core$Platform$programWithFlags(
 	})(
 	A2(
 		_elm_lang$core$Json_Decode$andThen,
-		function (operation) {
+		function (format) {
 			return A2(
 				_elm_lang$core$Json_Decode$andThen,
-				function (sources) {
-					return _elm_lang$core$Json_Decode$succeed(
-						{operation: operation, sources: sources});
+				function (operation) {
+					return A2(
+						_elm_lang$core$Json_Decode$andThen,
+						function (sources) {
+							return _elm_lang$core$Json_Decode$succeed(
+								{format: format, operation: operation, sources: sources});
+						},
+						A2(
+							_elm_lang$core$Json_Decode$field,
+							'sources',
+							_elm_lang$core$Json_Decode$list(_elm_lang$core$Json_Decode$string)));
 				},
-				A2(
-					_elm_lang$core$Json_Decode$field,
-					'sources',
-					_elm_lang$core$Json_Decode$list(_elm_lang$core$Json_Decode$string)));
+				A2(_elm_lang$core$Json_Decode$field, 'operation', _elm_lang$core$Json_Decode$string));
 		},
-		A2(_elm_lang$core$Json_Decode$field, 'operation', _elm_lang$core$Json_Decode$string)));
+		A2(
+			_elm_lang$core$Json_Decode$field,
+			'format',
+			_elm_lang$core$Json_Decode$oneOf(
+				{
+					ctor: '::',
+					_0: _elm_lang$core$Json_Decode$null(_elm_lang$core$Maybe$Nothing),
+					_1: {
+						ctor: '::',
+						_0: A2(_elm_lang$core$Json_Decode$map, _elm_lang$core$Maybe$Just, _elm_lang$core$Json_Decode$string),
+						_1: {ctor: '[]'}
+					}
+				}))));
 
 var Elm = {};
 Elm['Main'] = Elm['Main'] || {};
