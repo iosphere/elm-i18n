@@ -10,6 +10,9 @@ lint-js: $(JS_FILES) ## Check javascript file for linter warnings
 lint-js-fix: $(JS_FILES) ## Check javascript file for linter warnings and fix if possible
 	./node_modules/eslint/bin/eslint.js $(JS_FILES) --fix
 
+build:
+	elm-make src/Main.elm --output build/elm.js
+
 dist:
 	elm-make src/Main.elm --output dist/elm.js
 

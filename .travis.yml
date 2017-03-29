@@ -17,5 +17,5 @@ install:
   - cd tests && elm-package install -y && cd ..
 
 script:
-  - make dist
+  - make build
   - make test
