@@ -96,7 +96,7 @@ Module,Key,Comment,Supported Placeholders,Translation
 elm-i18n-generator --format CSV -l De --import export.csv
 ```
 
-Result in import/De/Translation/Main.elm:
+Result in `import/De/Translation/Main.elm`:
 
 ```elm
 module Translation.Main exposing (..)
@@ -118,6 +118,33 @@ greetingWithName name =
     "Guten Tag, "
         ++ name
 ```
+
+### Export: Generate PO from Elm source:
+
+```bash
+elm-i18n-generator --format PO --root example/Translation --language De --export
+```
+
+Result:
+
+```po
+#. A short greeting.
+msgid "Translation.Main.greeting"
+msgstr "Hi"
+
+#. A personalized greeting. Use placeholder name for the user's name.
+#. i18n: placeholders: name
+msgid "Translation.Main.greetingWithName"
+msgstr "Guten Tag, %(name)s"
+```
+
+### Import: Generate Elm source code from PO
+
+```bash
+elm-i18n-generator --format PO --language De --import export.po
+```
+
+Results in the same `import/De/Translation/Main.elm` as in the CSV example.
 
 ## Advantages
 
