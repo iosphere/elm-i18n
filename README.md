@@ -76,7 +76,9 @@ This repository provides a few tools to extract string functions and constants
 from modules containing translations (where one language can consist of multiple
 modules, but each module only contains one language).
 
-### Export: Generate CSV from Elm source
+### CSV
+
+#### Export: Generate CSV from Elm source
 
 ```bash
 elm-i18n-generator --format CSV --root example/Translation --language De --export
@@ -90,7 +92,7 @@ Module,Key,Comment,Supported Placeholders,Translation
 "Translation.Main","greetingWithName","A personalized greeting. Use placeholder name for the user's name.","name","Guten Tag, {{name}}"
 ```
 
-### Import: Generate Elm source code from CSV
+#### Import: Generate Elm source code from CSV
 
 ```bash
 elm-i18n-generator --format CSV -l De --import export.csv
@@ -119,7 +121,12 @@ greetingWithName name =
         ++ name
 ```
 
-### Export: Generate PO from Elm source:
+### PO
+
+For more information about the PO file format visit:
+https://www.gnu.org/savannah-checkouts/gnu/gettext/manual/html_node/PO-Files.html
+
+#### Export: Generate PO from Elm source:
 
 ```bash
 elm-i18n-generator --format PO --root example/Translation --language De --export
@@ -138,13 +145,14 @@ msgid "Translation.Main.greetingWithName"
 msgstr "Guten Tag, %(name)s"
 ```
 
-### Import: Generate Elm source code from PO
+#### Import: Generate Elm source code from PO
 
 ```bash
 elm-i18n-generator --format PO --language De --import export.po
 ```
 
-Results in the same `import/De/Translation/Main.elm` as in the CSV example.
+Results in the same `import/De/Translation/Main.elm`
+as in the [CSV example](#import-generate-elm-source-code-from-csv).
 
 ## Advantages
 
