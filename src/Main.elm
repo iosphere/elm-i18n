@@ -20,10 +20,6 @@ type alias Model =
     {}
 
 
-type Msg
-    = NoOp
-
-
 type Format
     = CSV
     | PO
@@ -50,11 +46,15 @@ operationFromString operation formatString =
 
 
 formatFromString : Maybe String -> Format
-formatFromString formatString =
-    if formatString == Just "PO" then
-        PO
-    else
-        CSV
+formatFromString maybeFormat =
+    let
+        formatString =
+            Maybe.map String.toUpper maybeFormat
+    in
+        if formatString == Just "PO" then
+            PO
+        else
+            CSV
 
 
 type alias Flags =
@@ -67,12 +67,12 @@ type alias Flags =
 {-| A worker program providing and interface for the Import and Export functions
 in the CSV and PO submodules.
 -}
-main : Program Flags Model Msg
+main : Program Flags Model Never
 main =
     programWithFlags { init = init, update = update, subscriptions = always Sub.none }
 
 
-init : Flags -> ( Model, Cmd Msg )
+init : Flags -> ( Model, Cmd Never )
 init flags =
     case operationFromString flags.operation flags.format of
         Export format ->
@@ -82,7 +82,7 @@ init flags =
             ( {}, operationImport flags.sources format )
 
 
-operationExport : List String -> Format -> Cmd Msg
+operationExport : List String -> Format -> Cmd Never
 operationExport source format =
     let
         exportFunction =
@@ -101,7 +101,7 @@ operationExport source format =
         exportResult exportValue
 
 
-operationImport : List String -> Format -> Cmd Msg
+operationImport : List String -> Format -> Cmd Never
 operationImport csv format =
     let
         importFunction =
@@ -120,6 +120,6 @@ operationImport csv format =
             |> importResult
 
 
-update : Msg -> Model -> ( Model, Cmd Msg )
+update : Never -> Model -> ( Model, Cmd Never )
 update msg model =
     ( model, Cmd.none )
