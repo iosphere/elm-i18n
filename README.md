@@ -1,6 +1,6 @@
 # i18n localization for Elm as a pre-build phase
 
-[![Travis](https://travis-ci.org/iosphere/elm-i18n.svg)](https://travis-ci.org/iosphere/elm-i18n)
+[![Travis](https://travis-ci.org/iosphere/elm-i18n.svg?branch=master)](https://travis-ci.org/iosphere/elm-i18n)
 [![npm version](https://badge.fury.io/js/elm-i18n.svg)](https://badge.fury.io/js/elm-i18n)
 
 elm-i18n provides tools and a concept for localizing elm apps. The idea is to
