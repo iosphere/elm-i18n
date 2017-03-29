@@ -3,12 +3,13 @@
 "use strict";
 
 const argv = require("yargs")
-    .option("language", {alias: "l", describe: "The language code of the current operation. This should match the subdirectory of the language in root."})
     .option("export", {alias: "e", describe: "If set all modules for the requested language found in root will be parsed and a export.csv will be generated."})
-    .option("exportOutput", {default: "export.csv", describe: "The file path to which the export should be written."})
-    .option("root", {default: "Translation", describe: "The root to the translation modules (only needed when using the export flag). This script expects this directory to contain a subdirectory for each language."})
+    .option("exportOutput", {default: "export", describe: "The file path to which the export should be written."})
+    .option("format", {default: "csv", describe: "The format of the import/export operation. Supported formats are CSV and PO (case-insensitive)."})
     .option("import", {alias: "i", describe: "A CSV file to be imported and to generate code from. Generate elm files will be placed in <importOutput>."})
     .option("importOutput", {default: "import", describe: "The base directory to which the generated code should be written. Subdirectories will be created per language and submodule."})
+    .option("language", {alias: "l", describe: "The language code of the current operation. This should match the subdirectory of the language in root."})
+    .option("root", {default: "Translation", describe: "The root to the translation modules (only needed when using the export flag). This script expects this directory to contain a subdirectory for each language."})
     .demand("language")
     .boolean(["export"])
     .help()
@@ -21,6 +22,10 @@ const glob = require("glob");
 if (!argv.export && !argv.import) {
     console.error("Please provide import or export option");
     process.exit(403);
+}
+
+if (argv.exportOutput == "export") {
+    argv.exportOutput = argv.exportOutput + "." + argv.format.toLowerCase();
 }
 
 const currentDir = process.cwd();
@@ -43,6 +48,7 @@ if (argv.export) {
     let worker = Elm.Main.worker({
         "sources": fileContents,
         "operation": "export",
+        "format": argv.format,
     });
 
     // subscribe to the port to handle completion callback
@@ -56,18 +62,19 @@ if (argv.export) {
         process.exit(403);
     }
 
-    let pathToCSV = path.join(currentDir, argv.import);
-    if (!fs.existsSync(pathToCSV)) {
-        console.error("Could not find CSV file at", pathToCSV);
+    let pathToImportFile = path.join(currentDir, argv.import);
+    if (!fs.existsSync(pathToImportFile)) {
+        console.error("Could not find " + argv.format + " file at", pathToImportFile);
         process.exit(403);
     }
 
-    let data = fs.readFileSync(pathToCSV);
+    let data = fs.readFileSync(pathToImportFile);
     let csvContent = data.toString();
 
     let worker = Elm.Main.worker({
         "sources": [csvContent],
         "operation": "import",
+        "format": argv.format,
     });
 
     worker.ports.importResult.subscribe(function(resultString) {

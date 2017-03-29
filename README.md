@@ -1,6 +1,6 @@
 # i18n localization for Elm as a pre-build phase
 
-[![Travis](https://travis-ci.org/iosphere/elm-i18n.svg)](https://travis-ci.org/iosphere/elm-i18n)
+[![Travis](https://travis-ci.org/iosphere/elm-i18n.svg?branch=master)](https://travis-ci.org/iosphere/elm-i18n)
 [![npm version](https://badge.fury.io/js/elm-i18n.svg)](https://badge.fury.io/js/elm-i18n)
 
 elm-i18n provides tools and a concept for localizing elm apps. The idea is to
@@ -13,8 +13,21 @@ compiling the elm app. The result is a localized compiled version of your app.**
 When repeating this process for multiple languages the compuler re-uses the
 cache and only the translation specific modules are cleared from the cache.
 
-Suggested project file structure (*note that the language identifier is excluded
-from the Translation module names*):
+## Features:
+
+* Switch languages:
+    * Switch the language of your elm app before building
+    * Easily build multiple localized version of your app
+*   `CSV <-> ELM <-> PO`
+    * Generate **CSV** and **PO** files from your localization module's elm code
+    * Generate your localization module's elm code from CSV and PO files
+
+
+
+## Suggested project file structure
+
+Note that the language identifier is only included in the directory name and
+excluded from the Translation module names:
 
 ```
 project
@@ -66,7 +79,7 @@ modules, but each module only contains one language).
 ### Export: Generate CSV from Elm source
 
 ```bash
-elm-i18n-generator --root example/Translation --language De --export
+elm-i18n-generator --format CSV --root example/Translation --language De --export
 ```
 
 Result:
@@ -80,10 +93,10 @@ Module,Key,Comment,Supported Placeholders,Translation
 ### Import: Generate Elm source code from CSV
 
 ```bash
-elm-i18n-generator -l De --import export.csv
+elm-i18n-generator --format CSV -l De --import export.csv
 ```
 
-Result in import/De/Translation/Main.elm:
+Result in `import/De/Translation/Main.elm`:
 
 ```elm
 module Translation.Main exposing (..)
@@ -105,6 +118,33 @@ greetingWithName name =
     "Guten Tag, "
         ++ name
 ```
+
+### Export: Generate PO from Elm source:
+
+```bash
+elm-i18n-generator --format PO --root example/Translation --language De --export
+```
+
+Result:
+
+```po
+#. A short greeting.
+msgid "Translation.Main.greeting"
+msgstr "Hi"
+
+#. A personalized greeting. Use placeholder name for the user's name.
+#. i18n: placeholders: name
+msgid "Translation.Main.greetingWithName"
+msgstr "Guten Tag, %(name)s"
+```
+
+### Import: Generate Elm source code from PO
+
+```bash
+elm-i18n-generator --format PO --language De --import export.po
+```
+
+Results in the same `import/De/Translation/Main.elm` as in the CSV example.
 
 ## Advantages
 

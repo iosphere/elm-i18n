@@ -4,6 +4,8 @@ import Test exposing (Test)
 import Tests.CSV.Export
 import Tests.CSV.Import
 import Tests.Localized
+import Tests.PO.Export
+import Tests.PO.Import
 
 
 all : Test
@@ -12,4 +14,6 @@ all =
         [ Tests.CSV.Export.all
         , Tests.CSV.Import.all
         , Tests.Localized.all
+        , Tests.PO.Export.all
+        , Tests.PO.Import.all
         ]

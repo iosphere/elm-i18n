@@ -1,17 +1,30 @@
 module Tests.CSV.Import exposing (..)
 
-import Localized.Parser as Localized
 import CSV.Export as Export
 import CSV.Import as CSV
 import CSV.Template
 import Expect
+import Localized
+import Localized.Parser as Localized
+import Localized.Writer as Writer
 import Test exposing (..)
 
 
 all : Test
 all =
     describe "Tests.CSV.Import"
-        [ testImport, testFullCircle ]
+        [ testGenerate
+        , testImport
+        , testFullCircle
+        ]
+
+
+testGenerate : Test
+testGenerate =
+    test "testGenerate" <|
+        \() ->
+            CSV.generate inputCSV
+                |> Expect.equal [ ( "Translation.Test", elements ) ]
 
 
 testImport : Test
@@ -19,6 +32,7 @@ testImport =
     test "testImport" <|
         \() ->
             CSV.generate inputCSV
+                |> Writer.generate
                 |> Expect.equal [ ( "Translation.Test", expectedSource ) ]
 
 
@@ -29,6 +43,7 @@ testFullCircle =
             Localized.parse expectedSource
                 |> Export.generate
                 |> CSV.generate
+                |> Writer.generate
                 |> Expect.equal [ ( "Translation.Test", expectedSource ) ]
 
 
@@ -60,3 +75,24 @@ myFormat label =
     "Prefix: "
         ++ label
 """
+
+
+elements : List Localized.Element
+elements =
+    [ Localized.ElementStatic
+        { moduleName = "Translation.Test"
+        , key = "myString"
+        , comment = "My comment"
+        , value = "Value"
+        }
+    , Localized.ElementFormat
+        { moduleName = "Translation.Test"
+        , key = "myFormat"
+        , comment = ""
+        , placeholders = [ "label" ]
+        , components =
+            [ Localized.FormatComponentStatic "Prefix: "
+            , Localized.FormatComponentPlaceholder "label"
+            ]
+        }
+    ]

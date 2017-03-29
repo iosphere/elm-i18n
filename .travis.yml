@@ -14,7 +14,8 @@ install:
   - npm install -g elm
   - npm install
   - elm-package install -y
+  - cd tests && elm-package install -y && cd ..
 
 script:
-  - make dist
+  - make build
   - make test

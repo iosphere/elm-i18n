@@ -1,6 +1,7 @@
 .PHONY: help
 
 JS_FILES = index.js
+ELM_FILES = $(shell find "src" -type f -name '*.elm')
 
 lint-js: $(JS_FILES) ## Check javascript file for linter warnings
 	@mkdir -p linter-logs
@@ -10,8 +11,12 @@ lint-js: $(JS_FILES) ## Check javascript file for linter warnings
 lint-js-fix: $(JS_FILES) ## Check javascript file for linter warnings and fix if possible
 	./node_modules/eslint/bin/eslint.js $(JS_FILES) --fix
 
-dist:
+build: $(ELM_FILES)
+	elm-make src/Main.elm --output build/elm.js
+
+dist: $(ELM_FILES)
 	elm-make src/Main.elm --output dist/elm.js
+
 
 test: ## Run tests
 	./node_modules/elm-test/bin/elm-test

@@ -30,3 +30,13 @@ type alias Format =
 type FormatComponent
     = FormatComponentStatic String
     | FormatComponentPlaceholder String
+
+
+isEmptyFormatComponent : FormatComponent -> Bool
+isEmptyFormatComponent comp =
+    case comp of
+        FormatComponentStatic string ->
+            String.isEmpty string
+
+        FormatComponentPlaceholder string ->
+            String.isEmpty string
