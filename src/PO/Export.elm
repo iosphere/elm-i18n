@@ -1,6 +1,7 @@
-module PO.Export exposing (..)
+module PO.Export exposing (generate)
 
 import Localized
+import PO.Template
 
 
 generate : List Localized.Element -> String
@@ -55,7 +56,7 @@ formatElement list =
             (\element ->
                 case element of
                     Localized.FormatComponentPlaceholder placeholder ->
-                        "%(" ++ placeholder ++ ")s"
+                        PO.Template.placeholder placeholder
 
                     Localized.FormatComponentStatic string ->
                         string

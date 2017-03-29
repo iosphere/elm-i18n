@@ -3,6 +3,7 @@ module Tests.PO.Import exposing (..)
 import Expect
 import Localized
 import PO.Import as PO
+import PO.Import.Internal as PO
 import Test exposing (..)
 
 
