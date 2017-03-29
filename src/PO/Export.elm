@@ -1,9 +1,24 @@
 module PO.Export exposing (generate)
 
+{-| The PO export generates PO strings from a list of localized elements
+(Localized.Element). For more information about the PO Format visit:
+https://www.gnu.org/savannah-checkouts/gnu/gettext/manual/html_node/PO-Files.html
+
+@docs generate
+-}
+
 import Localized
 import PO.Template
 
 
+{-| Generate a PO string from a list of localized elements (Localized.Element).
+You will usually have generated that list from a Localized.Parser that parsed
+Elm source code into a list of localized elements:
+
+    Localized.Parser.parse source
+        |> PO.Export.generate
+
+-}
 generate : List Localized.Element -> String
 generate elements =
     List.map line elements

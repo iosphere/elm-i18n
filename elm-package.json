@@ -7,7 +7,11 @@
         "src"
     ],
     "exposed-modules": [
-        "Main"
+        "CSV.Export",
+        "CSV.Import",
+        "Main",
+        "PO.Export",
+        "PO.Import"
     ],
     "dependencies": {
         "elm-community/list-extra": "6.0.0 <= v < 7.0.0",
