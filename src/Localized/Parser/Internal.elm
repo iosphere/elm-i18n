@@ -75,7 +75,7 @@ findStaticElementForKey moduleName source key =
     in
         case maybeValue of
             Just value ->
-                Localized.Static moduleName key (findComment source key) value
+                Localized.Static (Localized.Meta moduleName key (findComment source key)) value
                     |> Localized.ElementStatic
                     |> Just
 
@@ -117,7 +117,7 @@ findFormatElementForKey moduleName source key =
                 Nothing
 
             placeholderList ->
-                Localized.Format moduleName key (findComment source key) placeholderList content
+                Localized.Format (Localized.Meta moduleName key (findComment source key)) placeholderList content
                     |> Localized.ElementFormat
                     |> Just
 

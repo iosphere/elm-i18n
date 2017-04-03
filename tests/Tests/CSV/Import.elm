@@ -80,15 +80,19 @@ myFormat label =
 elements : List Localized.Element
 elements =
     [ Localized.ElementStatic
-        { moduleName = "Translation.Test"
-        , key = "myString"
-        , comment = "My comment"
+        { meta =
+            { moduleName = "Translation.Test"
+            , key = "myString"
+            , comment = "My comment"
+            }
         , value = "Value"
         }
     , Localized.ElementFormat
-        { moduleName = "Translation.Test"
-        , key = "myFormat"
-        , comment = ""
+        { meta =
+            { moduleName = "Translation.Test"
+            , key = "myFormat"
+            , comment = ""
+            }
         , placeholders = [ "label" ]
         , components =
             [ Localized.FormatComponentStatic "Prefix: "

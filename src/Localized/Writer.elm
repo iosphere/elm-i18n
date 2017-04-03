@@ -1,8 +1,18 @@
 module Localized.Writer exposing (generate)
 
+{-| This is the inverse of the Localized.Parser. The Writer takes a list of
+module names and associated localized elements and returns the source code for
+elm modules implementing the localized elements.
+
+@docs generate
+-}
+
 import Localized
 
 
+{-| Generate elm-source code for a list of modules and their associated
+localized elements.
+-}
 generate : List ( String, List Localized.Element ) -> List ( String, String )
 generate =
     List.map
@@ -40,15 +50,15 @@ tab =
 
 functionStatic : Localized.Static -> String
 functionStatic staticLocalized =
-    comment staticLocalized.comment
-        ++ signature staticLocalized.key []
+    comment staticLocalized.meta.comment
+        ++ signature staticLocalized.meta.key []
         ++ ("\n" ++ tab ++ toString staticLocalized.value)
 
 
 functionFormat : Localized.Format -> String
 functionFormat format =
-    comment format.comment
-        ++ signature format.key format.placeholders
+    comment format.meta.comment
+        ++ signature format.meta.key format.placeholders
         ++ "\n"
         ++ (List.indexedMap formatComponentsImplementation format.components
                 |> String.join "\n"

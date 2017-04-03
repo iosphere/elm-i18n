@@ -1,4 +1,4 @@
-module PO.Template exposing (placeholder)
+module PO.Template exposing (placeholder, placeholderCommentPrefix)
 
 
 placeholder : String -> String
@@ -8,4 +8,4 @@ placeholder placeholder =
 
 placeholderCommentPrefix : String
 placeholderCommentPrefix =
-    " i18n: placeholders: "
+    "i18n: placeholders: "

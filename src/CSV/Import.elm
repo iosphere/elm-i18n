@@ -1,6 +1,6 @@
 module CSV.Import exposing (generate)
 
-{-| Generates a list of localized elements for multiple modules, from a CSV
+{-| Generates a list of localized elements for multiple modules from a CSV
 string. The CSV string is expected to have the following columns:
 modulename, key, comment, placeholders, value
 
@@ -18,7 +18,7 @@ import Localized
 import Set
 
 
-{-| Generates localized elements for multiple modules, from a CSV
+{-| Generates localized elements for multiple modules from a CSV
 string. The CSV string is expected to have the following columns:
 modulename, key, comment, placeholders, value
 
@@ -151,9 +151,11 @@ formatElement modulename key comment placeholders value =
                 |> List.concat
     in
         Localized.ElementFormat
-            { moduleName = modulename
-            , key = key
-            , comment = comment
+            { meta =
+                { moduleName = modulename
+                , key = key
+                , comment = comment
+                }
             , placeholders = placeholders
             , components = components
             }
@@ -162,8 +164,10 @@ formatElement modulename key comment placeholders value =
 staticElement : String -> String -> String -> String -> Localized.Element
 staticElement modulename key comment value =
     Localized.ElementStatic
-        { moduleName = modulename
-        , key = key
-        , comment = comment
+        { meta =
+            { moduleName = modulename
+            , key = key
+            , comment = comment
+            }
         , value = value
         }

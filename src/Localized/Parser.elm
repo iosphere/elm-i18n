@@ -1,10 +1,16 @@
 module Localized.Parser exposing (parse)
 
+{-| The parser parses elm code (one module) into a list of localized elements.
+
+@docs parse
+-}
+
 import Localized
 import Localized.Parser.Internal exposing (..)
 
 
-{-| Parses an elm source code string and returns a list of localized elements.
+{-| Parses the source code of an elm module and
+returns a list of localized elements.
 -}
 parse : String -> List Localized.Element
 parse source =

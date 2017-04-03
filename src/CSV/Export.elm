@@ -35,10 +35,10 @@ line : Localized.Element -> List String
 line element =
     case element of
         Localized.ElementStatic static ->
-            [ static.moduleName, static.key, static.comment, "", static.value ]
+            [ static.meta.moduleName, static.meta.key, static.meta.comment, "", static.value ]
 
         Localized.ElementFormat format ->
-            [ format.moduleName, format.key, format.comment, String.join " " format.placeholders, formatString format.components ]
+            [ format.meta.moduleName, format.meta.key, format.meta.comment, String.join " " format.placeholders, formatString format.components ]
 
 
 formatString : List Localized.FormatComponent -> String

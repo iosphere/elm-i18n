@@ -1,4 +1,12 @@
-module PO.Import.Internal exposing (..)
+module PO.Import.Internal
+    exposing
+        ( element
+        , keys
+        , placeholdersFromPoComment
+        , placeholdersInValue
+        , poComments
+        , values
+        )
 
 import Dict exposing (Dict)
 import Localized exposing (FormatComponent)
@@ -9,8 +17,8 @@ import Utils.Regex
 import PO.Template
 
 
-element : String -> String -> String -> String -> String -> Localized.Element
-element poString moduleName key value fullComment =
+element : String -> String -> String -> String -> Localized.Element
+element moduleName key value fullComment =
     let
         comment =
             commentFromPoComment fullComment
@@ -33,19 +41,21 @@ element poString moduleName key value fullComment =
 
         unquotedValue =
             String.unquote value
+
+        meta =
+            { moduleName = moduleName
+            , key = key
+            , comment = comment
+            }
     in
         if List.isEmpty placeholders then
             Localized.ElementStatic
-                { moduleName = moduleName
-                , key = key
-                , comment = comment
+                { meta = meta
                 , value = unquotedValue
                 }
         else
             Localized.ElementFormat
-                { moduleName = moduleName
-                , key = key
-                , comment = comment
+                { meta = meta
                 , placeholders = placeholders
                 , components = formatComponentsFromValue unquotedValue placeholders
                 }
@@ -60,6 +70,9 @@ fullKey moduleName key =
     moduleName ++ "." ++ key
 
 
+{-| Extract a list of all localization keys per module from a PO string file's
+contents.
+-}
 keys : String -> List ( String, List String )
 keys poString =
     let
@@ -102,6 +115,10 @@ keys poString =
 ---- COMMENTS
 
 
+{-| Extract a the full comments (including the leading `#`) from a PO string
+file, for all given keys in a module. The dict will contain use the localized
+key for key and the value will be the multiline comment.
+-}
 poComments : String -> String -> List String -> Dict String String
 poComments poString moduleName allKeys =
     allKeys
@@ -131,11 +148,17 @@ commentFromPoComment poComment =
         |> String.trim
 
 
+{-| Extracts placeholder definitions from a PO comment. This is mainly supported
+for our own exports where we write placeholders into the comment using the
+following format:
+
+    #. i18n: placeholders: placeh1, placeh2
+-}
 placeholdersFromPoComment : String -> List String
 placeholdersFromPoComment poComment =
     let
         placeholdersPrefix =
-            " i18n: placeholders: "
+            " " ++ PO.Template.placeholderCommentPrefix
     in
         String.trim poComment
             |> String.split "#."
@@ -158,6 +181,9 @@ placeholdersFromPoComment poComment =
 ---- VALUES
 
 
+{-| Extract all values for a module and a given list of keys from a PO file.
+The dict will reference the value by its localization key.
+-}
 values : String -> String -> List String -> Dict String String
 values poString moduleName allKeys =
     allKeys
@@ -173,6 +199,10 @@ values poString moduleName allKeys =
         |> Dict.fromList
 
 
+{-| Finds all placeholders in a localized value. This is useful if the
+placeholder definition is missing form the comment, but ma lead to issues with
+sortine. For this reason, we only use this as a fallback an log an error.
+-}
 placeholdersInValue : String -> List String
 placeholdersInValue value =
     Regex.find Regex.All regexForPlaceholder value

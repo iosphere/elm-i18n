@@ -30,18 +30,18 @@ line : Localized.Element -> String
 line element =
     case element of
         Localized.ElementStatic static ->
-            commentLine static.comment
+            commentLine static.meta.comment
                 ++ "\n"
-                ++ identifier static.moduleName static.key
+                ++ identifier static.meta.moduleName static.meta.key
                 ++ "\n"
                 ++ staticElement static.value
 
         Localized.ElementFormat format ->
-            commentLine format.comment
+            commentLine format.meta.comment
                 ++ "\n"
-                ++ commentLine ("i18n: placeholders: " ++ String.join " " format.placeholders)
+                ++ commentLine (PO.Template.placeholderCommentPrefix ++ String.join " " format.placeholders)
                 ++ "\n"
-                ++ identifier format.moduleName format.key
+                ++ identifier format.meta.moduleName format.meta.key
                 ++ "\n"
                 ++ ("msgstr " ++ formatElement format.components)
 

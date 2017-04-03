@@ -9090,13 +9090,17 @@ var _iosphere$elm_i18n$Localized$isEmptyFormatComponent = function (comp) {
 		return _elm_lang$core$String$isEmpty(_p0._0);
 	}
 };
-var _iosphere$elm_i18n$Localized$Static = F4(
-	function (a, b, c, d) {
-		return {moduleName: a, key: b, comment: c, value: d};
+var _iosphere$elm_i18n$Localized$Meta = F3(
+	function (a, b, c) {
+		return {moduleName: a, key: b, comment: c};
 	});
-var _iosphere$elm_i18n$Localized$Format = F5(
-	function (a, b, c, d, e) {
-		return {moduleName: a, key: b, comment: c, placeholders: d, components: e};
+var _iosphere$elm_i18n$Localized$Static = F2(
+	function (a, b) {
+		return {meta: a, value: b};
+	});
+var _iosphere$elm_i18n$Localized$Format = F3(
+	function (a, b, c) {
+		return {meta: a, placeholders: b, components: c};
 	});
 var _iosphere$elm_i18n$Localized$ElementFormat = function (a) {
 	return {ctor: 'ElementFormat', _0: a};
@@ -9133,13 +9137,13 @@ var _iosphere$elm_i18n$CSV_Export$line = function (element) {
 		var _p2 = _p1._0;
 		return {
 			ctor: '::',
-			_0: _p2.moduleName,
+			_0: _p2.meta.moduleName,
 			_1: {
 				ctor: '::',
-				_0: _p2.key,
+				_0: _p2.meta.key,
 				_1: {
 					ctor: '::',
-					_0: _p2.comment,
+					_0: _p2.meta.comment,
 					_1: {
 						ctor: '::',
 						_0: '',
@@ -9156,13 +9160,13 @@ var _iosphere$elm_i18n$CSV_Export$line = function (element) {
 		var _p3 = _p1._0;
 		return {
 			ctor: '::',
-			_0: _p3.moduleName,
+			_0: _p3.meta.moduleName,
 			_1: {
 				ctor: '::',
-				_0: _p3.key,
+				_0: _p3.meta.key,
 				_1: {
 					ctor: '::',
-					_0: _p3.comment,
+					_0: _p3.meta.comment,
 					_1: {
 						ctor: '::',
 						_0: A2(_elm_lang$core$String$join, ' ', _p3.placeholders),
@@ -9350,7 +9354,10 @@ var _periodic$elm_csv$Csv$parse = function (_p2) {
 var _iosphere$elm_i18n$CSV_Import$staticElement = F4(
 	function (modulename, key, comment, value) {
 		return _iosphere$elm_i18n$Localized$ElementStatic(
-			{moduleName: modulename, key: key, comment: comment, value: value});
+			{
+				meta: {moduleName: modulename, key: key, comment: comment},
+				value: value
+			});
 	});
 var _iosphere$elm_i18n$CSV_Import$formatElement = F5(
 	function (modulename, key, comment, placeholders, value) {
@@ -9380,7 +9387,11 @@ var _iosphere$elm_i18n$CSV_Import$formatElement = F5(
 				},
 				A2(_elm_lang$core$String$split, '{{', value)));
 		return _iosphere$elm_i18n$Localized$ElementFormat(
-			{moduleName: modulename, key: key, comment: comment, placeholders: placeholders, components: components});
+			{
+				meta: {moduleName: modulename, key: key, comment: comment},
+				placeholders: placeholders,
+				components: components
+			});
 	});
 var _iosphere$elm_i18n$CSV_Import$code = F5(
 	function (modulename, key, comment, placeholderString, value) {
@@ -9568,11 +9579,13 @@ var _iosphere$elm_i18n$Localized_Parser_Internal$findFormatElementForKey = F3(
 		} else {
 			return _elm_lang$core$Maybe$Just(
 				_iosphere$elm_i18n$Localized$ElementFormat(
-					A5(
+					A3(
 						_iosphere$elm_i18n$Localized$Format,
-						moduleName,
-						key,
-						A2(_iosphere$elm_i18n$Localized_Parser_Internal$findComment, source, key),
+						A3(
+							_iosphere$elm_i18n$Localized$Meta,
+							moduleName,
+							key,
+							A2(_iosphere$elm_i18n$Localized_Parser_Internal$findComment, source, key)),
 						_p3,
 						content)));
 		}
@@ -9596,11 +9609,13 @@ var _iosphere$elm_i18n$Localized_Parser_Internal$findStaticElementForKey = F3(
 		if (_p4.ctor === 'Just') {
 			return _elm_lang$core$Maybe$Just(
 				_iosphere$elm_i18n$Localized$ElementStatic(
-					A4(
+					A2(
 						_iosphere$elm_i18n$Localized$Static,
-						moduleName,
-						key,
-						A2(_iosphere$elm_i18n$Localized_Parser_Internal$findComment, source, key),
+						A3(
+							_iosphere$elm_i18n$Localized$Meta,
+							moduleName,
+							key,
+							A2(_iosphere$elm_i18n$Localized_Parser_Internal$findComment, source, key)),
 						_p4._0)));
 		} else {
 			return _elm_lang$core$Maybe$Nothing;
@@ -9700,12 +9715,12 @@ var _iosphere$elm_i18n$Localized_Writer$tab = '    ';
 var _iosphere$elm_i18n$Localized_Writer$functionStatic = function (staticLocalized) {
 	return A2(
 		_elm_lang$core$Basics_ops['++'],
-		_iosphere$elm_i18n$Localized_Writer$comment(staticLocalized.comment),
+		_iosphere$elm_i18n$Localized_Writer$comment(staticLocalized.meta.comment),
 		A2(
 			_elm_lang$core$Basics_ops['++'],
 			A2(
 				_iosphere$elm_i18n$Localized_Writer$signature,
-				staticLocalized.key,
+				staticLocalized.meta.key,
 				{ctor: '[]'}),
 			A2(
 				_elm_lang$core$Basics_ops['++'],
@@ -9737,10 +9752,10 @@ var _iosphere$elm_i18n$Localized_Writer$formatComponentsImplementation = F2(
 var _iosphere$elm_i18n$Localized_Writer$functionFormat = function (format) {
 	return A2(
 		_elm_lang$core$Basics_ops['++'],
-		_iosphere$elm_i18n$Localized_Writer$comment(format.comment),
+		_iosphere$elm_i18n$Localized_Writer$comment(format.meta.comment),
 		A2(
 			_elm_lang$core$Basics_ops['++'],
-			A2(_iosphere$elm_i18n$Localized_Writer$signature, format.key, format.placeholders),
+			A2(_iosphere$elm_i18n$Localized_Writer$signature, format.meta.key, format.placeholders),
 			A2(
 				_elm_lang$core$Basics_ops['++'],
 				'\n',
@@ -9789,7 +9804,7 @@ var _iosphere$elm_i18n$Localized_Writer$generate = _elm_lang$core$List$map(
 		};
 	});
 
-var _iosphere$elm_i18n$PO_Template$placeholderCommentPrefix = ' i18n: placeholders: ';
+var _iosphere$elm_i18n$PO_Template$placeholderCommentPrefix = 'i18n: placeholders: ';
 var _iosphere$elm_i18n$PO_Template$placeholder = function (placeholder) {
 	return A2(
 		_elm_lang$core$Basics_ops['++'],
@@ -9849,13 +9864,13 @@ var _iosphere$elm_i18n$PO_Export$line = function (element) {
 		var _p2 = _p1._0;
 		return A2(
 			_elm_lang$core$Basics_ops['++'],
-			_iosphere$elm_i18n$PO_Export$commentLine(_p2.comment),
+			_iosphere$elm_i18n$PO_Export$commentLine(_p2.meta.comment),
 			A2(
 				_elm_lang$core$Basics_ops['++'],
 				'\n',
 				A2(
 					_elm_lang$core$Basics_ops['++'],
-					A2(_iosphere$elm_i18n$PO_Export$identifier, _p2.moduleName, _p2.key),
+					A2(_iosphere$elm_i18n$PO_Export$identifier, _p2.meta.moduleName, _p2.meta.key),
 					A2(
 						_elm_lang$core$Basics_ops['++'],
 						'\n',
@@ -9864,7 +9879,7 @@ var _iosphere$elm_i18n$PO_Export$line = function (element) {
 		var _p3 = _p1._0;
 		return A2(
 			_elm_lang$core$Basics_ops['++'],
-			_iosphere$elm_i18n$PO_Export$commentLine(_p3.comment),
+			_iosphere$elm_i18n$PO_Export$commentLine(_p3.meta.comment),
 			A2(
 				_elm_lang$core$Basics_ops['++'],
 				'\n',
@@ -9873,14 +9888,14 @@ var _iosphere$elm_i18n$PO_Export$line = function (element) {
 					_iosphere$elm_i18n$PO_Export$commentLine(
 						A2(
 							_elm_lang$core$Basics_ops['++'],
-							'i18n: placeholders: ',
+							_iosphere$elm_i18n$PO_Template$placeholderCommentPrefix,
 							A2(_elm_lang$core$String$join, ' ', _p3.placeholders))),
 					A2(
 						_elm_lang$core$Basics_ops['++'],
 						'\n',
 						A2(
 							_elm_lang$core$Basics_ops['++'],
-							A2(_iosphere$elm_i18n$PO_Export$identifier, _p3.moduleName, _p3.key),
+							A2(_iosphere$elm_i18n$PO_Export$identifier, _p3.meta.moduleName, _p3.meta.key),
 							A2(
 								_elm_lang$core$Basics_ops['++'],
 								'\n',
@@ -9991,7 +10006,7 @@ var _iosphere$elm_i18n$PO_Import_Internal$placeholdersInValue = function (value)
 		A3(_elm_lang$core$Regex$find, _elm_lang$core$Regex$All, _iosphere$elm_i18n$PO_Import_Internal$regexForPlaceholder, value));
 };
 var _iosphere$elm_i18n$PO_Import_Internal$placeholdersFromPoComment = function (poComment) {
-	var placeholdersPrefix = ' i18n: placeholders: ';
+	var placeholdersPrefix = A2(_elm_lang$core$Basics_ops['++'], ' ', _iosphere$elm_i18n$PO_Template$placeholderCommentPrefix);
 	return A2(
 		_elm_lang$core$Maybe$withDefault,
 		{ctor: '[]'},
@@ -10145,8 +10160,8 @@ var _iosphere$elm_i18n$PO_Import_Internal$values = F3(
 				},
 				allKeys));
 	});
-var _iosphere$elm_i18n$PO_Import_Internal$element = F5(
-	function (poString, moduleName, key, value, fullComment) {
+var _iosphere$elm_i18n$PO_Import_Internal$element = F4(
+	function (moduleName, key, value, fullComment) {
 		var unquotedValue = _elm_community$string_extra$String_Extra$unquote(value);
 		var placeholdersC = _iosphere$elm_i18n$PO_Import_Internal$placeholdersFromPoComment(fullComment);
 		var placeholdersV = _iosphere$elm_i18n$PO_Import_Internal$placeholdersInValue(value);
@@ -10156,12 +10171,11 @@ var _iosphere$elm_i18n$PO_Import_Internal$element = F5(
 			placeholdersV,
 			{ctor: '[]'})) ? A2(_elm_lang$core$Debug$log, 'Did not find placeholder list in comment using placeholders found in msgstr instead. Order might be wrong.', placeholdersV) : {ctor: '[]'});
 		var comment = _iosphere$elm_i18n$PO_Import_Internal$commentFromPoComment(fullComment);
+		var meta = {moduleName: moduleName, key: key, comment: comment};
 		return _elm_lang$core$List$isEmpty(placeholders) ? _iosphere$elm_i18n$Localized$ElementStatic(
-			{moduleName: moduleName, key: key, comment: comment, value: unquotedValue}) : _iosphere$elm_i18n$Localized$ElementFormat(
+			{meta: meta, value: unquotedValue}) : _iosphere$elm_i18n$Localized$ElementFormat(
 			{
-				moduleName: moduleName,
-				key: key,
-				comment: comment,
+				meta: meta,
 				placeholders: placeholders,
 				components: A2(_iosphere$elm_i18n$PO_Import_Internal$formatComponentsFromValue, unquotedValue, placeholders)
 			});
@@ -10186,9 +10200,8 @@ var _iosphere$elm_i18n$PO_Import$generateModule = F3(
 		return A2(
 			_elm_lang$core$List$map,
 			function (key) {
-				return A5(
+				return A4(
 					_iosphere$elm_i18n$PO_Import_Internal$element,
-					poString,
 					moduleName,
 					key,
 					valueForKey(key),
@@ -10215,7 +10228,7 @@ var _iosphere$elm_i18n$PO_Import$generate = function (poString) {
 };
 
 var _iosphere$elm_i18n$Main$update = F2(
-	function (msg, model) {
+	function (_p0, model) {
 		return {ctor: '_Tuple2', _0: model, _1: _elm_lang$core$Platform_Cmd$none};
 	});
 var _iosphere$elm_i18n$Main$exportResult = _elm_lang$core$Native_Platform.outgoingPort(
@@ -10226,8 +10239,8 @@ var _iosphere$elm_i18n$Main$exportResult = _elm_lang$core$Native_Platform.outgoi
 var _iosphere$elm_i18n$Main$operationExport = F2(
 	function (source, format) {
 		var exportFunction = function () {
-			var _p0 = format;
-			if (_p0.ctor === 'CSV') {
+			var _p1 = format;
+			if (_p1.ctor === 'CSV') {
 				return _iosphere$elm_i18n$CSV_Export$generate;
 			} else {
 				return _iosphere$elm_i18n$PO_Export$generate;
@@ -10249,8 +10262,8 @@ var _iosphere$elm_i18n$Main$importResult = _elm_lang$core$Native_Platform.outgoi
 var _iosphere$elm_i18n$Main$operationImport = F2(
 	function (csv, format) {
 		var importFunction = function () {
-			var _p1 = format;
-			if (_p1.ctor === 'CSV') {
+			var _p2 = format;
+			if (_p2.ctor === 'CSV') {
 				return _iosphere$elm_i18n$CSV_Import$generate;
 			} else {
 				return _iosphere$elm_i18n$PO_Import$generate;
@@ -10260,11 +10273,11 @@ var _iosphere$elm_i18n$Main$operationImport = F2(
 			A2(
 				_elm_lang$core$List$map,
 				_elm_lang$core$Tuple$mapFirst(
-					function (_p2) {
+					function (_p3) {
 						return A2(
 							_elm_lang$core$String$join,
 							'/',
-							A2(_elm_lang$core$String$split, '.', _p2));
+							A2(_elm_lang$core$String$split, '.', _p3));
 					}),
 				_iosphere$elm_i18n$Localized_Writer$generate(
 					importFunction(
@@ -10298,18 +10311,18 @@ var _iosphere$elm_i18n$Main$operationFromString = F2(
 			_iosphere$elm_i18n$Main$formatFromString(formatString));
 	});
 var _iosphere$elm_i18n$Main$init = function (flags) {
-	var _p3 = A2(_iosphere$elm_i18n$Main$operationFromString, flags.operation, flags.format);
-	if (_p3.ctor === 'Export') {
+	var _p4 = A2(_iosphere$elm_i18n$Main$operationFromString, flags.operation, flags.format);
+	if (_p4.ctor === 'Export') {
 		return {
 			ctor: '_Tuple2',
 			_0: {},
-			_1: A2(_iosphere$elm_i18n$Main$operationExport, flags.sources, _p3._0)
+			_1: A2(_iosphere$elm_i18n$Main$operationExport, flags.sources, _p4._0)
 		};
 	} else {
 		return {
 			ctor: '_Tuple2',
 			_0: {},
-			_1: A2(_iosphere$elm_i18n$Main$operationImport, flags.sources, _p3._0)
+			_1: A2(_iosphere$elm_i18n$Main$operationImport, flags.sources, _p4._0)
 		};
 	}
 };
