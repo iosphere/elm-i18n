@@ -1,6 +1,6 @@
 {
     "version": "1.0.0",
-    "summary": "Get your app translated and generate localized versions of your app",
+    "summary": "Generate localized versions of your elm-app, import and export strings (PO/CSV)",
     "repository": "https://github.com/iosphere/elm-i18n.git",
     "license": "MIT",
     "source-directories": [
@@ -12,7 +12,6 @@
         "Localized",
         "Localized.Parser",
         "Localized.Writer",
-        "Main",
         "PO.Export",
         "PO.Import"
     ],
