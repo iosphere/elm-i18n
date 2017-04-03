@@ -121,5 +121,5 @@ operationImport csv format =
 
 
 update : Never -> Model -> ( Model, Cmd Never )
-update msg model =
+update _ model =
     ( model, Cmd.none )

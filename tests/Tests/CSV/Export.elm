@@ -24,15 +24,19 @@ testExport =
 elements : List Localized.Element
 elements =
     [ Localized.ElementStatic
-        { moduleName = "Translation.Second"
-        , key = "myString"
-        , comment = "MyComment"
+        { meta =
+            { moduleName = "Translation.Second"
+            , key = "myString"
+            , comment = "MyComment"
+            }
         , value = "Value"
         }
     , Localized.ElementFormat
-        { moduleName = "Translation.Test"
-        , key = "myFormat"
-        , comment = ""
+        { meta =
+            { moduleName = "Translation.Test"
+            , key = "myFormat"
+            , comment = ""
+            }
         , placeholders = [ "label" ]
         , components =
             [ Localized.FormatComponentStatic "Prefix: "

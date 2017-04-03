@@ -39,27 +39,35 @@ testStringDeclarations =
 expected : List Localized.Element
 expected =
     [ Localized.ElementStatic
-        { moduleName = mockModuleName
-        , key = "myString"
-        , comment = ""
+        { meta =
+            { moduleName = mockModuleName
+            , key = "myString"
+            , comment = ""
+            }
         , value = "Value"
         }
     , Localized.ElementStatic
-        { moduleName = mockModuleName
-        , key = "myString2"
-        , comment = ""
+        { meta =
+            { moduleName = mockModuleName
+            , key = "myString2"
+            , comment = ""
+            }
         , value = "Value2"
         }
     , Localized.ElementStatic
-        { moduleName = mockModuleName
-        , key = "myStringC"
-        , comment = "My comment with a-hyphen"
+        { meta =
+            { moduleName = mockModuleName
+            , key = "myStringC"
+            , comment = "My comment with a-hyphen"
+            }
         , value = "ValueC"
         }
     , Localized.ElementFormat
-        { moduleName = mockModuleName
-        , key = "myFormat"
-        , comment = ""
+        { meta =
+            { moduleName = mockModuleName
+            , key = "myFormat"
+            , comment = ""
+            }
         , placeholders = [ "label" ]
         , components =
             [ Localized.FormatComponentStatic "Prefix: "
@@ -67,9 +75,11 @@ expected =
             ]
         }
     , Localized.ElementFormat
-        { moduleName = mockModuleName
-        , key = "myFormat2"
-        , comment = "My formatted comment"
+        { meta =
+            { moduleName = mockModuleName
+            , key = "myFormat2"
+            , comment = "My formatted comment"
+            }
         , placeholders = [ "argument" ]
         , components =
             [ Localized.FormatComponentStatic "Newline after static: "
@@ -77,9 +87,11 @@ expected =
             ]
         }
     , Localized.ElementStatic
-        { moduleName = mockModuleName
-        , key = "stringWithMultiLineComment"
-        , comment = "My comment over two\nlines."
+        { meta =
+            { moduleName = mockModuleName
+            , key = "stringWithMultiLineComment"
+            , comment = "My comment over two\nlines."
+            }
         , value = ""
         }
     ]

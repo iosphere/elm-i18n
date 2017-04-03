@@ -9,6 +9,9 @@
     "exposed-modules": [
         "CSV.Export",
         "CSV.Import",
+        "Localized",
+        "Localized.Parser",
+        "Localized.Writer",
         "Main",
         "PO.Export",
         "PO.Import"

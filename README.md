@@ -13,6 +13,10 @@ compiling the elm app. The result is a localized compiled version of your app.**
 When repeating this process for multiple languages the compuler re-uses the
 cache and only the translation specific modules are cleared from the cache.
 
+The elm-package is aimed at tool developers who want to parse elm-code into
+localized elements, read or write CSV or PO files. **If you want to use this
+tool for your elm-project you only need the information in this README.**
+
 ## Features:
 
 * Switch languages:
