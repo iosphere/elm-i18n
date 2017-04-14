@@ -10,7 +10,7 @@ multiple modules, but each module contains only one language.
 
 **The correct set of language modules is symlinked or copied into place before
 compiling the elm app. The result is a localized compiled version of your app.**
-When repeating this process for multiple languages the compuler re-uses the
+When repeating this process for multiple languages the compiler re-uses the
 cache and only the translation specific modules are cleared from the cache.
 
 The elm-package is aimed at tool developers who want to parse elm-code into
@@ -183,6 +183,8 @@ as in the [CSV example](#import-generate-elm-source-code-from-csv).
   *However, you can add a constant with the current language code and have different code paths if that
   is required.*
 - Language selection has to be handled outside of the elm-app (by loading the appropriate js artefact).
+
+[An issue has been created to address this disadvantage.](https://github.com/iosphere/elm-i18n/issues/2)
 
 ## Building elm-i18n
 
