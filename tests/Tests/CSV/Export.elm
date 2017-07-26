@@ -1,16 +1,10 @@
 module Tests.CSV.Export exposing (..)
 
+import CSV.Export as CSV
+import CSV.Template
 import Expect
 import Localized
-import CSV.Export as CSV
 import Test exposing (..)
-import CSV.Template
-
-
-all : Test
-all =
-    describe "Tests.CSV.Export"
-        [ testExport ]
 
 
 testExport : Test

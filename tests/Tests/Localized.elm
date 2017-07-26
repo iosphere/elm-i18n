@@ -7,12 +7,6 @@ import Localized.Parser.Internal as Parser
 import Test exposing (..)
 
 
-all : Test
-all =
-    describe "Tests.LocalizedString"
-        [ testParse, testStringDeclarations ]
-
-
 testParse : Test
 testParse =
     test "testParse" <|

@@ -7,12 +7,6 @@ import PO.Import.Internal as PO
 import Test exposing (..)
 
 
-all : Test
-all =
-    describe "Tests.PO.Import"
-        [ testImport, testKeys, testPlaceholders, testPlaceholdersFromComment ]
-
-
 testImport : Test
 testImport =
     test "testImport" <|
@@ -49,8 +43,8 @@ testPlaceholdersFromComment : Test
 testPlaceholdersFromComment =
     test "testPlaceholdersFromComment" <|
         \() ->
-            [ PO.placeholdersFromPoComment ("#.\n#. i18n: placeholders: label")
-            , PO.placeholdersFromPoComment ("#. My Comment")
+            [ PO.placeholdersFromPoComment "#.\n#. i18n: placeholders: label"
+            , PO.placeholdersFromPoComment "#. My Comment"
             ]
                 |> Expect.equal
                     [ [ "label" ]
