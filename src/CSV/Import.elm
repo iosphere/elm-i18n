@@ -10,6 +10,7 @@ Use Localized.Writer.write to create elm code from the list of localized
 elements.
 
 @docs generate
+
 -}
 
 import Csv
@@ -59,18 +60,18 @@ generateForCsv lines =
                     )
                 |> Dict.fromList
     in
-        -- Generate the source code for each module based on the lines
-        -- grouped in the expression above.
-        List.map
-            (\name ->
-                let
-                    linesForThisModule =
-                        Dict.get name linesForModules
-                            |> Maybe.withDefault []
-                in
-                    ( name, generateForModule linesForThisModule )
-            )
-            modules
+    -- Generate the source code for each module based on the lines
+    -- grouped in the expression above.
+    List.map
+        (\name ->
+            let
+                linesForThisModule =
+                    Dict.get name linesForModules
+                        |> Maybe.withDefault []
+            in
+            ( name, generateForModule linesForThisModule )
+        )
+        modules
 
 
 generateForModule : List (List String) -> List Localized.Element
@@ -119,10 +120,10 @@ code modulename key comment placeholderString value =
         numPlaceholders =
             List.length placeholders
     in
-        if numPlaceholders == 0 then
-            staticElement modulename key comment value
-        else
-            formatElement modulename key comment placeholders value
+    if numPlaceholders == 0 then
+        staticElement modulename key comment value
+    else
+        formatElement modulename key comment placeholders value
 
 
 formatElement : String -> String -> String -> List String -> String -> Localized.Element
@@ -131,34 +132,35 @@ formatElement modulename key comment placeholders value =
         components =
             -- "Hello {{p}} Goodbye {{q}}" -> ["Hello ", "p}} Goodbye ", "q }}"]
             String.split "{{" value
+                |> withoutEmptyStrings
                 |> List.map
                     (\candidate ->
                         if String.contains "}}" candidate then
                             -- "p}} Goodbye " -> ["p", " Goodbye "]
                             String.split "}}" candidate
-                                |> List.filter (String.isEmpty >> not)
+                                |> withoutEmptyStrings
                                 -- ["p", " Goodbye "] -> [FormatComponentPlaceholder "p", FormatComponentStatic " Goodbye "]
                                 |> List.indexedMap
                                     (\index submatch ->
                                         if index % 2 == 0 then
                                             Localized.FormatComponentPlaceholder (String.trim submatch)
                                         else
-                                            Localized.FormatComponentStatic candidate
+                                            Localized.FormatComponentStatic submatch
                                     )
                         else
                             [ Localized.FormatComponentStatic candidate ]
                     )
                 |> List.concat
     in
-        Localized.ElementFormat
-            { meta =
-                { moduleName = modulename
-                , key = key
-                , comment = comment
-                }
-            , placeholders = placeholders
-            , components = components
+    Localized.ElementFormat
+        { meta =
+            { moduleName = modulename
+            , key = key
+            , comment = comment
             }
+        , placeholders = placeholders
+        , components = components
+        }
 
 
 staticElement : String -> String -> String -> String -> Localized.Element
@@ -171,3 +173,8 @@ staticElement modulename key comment value =
             }
         , value = value
         }
+
+
+withoutEmptyStrings : List String -> List String
+withoutEmptyStrings =
+    List.filter (String.isEmpty >> not)

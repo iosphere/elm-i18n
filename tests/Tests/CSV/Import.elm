@@ -44,6 +44,8 @@ inputCSV =
         ++ """
 "Translation.Test","myString","My comment","","Value"
 "Translation.Test","myFormat","","label","Prefix: {{label}}"
+"Translation.Test","myFormatAtBeginning","","label","{{label}} suffix"
+"Translation.Test","myFormatQuoted","","label","Prefix '{{label}}' suffix"
 """
 
 
@@ -65,6 +67,19 @@ myFormat : String -> String
 myFormat label =
     "Prefix: "
         ++ label
+
+
+myFormatAtBeginning : String -> String
+myFormatAtBeginning label =
+    label
+        ++ " suffix"
+
+
+myFormatQuoted : String -> String
+myFormatQuoted label =
+    "Prefix '"
+        ++ label
+        ++ "' suffix"
 """
 
 
@@ -88,6 +103,31 @@ elements =
         , components =
             [ Localized.FormatComponentStatic "Prefix: "
             , Localized.FormatComponentPlaceholder "label"
+            ]
+        }
+    , Localized.ElementFormat
+        { meta =
+            { moduleName = "Translation.Test"
+            , key = "myFormatAtBeginning"
+            , comment = ""
+            }
+        , placeholders = [ "label" ]
+        , components =
+            [ Localized.FormatComponentPlaceholder "label"
+            , Localized.FormatComponentStatic " suffix"
+            ]
+        }
+    , Localized.ElementFormat
+        { meta =
+            { moduleName = "Translation.Test"
+            , key = "myFormatQuoted"
+            , comment = ""
+            }
+        , placeholders = [ "label" ]
+        , components =
+            [ Localized.FormatComponentStatic "Prefix '"
+            , Localized.FormatComponentPlaceholder "label"
+            , Localized.FormatComponentStatic "' suffix"
             ]
         }
     ]
