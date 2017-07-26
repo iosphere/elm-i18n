@@ -10,15 +10,6 @@ import Localized.Writer as Writer
 import Test exposing (..)
 
 
-all : Test
-all =
-    describe "Tests.CSV.Import"
-        [ testGenerate
-        , testImport
-        , testFullCircle
-        ]
-
-
 testGenerate : Test
 testGenerate =
     test "testGenerate" <|

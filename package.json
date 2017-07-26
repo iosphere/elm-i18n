@@ -5,7 +5,7 @@
     "keywords": ["elm", "translate", "i18n", "internationalization", "internationalisation", "translation", "tool"],
     "main": "index.js",
     "dependencies": {
-        "elm-test": "^0.18.2",
+        "elm-test": "^0.18.7",
         "fs-extra": "^2.1.2",
         "glob": "^7.1.1",
         "prompt": "^1.0.0",

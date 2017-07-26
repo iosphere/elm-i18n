@@ -6,12 +6,6 @@ import PO.Export as PO
 import Test exposing (..)
 
 
-all : Test
-all =
-    describe "Tests.PO.Export"
-        [ testExport ]
-
-
 testExport : Test
 testExport =
     test "testExport" <|
