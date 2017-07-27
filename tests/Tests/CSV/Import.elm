@@ -42,9 +42,9 @@ inputCSV : String
 inputCSV =
     CSV.Template.headers
         ++ """
-"Translation.Test","myString","My comment","","Value"
+"Translation.Test","myString","My comment","","Value","IGNORE"
 "Translation.Test","myFormat","","label","Prefix: {{label}}"
-"Translation.Test","myFormatAtBeginning","","label","{{label}} suffix"
+"Translation.Test","myFormatAtBeginning","","label","{{label}} suffix","IGNORE","IGNORE"
 "Translation.Test","myFormatQuoted","","label","Prefix '{{label}}' suffix"
 """
 
