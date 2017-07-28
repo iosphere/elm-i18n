@@ -2,7 +2,7 @@
 
 ### Bug fixes
 
-* Dp not break on CSV with additional columns
+* Do not break on CSV with additional columns
 * Fix placeholders in formatted elements
 
 ## 1.0.0 (April 03, 2017)
