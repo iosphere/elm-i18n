@@ -87,7 +87,7 @@ allModuleNames lines =
 moduleNameForLine : List String -> Maybe String
 moduleNameForLine columns =
     case columns of
-        [ modulename, _, _, _, _ ] ->
+        modulename :: _ :: _ :: _ :: _ :: xs ->
             Just modulename
 
         _ ->
@@ -102,7 +102,7 @@ linesForModule moduleName lines =
 fromLine : List String -> Maybe Localized.Element
 fromLine columns =
     case columns of
-        [ modulename, key, comment, placeholders, value ] ->
+        modulename :: key :: comment :: placeholders :: value :: xs ->
             Just (code modulename key comment placeholders value)
 
         _ ->
