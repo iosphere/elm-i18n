@@ -25,11 +25,11 @@
         "version": "make dist && git add -A dist",
         "postversion": "git push && git push --tags"
     },
-    "author": [{
-            "name": "iosphere GmbH",
-            "url": "https://iosphere.de"
-        },
-        {
+    "author": {
+        "name": "iosphere GmbH",
+        "url": "https://iosphere.de"
+    },
+    "contributors": [{
             "name": "Felix Lamouroux",
             "url": "https://github.com/felixLam"
         }
