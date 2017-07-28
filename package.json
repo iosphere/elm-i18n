@@ -1,42 +1,51 @@
 {
-    "name": "elm-i18n",
-    "version": "1.0.0",
-    "description": "Generate localized versions of your elm-app, import and export strings (PO/CSV)",
-    "keywords": ["elm", "translate", "i18n", "internationalization", "internationalisation", "translation", "tool"],
-    "main": "index.js",
-    "dependencies": {
-        "elm-test": "^0.18.7",
-        "fs-extra": "^2.1.2",
-        "glob": "^7.1.1",
-        "prompt": "^1.0.0",
-        "symlink-or-copy": "^1.1.8",
-        "yargs": "^7.0.2"
-    },
-    "devDependencies": {
-        "eslint-config-google": "^0.7.1",
-        "eslint": "^3.16.1"
-    },
-    "repository": {
-        "type": "git",
-        "url": "https://github.com/iosphere/elm-i18n.git"
-    },
-    "scripts": {
-        "preversion": "make test && make lint-js",
-        "version": "make dist && git add -A dist",
-        "postversion": "git push && git push --tags"
-    },
-    "author": [{
-            "name": "iosphere GmbH",
-            "url": "https://iosphere.de"
-        },
-        {
-            "name": "Felix Lamouroux",
-            "url": "https://github.com/felixLam"
-        }
-    ],
-    "license": "MIT",
-    "bin": {
-        "elm-i18n-generator": "extractor.js",
-        "elm-i18n-switch": "index.js"
+  "name": "elm-i18n",
+  "version": "1.0.1",
+  "description": "Generate localized versions of your elm-app, import and export strings (PO/CSV)",
+  "keywords": [
+    "elm",
+    "translate",
+    "i18n",
+    "internationalization",
+    "internationalisation",
+    "translation",
+    "tool"
+  ],
+  "main": "index.js",
+  "dependencies": {
+    "elm-test": "^0.18.7",
+    "fs-extra": "^2.1.2",
+    "glob": "^7.1.1",
+    "prompt": "^1.0.0",
+    "symlink-or-copy": "^1.1.8",
+    "yargs": "^7.0.2"
+  },
+  "devDependencies": {
+    "eslint-config-google": "^0.7.1",
+    "eslint": "^3.16.1"
+  },
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/iosphere/elm-i18n.git"
+  },
+  "scripts": {
+    "preversion": "make test && make lint-js",
+    "version": "make dist && git add -A dist",
+    "postversion": "git push && git push --tags"
+  },
+  "author": {
+    "name": "iosphere GmbH",
+    "url": "https://iosphere.de"
+  },
+  "contributors": [
+    {
+      "name": "Felix Lamouroux",
+      "url": "https://github.com/felixLam"
     }
+  ],
+  "license": "MIT",
+  "bin": {
+    "elm-i18n-generator": "extractor.js",
+    "elm-i18n-switch": "index.js"
+  }
 }
