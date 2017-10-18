@@ -1,3 +1,9 @@
+## 1.0.2 (October 18, 2017)
+
+### Bug fixes
+
+* Fix Elm file path when importing translations
+
 ## 1.0.1 (July 28, 2017)
 
 ### Bug fixes
