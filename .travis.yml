@@ -2,20 +2,34 @@ sudo: false
 
 language: node_js
 node_js:
-  - "5"
+  - node # latest stable
 
 cache:
   directories:
-  - node_modules
-  - tests/elm-stuff
-  - elm-stuff
+    - sysconfcpus
+    - node_modules
+    - tests/elm-stuff
+    - elm-stuff
 
 install:
   - npm install -g elm
   - npm install
   - elm-package install -y
   - cd tests && elm-package install -y && cd ..
+  # Travis exposes a few more CPUs (like... 14 more) than the code can actually
+  # use. This program allows us to lie to the compiler about how many CPUs it
+  # can use. In this case, we're actually telling the truth about the number of
+  # usable CPUs, so build times go way down.
+  - |
+    if [ ! -d sysconfcpus/bin ];
+    then
+      git clone https://github.com/obmarg/libsysconfcpus.git;
+      cd libsysconfcpus;
+      ./configure --prefix=$TRAVIS_BUILD_DIR/sysconfcpus;
+      make && make install;
+      cd ..;
+    fi
 
 script:
-  - make build
-  - make test
+  - $TRAVIS_BUILD_DIR/sysconfcpus/bin/sysconfcpus -n 2 make build
+  - $TRAVIS_BUILD_DIR/sysconfcpus/bin/sysconfcpus -n 2 make test
