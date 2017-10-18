@@ -9,7 +9,7 @@ const argv = require("yargs")
     .option("import", {alias: "i", describe: "A CSV file to be imported and to generate code from. Generate elm files will be placed in <importOutput>."})
     .option("importOutput", {default: "import", describe: "The base directory to which the generated code should be written. Subdirectories will be created per language and submodule."})
     .option("language", {alias: "l", describe: "The language code of the current operation. This should match the subdirectory of the language in root."})
-    .option("root", {default: "Translation", describe: "The root to the translation modules (only needed when using the export flag). This script expects this directory to contain a subdirectory for each language."})
+    .option("root", {default: "Translation", describe: "The root to the translation modules. This script expects this directory to contain a subdirectory for each language."})
     .demand("language")
     .boolean(["export"])
     .help()
@@ -105,11 +105,14 @@ function handleExport(resultString) {
  * @param  {[[String]]} results A list of (module name, file content) tuples.
  */
 function handleImport(results) {
-    let importDir = path.join(currentDir, argv.importOutput, argv.language);
+    let importDir = path.join(currentDir, argv.importOutput, argv.root, argv.language);
     fs.ensureDirSync(importDir);
     console.log("Writing elm-files files to:", importDir);
     results.forEach(function(result) {
         let moduleName = result[0];
+        if (moduleName.indexOf(argv.root) === 0) {
+            moduleName = moduleName.substr(argv.root.length + 1)
+        }
         let filePath = path.join(importDir, moduleName + ".elm");
         fs.ensureDirSync(path.dirname(filePath));
         fs.writeFileSync(filePath, result[1]);
