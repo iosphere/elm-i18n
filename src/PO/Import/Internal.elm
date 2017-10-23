@@ -9,7 +9,7 @@ module PO.Import.Internal
         )
 
 import Dict exposing (Dict)
-import Localized exposing (FormatComponent)
+import Localized exposing (..)
 import Regex exposing (Regex)
 import Set
 import String.Extra as String
@@ -17,7 +17,7 @@ import Utils.Regex
 import PO.Template
 
 
-element : String -> String -> String -> String -> Localized.Element
+element : ModuleName -> Key -> Value -> Comment -> Element
 element moduleName key value fullComment =
     let
         comment =
@@ -49,12 +49,12 @@ element moduleName key value fullComment =
             }
     in
         if List.isEmpty placeholders then
-            Localized.ElementStatic
+            ElementStatic
                 { meta = meta
                 , value = unquotedValue
                 }
         else
-            Localized.ElementFormat
+            ElementFormat
                 { meta = meta
                 , placeholders = placeholders
                 , components = formatComponentsFromValue unquotedValue placeholders
@@ -65,7 +65,7 @@ element moduleName key value fullComment =
 ---- KEYS
 
 
-fullKey : String -> String -> String
+fullKey : ModuleName -> Key -> String
 fullKey moduleName key =
     moduleName ++ "." ++ key
 
@@ -73,7 +73,7 @@ fullKey moduleName key =
 {-| Extract a list of all localization keys per module from a PO string file's
 contents.
 -}
-keys : String -> List ( String, List String )
+keys : String -> List ( ModuleName, List String )
 keys poString =
     let
         matches =
@@ -119,7 +119,7 @@ keys poString =
 file, for all given keys in a module. The dict will contain use the localized
 key for key and the value will be the multiline comment.
 -}
-poComments : String -> String -> List String -> Dict String String
+poComments : String -> ModuleName -> List Key -> Dict Key String
 poComments poString moduleName allKeys =
     allKeys
         |> List.map
@@ -133,7 +133,7 @@ poComments poString moduleName allKeys =
         |> Dict.fromList
 
 
-commentFromPoComment : String -> String
+commentFromPoComment : String -> Comment
 commentFromPoComment poComment =
     String.trim poComment
         |> String.split "#."
@@ -154,7 +154,7 @@ following format:
 
     #. i18n: placeholders: placeh1, placeh2
 -}
-placeholdersFromPoComment : String -> List String
+placeholdersFromPoComment : String -> List Placeholder
 placeholdersFromPoComment poComment =
     let
         placeholdersPrefix =
@@ -184,7 +184,7 @@ placeholdersFromPoComment poComment =
 {-| Extract all values for a module and a given list of keys from a PO file.
 The dict will reference the value by its localization key.
 -}
-values : String -> String -> List String -> Dict String String
+values : String -> ModuleName -> List Key -> Dict Key Value
 values poString moduleName allKeys =
     allKeys
         |> List.map
@@ -203,18 +203,18 @@ values poString moduleName allKeys =
 placeholder definition is missing form the comment, but ma lead to issues with
 sortine. For this reason, we only use this as a fallback an log an error.
 -}
-placeholdersInValue : String -> List String
+placeholdersInValue : Value -> List Placeholder
 placeholdersInValue value =
     Regex.find Regex.All regexForPlaceholder value
         |> List.filterMap (\match -> Utils.Regex.submatchAt 0 (Just match))
 
 
-formatComponentsFromValue : String -> List String -> List Localized.FormatComponent
+formatComponentsFromValue : Value -> List Placeholder -> List FormatComponent
 formatComponentsFromValue value placeholders =
-    findPlaceholdersInStaticComponents [ Localized.FormatComponentStatic value ] placeholders
+    findPlaceholdersInStaticComponents [ FormatComponentStatic value ] placeholders
 
 
-findPlaceholdersInStaticComponents : List Localized.FormatComponent -> List String -> List Localized.FormatComponent
+findPlaceholdersInStaticComponents : List FormatComponent -> List Placeholder -> List FormatComponent
 findPlaceholdersInStaticComponents components placeholders =
     case List.head placeholders of
         Nothing ->
@@ -226,16 +226,16 @@ findPlaceholdersInStaticComponents components placeholders =
                     List.map
                         (\component ->
                             case component of
-                                Localized.FormatComponentPlaceholder _ ->
+                                FormatComponentPlaceholder _ ->
                                     [ component ]
 
-                                Localized.FormatComponentStatic value ->
+                                FormatComponentStatic value ->
                                     let
                                         subComponents =
                                             String.split (PO.Template.placeholder nextPlaceholder) value
-                                                |> List.map Localized.FormatComponentStatic
-                                                |> List.intersperse (Localized.FormatComponentPlaceholder nextPlaceholder)
-                                                |> List.filter (Localized.isEmptyFormatComponent >> not)
+                                                |> List.map FormatComponentStatic
+                                                |> List.intersperse (FormatComponentPlaceholder nextPlaceholder)
+                                                |> List.filter (isEmptyFormatComponent >> not)
                                     in
                                         subComponents
                         )
@@ -249,13 +249,13 @@ findPlaceholdersInStaticComponents components placeholders =
 ---- REGEX
 
 
-regexComments : String -> Regex
+regexComments : Key -> Regex
 regexComments key =
     -- Find all lines preceeding `msgid "key"` that start with `#.`
     Regex.regex ("((?:#\\.[^\\n]*\\n)*)msgid " ++ toString key)
 
 
-regexForValue : String -> Regex
+regexForValue : Key -> Regex
 regexForValue key =
     -- Find all lines succeeding `msgid "key" \nmsgstr` until the two successive white lines
     Regex.regex

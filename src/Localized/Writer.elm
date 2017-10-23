@@ -7,13 +7,13 @@ elm modules implementing the localized elements.
 @docs generate
 -}
 
-import Localized
+import Localized exposing (..)
 
 
 {-| Generate elm-source code for a list of modules and their associated
 localized elements.
 -}
-generate : List ( String, List Localized.Element ) -> List ( String, String )
+generate : List Module -> List ( ModuleName, SourceCode )
 generate =
     List.map
         (\( modulename, elements ) ->
@@ -21,7 +21,7 @@ generate =
         )
 
 
-moduleImplementation : String -> List Localized.Element -> String
+moduleImplementation : ModuleName -> List Element -> SourceCode
 moduleImplementation name elements =
     "module "
         ++ name
@@ -33,29 +33,29 @@ moduleImplementation name elements =
            )
 
 
-functionFromElement : Localized.Element -> String
+functionFromElement : Element -> SourceCode
 functionFromElement element =
     case element of
-        Localized.ElementStatic static ->
+        ElementStatic static ->
             functionStatic static
 
-        Localized.ElementFormat format ->
+        ElementFormat format ->
             functionFormat format
 
 
-tab : String
+tab : SourceCode
 tab =
     "    "
 
 
-functionStatic : Localized.Static -> String
+functionStatic : Static -> SourceCode
 functionStatic staticLocalized =
     comment staticLocalized.meta.comment
         ++ signature staticLocalized.meta.key []
         ++ ("\n" ++ tab ++ toString staticLocalized.value)
 
 
-functionFormat : Localized.Format -> String
+functionFormat : Format -> SourceCode
 functionFormat format =
     comment format.meta.comment
         ++ signature format.meta.key format.placeholders
@@ -65,7 +65,7 @@ functionFormat format =
            )
 
 
-formatComponentsImplementation : Int -> Localized.FormatComponent -> String
+formatComponentsImplementation : Int -> FormatComponent -> SourceCode
 formatComponentsImplementation index component =
     let
         prefix =
@@ -75,14 +75,14 @@ formatComponentsImplementation index component =
                 tab ++ tab ++ "++ "
     in
         case component of
-            Localized.FormatComponentStatic string ->
+            FormatComponentStatic string ->
                 prefix ++ toString string
 
-            Localized.FormatComponentPlaceholder string ->
+            FormatComponentPlaceholder string ->
                 prefix ++ String.trim string
 
 
-signature : String -> List String -> String
+signature : Key -> List Placeholder -> SourceCode
 signature key placeholders =
     let
         num =
@@ -104,7 +104,7 @@ signature key placeholders =
             ++ (key ++ parameters ++ " =")
 
 
-comment : String -> String
+comment : Comment -> SourceCode
 comment string =
     if String.isEmpty string then
         ""

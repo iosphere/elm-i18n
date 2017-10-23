@@ -7,7 +7,7 @@ module CSV.Export exposing (generate)
 -}
 
 import CSV.Template
-import Localized
+import Localized exposing (..)
 
 
 {-| Generate a CSV string from a list of localized elements (Localized.Element).
@@ -18,7 +18,7 @@ Elm source code into a list of localized elements:
         |> CSV.Export.generate
 
 -}
-generate : List Localized.Element -> String
+generate : List Element -> String
 generate elements =
     List.map line elements
         |> List.map
@@ -31,26 +31,26 @@ generate elements =
         |> flip String.append "\n"
 
 
-line : Localized.Element -> List String
+line : Element -> List String
 line element =
     case element of
-        Localized.ElementStatic static ->
+        ElementStatic static ->
             [ static.meta.moduleName, static.meta.key, static.meta.comment, "", static.value ]
 
-        Localized.ElementFormat format ->
+        ElementFormat format ->
             [ format.meta.moduleName, format.meta.key, format.meta.comment, String.join " " format.placeholders, formatString format.components ]
 
 
-formatString : List Localized.FormatComponent -> String
+formatString : List FormatComponent -> String
 formatString components =
     components
         |> List.map
             (\component ->
                 case component of
-                    Localized.FormatComponentStatic value ->
+                    FormatComponentStatic value ->
                         value
 
-                    Localized.FormatComponentPlaceholder placeholder ->
+                    FormatComponentPlaceholder placeholder ->
                         CSV.Template.placeholder placeholder
             )
         |> String.join ""

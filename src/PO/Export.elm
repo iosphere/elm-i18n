@@ -7,7 +7,7 @@ https://www.gnu.org/savannah-checkouts/gnu/gettext/manual/html_node/PO-Files.htm
 @docs generate
 -}
 
-import Localized
+import Localized exposing (..)
 import PO.Template
 
 
@@ -19,24 +19,24 @@ Elm source code into a list of localized elements:
         |> PO.Export.generate
 
 -}
-generate : List Localized.Element -> String
+generate : List Element -> String
 generate elements =
     List.map line elements
         |> String.join "\n\n"
         |> flip String.append "\n"
 
 
-line : Localized.Element -> String
+line : Element -> String
 line element =
     case element of
-        Localized.ElementStatic static ->
+        ElementStatic static ->
             commentLine static.meta.comment
                 ++ "\n"
                 ++ identifier static.meta.moduleName static.meta.key
                 ++ "\n"
                 ++ staticElement static.value
 
-        Localized.ElementFormat format ->
+        ElementFormat format ->
             commentLine format.meta.comment
                 ++ "\n"
                 ++ commentLine (PO.Template.placeholderCommentPrefix ++ String.join " " format.placeholders)
@@ -46,7 +46,7 @@ line element =
                 ++ ("msgstr " ++ formatElement format.components)
 
 
-commentLine : String -> String
+commentLine : Comment -> String
 commentLine comment =
     String.split "\n" comment
         |> String.join "\n#. "
@@ -54,26 +54,26 @@ commentLine comment =
         |> String.trim
 
 
-identifier : String -> String -> String
+identifier : ModuleName -> Key -> String
 identifier modulename key =
     "msgid \"" ++ modulename ++ "." ++ key ++ "\""
 
 
-staticElement : String -> String
+staticElement : Value -> String
 staticElement value =
     "msgstr " ++ toString value
 
 
-formatElement : List Localized.FormatComponent -> String
+formatElement : List FormatComponent -> String
 formatElement list =
     list
         |> List.map
             (\element ->
                 case element of
-                    Localized.FormatComponentPlaceholder placeholder ->
+                    FormatComponentPlaceholder placeholder ->
                         PO.Template.placeholder placeholder
 
-                    Localized.FormatComponentStatic string ->
+                    FormatComponentStatic string ->
                         string
             )
         |> String.join ""

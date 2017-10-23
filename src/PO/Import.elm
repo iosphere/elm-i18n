@@ -12,7 +12,7 @@ elements.
 -}
 
 import Dict exposing (Dict)
-import Localized exposing (FormatComponent)
+import Localized exposing (..)
 import PO.Import.Internal exposing (..)
 
 
@@ -27,7 +27,7 @@ You will usually use this output to create elm code:
     |> Localized.Writer.write
 
 -}
-generate : String -> List ( String, List Localized.Element )
+generate : String -> List Module
 generate poString =
     let
         keysInModules =
@@ -41,7 +41,7 @@ generate poString =
             keysInModules
 
 
-generateModule : String -> String -> List String -> List Localized.Element
+generateModule : String -> ModuleName -> List Key -> List Element
 generateModule poString moduleName allKeys =
     let
         fullComments =

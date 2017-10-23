@@ -1,7 +1,7 @@
 module Localized.Parser.Internal exposing (..)
 
 import List.Extra as List
-import Localized
+import Localized exposing (..)
 import Regex exposing (Regex)
 import Utils.Regex as Utils
 
@@ -33,7 +33,7 @@ regexFormats key =
         |> Regex.regex
 
 
-findModuleName : String -> String
+findModuleName : SourceCode -> ModuleName
 findModuleName source =
     Regex.find (Regex.AtMost 1) regexFindModuleName source
         |> List.head
@@ -44,7 +44,7 @@ findModuleName source =
 {-| Finds all top level string declarations, both constants (`key : String`
 and functions returning strings (e.g. `fun : String -> String`).
 -}
-stringDeclarations : String -> List ( String, List String )
+stringDeclarations : SourceCode -> List ( Key, List String )
 stringDeclarations source =
     Regex.find Regex.All regexStringDeclarations source
         |> List.filterMap
@@ -65,7 +65,7 @@ stringDeclarations source =
             )
 
 
-findStaticElementForKey : String -> String -> String -> Maybe Localized.Element
+findStaticElementForKey : ModuleName -> SourceCode -> Key -> Maybe Element
 findStaticElementForKey moduleName source key =
     let
         maybeValue =
@@ -75,15 +75,15 @@ findStaticElementForKey moduleName source key =
     in
         case maybeValue of
             Just value ->
-                Localized.Static (Localized.Meta moduleName key (findComment source key)) value
-                    |> Localized.ElementStatic
+                Static (Meta moduleName key (findComment source key)) value
+                    |> ElementStatic
                     |> Just
 
             Nothing ->
                 Nothing
 
 
-findFormatElementForKey : String -> String -> String -> Maybe Localized.Element
+findFormatElementForKey : ModuleName -> SourceCode -> Key -> Maybe Element
 findFormatElementForKey moduleName source key =
     let
         regex =
@@ -117,12 +117,12 @@ findFormatElementForKey moduleName source key =
                 Nothing
 
             placeholderList ->
-                Localized.Format (Localized.Meta moduleName key (findComment source key)) placeholderList content
-                    |> Localized.ElementFormat
+                Format (Meta moduleName key (findComment source key)) placeholderList content
+                    |> ElementFormat
                     |> Just
 
 
-findComment : String -> String -> String
+findComment : SourceCode -> Key -> Comment
 findComment source key =
     let
         match =
@@ -133,15 +133,15 @@ findComment source key =
             |> Maybe.withDefault ""
 
 
-formatComponentFromString : String -> Localized.FormatComponent
+formatComponentFromString : String -> FormatComponent
 formatComponentFromString value =
     if String.endsWith "\"" value && String.startsWith "\"" value then
         -- Remove quotes from value
         String.dropLeft 1 value
             |> String.dropRight 1
-            |> Localized.FormatComponentStatic
+            |> FormatComponentStatic
     else
-        Localized.FormatComponentPlaceholder value
+        FormatComponentPlaceholder value
 
 
 trimmedStrings : List String -> List String

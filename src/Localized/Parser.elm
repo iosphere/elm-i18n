@@ -5,14 +5,14 @@ module Localized.Parser exposing (parse)
 @docs parse
 -}
 
-import Localized
+import Localized exposing (..)
 import Localized.Parser.Internal exposing (..)
 
 
 {-| Parses the source code of an elm module and
 returns a list of localized elements.
 -}
-parse : String -> List Localized.Element
+parse : SourceCode -> List Element
 parse source =
     let
         stringKeysAndParameters =
