@@ -1,7 +1,6 @@
-module Translation.Main exposing (..)
+module Translation.Main.De exposing (..)
 
 {-| -}
-
 
 {-| A short greeting.
 -}

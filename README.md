@@ -158,6 +158,75 @@ elm-i18n-generator --format PO --language De --import export.po
 Results in the same `import/De/Translation/Main.elm`
 as in the [CSV example](#import-generate-elm-source-code-from-csv).
 
+
+#### Generate Elm source for switching Language during run-time
+
+Pass all the languages you want to switch between as a comma-separated list.
+
+```bash
+elm-i18n-generator --language De,Pl,En,Fr --genswitch
+```
+
+#### Migrate legacy symlinked translations to switchables
+
+Remove the legacy symlink
+```
+rm src/Translation
+```
+
+Export each of your languages to CSV temporarily
+```
+mkdir languages
+elm-i18n.generator --format CSV --language En --root Translation/ --export --exportOutput languages/en.csv
+```
+
+Then, import them again.
+```
+elm-i18n-generator --format CSV --language En --importOutput src --import languages/en.csv
+```
+
+
+Finally, generate the switch
+```
+elm-i18n-generator --language De,En --genswitch --importOutput . --root src
+```
+
+After this your Project should look like this:
+
+```
+project
+└── src/
+    ├── Main.elm (e.g. imports Translation.Main)
+    ├── View.elm (e.g. imports Translation.View)
+    └── Translation
+        ├── Main.elm (module Translation.Main)
+        ├── View.elm (module Translation.View)
+        ├── Main/
+        │   ├── De.elm (module Translation.Main.De)
+        │   └── En.elm (module Translation.View.En)
+        └── View/
+            ├── De.elm (module Translation.Main.De)
+            └── En.elm (module Translation.View.En)
+```
+
+Use the `Language` type to dynamically translate your websites:
+
+
+```
+import Translation exposing (Language(..))
+
+state =
+    { language = Language
+    }
+
+render state =
+    div []
+        [ text (Translation.Main.greetingWithName state.language "Leonard")
+        , text "and in German:"
+        , text (Translation.Main.greetingWithName De "Leonard")
+        ]
+```
+
 ## Advantages
 
 + Each build of your app only contains one language.

@@ -11,14 +11,20 @@ module Localized
         , Value
         , SourceCode
         , Placeholder
+        , LangCode
         , Module
+        , ModuleImplementation
+        , elementMeta
+        , languageModuleName
         , isEmptyFormatComponent
+        , elementRemoveLang
+        , namedModule
         )
 
 {-| This module provides data structures describing localized string functions
 and constants.
 
-@docs Element, Meta, Static, Format, FormatComponent, ModuleName, Key, Comment, Value, Placeholder, Module, SourceCode, isEmptyFormatComponent
+@docs Element, Meta, Static, Format, FormatComponent, ModuleName, Key, Comment, Value, Placeholder, Module, ModuleImplementation, SourceCode, LangCode, isEmptyFormatComponent, elementMeta, languageModuleName, elementRemoveLang, namedModule
 -}
 
 
@@ -109,11 +115,23 @@ type alias Module =
     ( ModuleName, List Element )
 
 
+{-| The representation of an Elm module with its complete source
+-}
+type alias ModuleImplementation =
+    ( ModuleName, SourceCode )
+
+
 {-| A list of components make up a formatted element. See Format.
 -}
 type FormatComponent
     = FormatComponentStatic String
     | FormatComponentPlaceholder String
+
+
+{-| A language code as a String used for module names, ie. "En" or "De"
+-}
+type alias LangCode =
+    String
 
 
 {-| Returns true if the component is empty.
@@ -126,3 +144,53 @@ isEmptyFormatComponent comp =
 
         FormatComponentPlaceholder string ->
             String.isEmpty string
+
+
+{-| Returns an attribute of any Element
+-}
+elementMeta : (Meta -> val) -> Element -> val
+elementMeta accessor element =
+    case element of
+        ElementStatic e ->
+            accessor e.meta
+
+        ElementFormat e ->
+            accessor e.meta
+
+
+{-| Returns an empty Module with a name indicating the locale.
+-}
+languageModuleName : ModuleName -> LangCode -> ModuleName
+languageModuleName name lang =
+    name ++ "." ++ lang
+
+
+{-| Constructs a new Module with the given name
+-}
+namedModule : ModuleName -> Module
+namedModule name =
+    ( name, [] )
+
+
+{-| Removes a locale "En" from a module name like "Translation.Main.En"
+-}
+elementRemoveLang : LangCode -> Element -> Element
+elementRemoveLang lang element =
+    let
+        moduleName =
+            elementMeta .moduleName element
+
+        cleanedName =
+            String.split "." moduleName
+                |> List.filter (\p -> p /= lang)
+                |> String.join "."
+
+        changeName meta name =
+            { meta | moduleName = name }
+    in
+        case element of
+            ElementStatic e ->
+                ElementStatic { e | meta = changeName e.meta cleanedName }
+
+            ElementFormat e ->
+                ElementFormat { e | meta = changeName e.meta cleanedName }

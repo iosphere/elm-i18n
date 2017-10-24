@@ -18,6 +18,12 @@ dist: $(ELM_FILES)
 	elm-make src/Main.elm --output dist/elm.js
 
 
+gentest: dist
+	cd example && node ../extractor.js -l De,En -s --root src
+
+imptest: dist
+	cd example && node ../extractor.js --format CSV --language En --importOutput src/ --import languages/en.csv
+
 test: ## Run tests
 	./node_modules/elm-test/bin/elm-test
 

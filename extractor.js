@@ -8,6 +8,7 @@ const argv = require("yargs")
     .option("format", {default: "csv", describe: "The format of the import/export operation. Supported formats are CSV and PO (case-insensitive)."})
     .option("import", {alias: "i", describe: "A CSV file to be imported and to generate code from. Generate elm files will be placed in <importOutput>."})
     .option("importOutput", {default: "import", describe: "The base directory to which the generated code should be written. Subdirectories will be created per language and submodule."})
+    .option("genswitch", {alias: "s", describe: "Generates Elm modules containing switches for all given languages."})
     .option("language", {alias: "l", describe: "The language code of the current operation. This should match the subdirectory of the language in root."})
     .option("root", {default: "Translation", describe: "The root to the translation modules. This script expects this directory to contain a subdirectory for each language."})
     .demand("language")
@@ -19,8 +20,8 @@ const fs = require("fs-extra");
 const path = require("path");
 const glob = require("glob");
 
-if (!argv.export && !argv.import) {
-    console.error("Please provide import or export option");
+if (!argv.export && !argv.import && !argv.genswitch) {
+    console.error("Please provide import, export or genswitch option");
     process.exit(403);
 }
 
@@ -46,6 +47,7 @@ if (argv.export) {
 
     // pass the array of file contents to our elm worker
     let worker = Elm.Main.worker({
+        "languages": [],
         "sources": fileContents,
         "operation": "export",
         "format": argv.format,
@@ -55,7 +57,7 @@ if (argv.export) {
     worker.ports.exportResult.subscribe(function(resultString) {
         handleExport(resultString);
     });
-} else {
+} else if (argv.import) {
     // ensure that import is a valid file path
     if (!argv.import || argv.import == "" || argv.import == true) {
         console.error("Please provide an import path");
@@ -72,13 +74,40 @@ if (argv.export) {
     let csvContent = data.toString();
 
     let worker = Elm.Main.worker({
+        "languages": argv.language.split(","),
         "sources": [csvContent],
         "operation": "import",
         "format": argv.format,
     });
 
+    let importDir = path.join(currentDir, argv.importOutput, argv.root);
     worker.ports.importResult.subscribe(function(resultString) {
-        handleImport(resultString);
+        handleImport(resultString, importDir);
+    });
+} else {
+    let fullPath = path.join(currentDir, argv.root);
+    console.log("Parsing from", fullPath);
+    let fileNames = glob.sync(fullPath + "/Translation/**/{"+argv.language+"}.elm");
+    console.log("└── Found elm module files for export:", fileNames);
+
+    // read all files and store their content in an array
+    let fileContents = [];
+    fileNames.forEach(function(file) {
+        let data = fs.readFileSync(file);
+        let content = data.toString();
+        fileContents.push(content);
+    });
+
+    let worker = Elm.Main.worker({
+        "sources": fileContents,
+        "operation": "genswitch",
+        "languages": argv.language.split(","),
+        "format": argv.format,
+    });
+
+    let importDir = path.join(currentDir, argv.importOutput, argv.root);
+    worker.ports.importResult.subscribe(function(resultString) {
+        handleImport(resultString, importDir);
     });
 }
 
@@ -104,16 +133,17 @@ function handleExport(resultString) {
  *
  * @param  {[[String]]} results A list of (module name, file content) tuples.
  */
-function handleImport(results) {
-    let importDir = path.join(currentDir, argv.importOutput, argv.root, argv.language);
+function handleImport(results, importDir) {
     fs.ensureDirSync(importDir);
     console.log("Writing elm-files files to:", importDir);
     results.forEach(function(result) {
         let moduleName = result[0];
         if (moduleName.indexOf(argv.root) === 0) {
-            moduleName = moduleName.substr(argv.root.length + 1)
+            moduleName = moduleName.substr(argv.root.length + 1);
         }
         let filePath = path.join(importDir, moduleName + ".elm");
+        // we also generate the top-level Translation.elm
+        filePath = filePath.replace(/\/(\.elm)$/, "$1");
         fs.ensureDirSync(path.dirname(filePath));
         fs.writeFileSync(filePath, result[1]);
         console.log("└── Finished writing:", filePath);

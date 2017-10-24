@@ -9190,12 +9190,35 @@ var _iosphere$elm_i18n$CSV_Template$placeholder = function (placeholder) {
 };
 var _iosphere$elm_i18n$CSV_Template$headers = 'Module,Key,Comment,Supported Placeholders,Translation';
 
+var _iosphere$elm_i18n$Localized$namedModule = function (name) {
+	return {
+		ctor: '_Tuple2',
+		_0: name,
+		_1: {ctor: '[]'}
+	};
+};
+var _iosphere$elm_i18n$Localized$languageModuleName = F2(
+	function (name, lang) {
+		return A2(
+			_elm_lang$core$Basics_ops['++'],
+			name,
+			A2(_elm_lang$core$Basics_ops['++'], '.', lang));
+	});
+var _iosphere$elm_i18n$Localized$elementMeta = F2(
+	function (accessor, element) {
+		var _p0 = element;
+		if (_p0.ctor === 'ElementStatic') {
+			return accessor(_p0._0.meta);
+		} else {
+			return accessor(_p0._0.meta);
+		}
+	});
 var _iosphere$elm_i18n$Localized$isEmptyFormatComponent = function (comp) {
-	var _p0 = comp;
-	if (_p0.ctor === 'FormatComponentStatic') {
-		return _elm_lang$core$String$isEmpty(_p0._0);
+	var _p1 = comp;
+	if (_p1.ctor === 'FormatComponentStatic') {
+		return _elm_lang$core$String$isEmpty(_p1._0);
 	} else {
-		return _elm_lang$core$String$isEmpty(_p0._0);
+		return _elm_lang$core$String$isEmpty(_p1._0);
 	}
 };
 var _iosphere$elm_i18n$Localized$Meta = F3(
@@ -9216,6 +9239,48 @@ var _iosphere$elm_i18n$Localized$ElementFormat = function (a) {
 var _iosphere$elm_i18n$Localized$ElementStatic = function (a) {
 	return {ctor: 'ElementStatic', _0: a};
 };
+var _iosphere$elm_i18n$Localized$elementRemoveLang = F2(
+	function (lang, element) {
+		var changeName = F2(
+			function (meta, name) {
+				return _elm_lang$core$Native_Utils.update(
+					meta,
+					{moduleName: name});
+			});
+		var moduleName = A2(
+			_iosphere$elm_i18n$Localized$elementMeta,
+			function (_) {
+				return _.moduleName;
+			},
+			element);
+		var cleanedName = A2(
+			_elm_lang$core$String$join,
+			'.',
+			A2(
+				_elm_lang$core$List$filter,
+				function (p) {
+					return !_elm_lang$core$Native_Utils.eq(p, lang);
+				},
+				A2(_elm_lang$core$String$split, '.', moduleName)));
+		var _p2 = element;
+		if (_p2.ctor === 'ElementStatic') {
+			var _p3 = _p2._0;
+			return _iosphere$elm_i18n$Localized$ElementStatic(
+				_elm_lang$core$Native_Utils.update(
+					_p3,
+					{
+						meta: A2(changeName, _p3.meta, cleanedName)
+					}));
+		} else {
+			var _p4 = _p2._0;
+			return _iosphere$elm_i18n$Localized$ElementFormat(
+				_elm_lang$core$Native_Utils.update(
+					_p4,
+					{
+						meta: A2(changeName, _p4.meta, cleanedName)
+					}));
+		}
+	});
 var _iosphere$elm_i18n$Localized$FormatComponentPlaceholder = function (a) {
 	return {ctor: 'FormatComponentPlaceholder', _0: a};
 };
@@ -9789,62 +9854,55 @@ var _iosphere$elm_i18n$Localized_Parser$parse = function (source) {
 		stringKeysAndParameters);
 };
 
-var _iosphere$elm_i18n$Localized_Writer$comment = function (string) {
-	return _elm_lang$core$String$isEmpty(string) ? '' : A2(
-		_elm_lang$core$Basics_ops['++'],
-		'{-| ',
-		A2(_elm_lang$core$Basics_ops['++'], string, '\n-}\n'));
-};
-var _iosphere$elm_i18n$Localized_Writer$signature = F2(
-	function (key, placeholders) {
-		var num = _elm_lang$core$List$length(placeholders);
-		var types = _elm_lang$core$Native_Utils.eq(num, 0) ? 'String' : A2(
-			_elm_lang$core$String$join,
-			' -> ',
-			A2(_elm_lang$core$List$repeat, num + 1, 'String'));
-		var parameters = _elm_lang$core$Native_Utils.eq(num, 0) ? '' : A2(
-			_elm_lang$core$Basics_ops['++'],
-			' ',
-			A2(_elm_lang$core$String$join, ' ', placeholders));
-		return A2(
-			_elm_lang$core$Basics_ops['++'],
-			A2(
-				_elm_lang$core$Basics_ops['++'],
-				key,
-				A2(
-					_elm_lang$core$Basics_ops['++'],
-					' : ',
-					A2(_elm_lang$core$Basics_ops['++'], types, '\n'))),
-			A2(
-				_elm_lang$core$Basics_ops['++'],
-				key,
-				A2(_elm_lang$core$Basics_ops['++'], parameters, ' =')));
-	});
-var _iosphere$elm_i18n$Localized_Writer$tab = '    ';
-var _iosphere$elm_i18n$Localized_Writer$functionStatic = function (staticLocalized) {
+var _iosphere$elm_i18n$Localized_Writer_Module$importModuleExposingAll = function (_p0) {
+	var _p1 = _p0;
 	return A2(
 		_elm_lang$core$Basics_ops['++'],
-		_iosphere$elm_i18n$Localized_Writer$comment(staticLocalized.meta.comment),
-		A2(
-			_elm_lang$core$Basics_ops['++'],
-			A2(
-				_iosphere$elm_i18n$Localized_Writer$signature,
-				staticLocalized.meta.key,
-				{ctor: '[]'}),
-			A2(
-				_elm_lang$core$Basics_ops['++'],
-				'\n',
-				A2(
-					_elm_lang$core$Basics_ops['++'],
-					_iosphere$elm_i18n$Localized_Writer$tab,
-					_elm_lang$core$Basics$toString(staticLocalized.value)))));
+		'import ',
+		A2(_elm_lang$core$Basics_ops['++'], _p1._0, ' exposing (..)\n'));
 };
-var _iosphere$elm_i18n$Localized_Writer$formatComponentsImplementation = F2(
-	function (index, component) {
-		var prefix = _elm_lang$core$Native_Utils.eq(index, 0) ? _iosphere$elm_i18n$Localized_Writer$tab : A2(
+var _iosphere$elm_i18n$Localized_Writer_Module$importModule = function (_p2) {
+	var _p3 = _p2;
+	return A2(
+		_elm_lang$core$Basics_ops['++'],
+		'import ',
+		A2(_elm_lang$core$Basics_ops['++'], _p3._0, '\n'));
+};
+var _iosphere$elm_i18n$Localized_Writer_Module$head = function (_p4) {
+	var _p5 = _p4;
+	return A2(
+		_elm_lang$core$Basics_ops['++'],
+		'module ',
+		A2(_elm_lang$core$Basics_ops['++'], _p5._0, ' exposing (..)\n\n{-| -}\n\n'));
+};
+var _iosphere$elm_i18n$Localized_Writer_Module$elements = F2(
+	function (functionImplementation, _p6) {
+		var _p7 = _p6;
+		return A3(
+			_elm_lang$core$Basics$flip,
+			_elm_lang$core$String$append,
+			'\n',
+			_elm_lang$core$String$trim(
+				A2(
+					_elm_lang$core$String$join,
+					'\n\n\n',
+					A2(_elm_lang$core$List$map, functionImplementation, _p7._1))));
+	});
+var _iosphere$elm_i18n$Localized_Writer_Module$implementation = F2(
+	function (functionImplementation, mod) {
+		return A2(
 			_elm_lang$core$Basics_ops['++'],
-			_iosphere$elm_i18n$Localized_Writer$tab,
-			A2(_elm_lang$core$Basics_ops['++'], _iosphere$elm_i18n$Localized_Writer$tab, '++ '));
+			_iosphere$elm_i18n$Localized_Writer_Module$head(mod),
+			A2(_iosphere$elm_i18n$Localized_Writer_Module$elements, functionImplementation, mod));
+	});
+
+var _iosphere$elm_i18n$Localized_Writer_Element$tab = '    ';
+var _iosphere$elm_i18n$Localized_Writer_Element$formatComponentsImplementation = F2(
+	function (index, component) {
+		var prefix = _elm_lang$core$Native_Utils.eq(index, 0) ? _iosphere$elm_i18n$Localized_Writer_Element$tab : A2(
+			_elm_lang$core$Basics_ops['++'],
+			_iosphere$elm_i18n$Localized_Writer_Element$tab,
+			A2(_elm_lang$core$Basics_ops['++'], _iosphere$elm_i18n$Localized_Writer_Element$tab, '++ '));
 		var _p0 = component;
 		if (_p0.ctor === 'FormatComponentStatic') {
 			return A2(
@@ -9858,60 +9916,363 @@ var _iosphere$elm_i18n$Localized_Writer$formatComponentsImplementation = F2(
 				_elm_lang$core$String$trim(_p0._0));
 		}
 	});
-var _iosphere$elm_i18n$Localized_Writer$functionFormat = function (format) {
+var _iosphere$elm_i18n$Localized_Writer_Element$head = function (element) {
 	return A2(
 		_elm_lang$core$Basics_ops['++'],
-		_iosphere$elm_i18n$Localized_Writer$comment(format.meta.comment),
+		A2(
+			_iosphere$elm_i18n$Localized$elementMeta,
+			function (_) {
+				return _.key;
+			},
+			element),
 		A2(
 			_elm_lang$core$Basics_ops['++'],
-			A2(_iosphere$elm_i18n$Localized_Writer$signature, format.meta.key, format.placeholders),
+			function () {
+				var _p1 = element;
+				if (_p1.ctor === 'ElementStatic') {
+					return '';
+				} else {
+					return A2(
+						_elm_lang$core$Basics_ops['++'],
+						' ',
+						A2(_elm_lang$core$String$join, '', _p1._0.placeholders));
+				}
+			}(),
+			' ='));
+};
+var _iosphere$elm_i18n$Localized_Writer_Element$body = function (element) {
+	var _p2 = element;
+	if (_p2.ctor === 'ElementStatic') {
+		return A2(
+			_elm_lang$core$Basics_ops['++'],
+			_iosphere$elm_i18n$Localized_Writer_Element$tab,
+			_elm_lang$core$Basics$toString(_p2._0.value));
+	} else {
+		return A2(
+			_elm_lang$core$String$join,
+			'\n',
+			A2(_elm_lang$core$List$indexedMap, _iosphere$elm_i18n$Localized_Writer_Element$formatComponentsImplementation, _p2._0.components));
+	}
+};
+var _iosphere$elm_i18n$Localized_Writer_Element$placeholders = function (element) {
+	var _p3 = element;
+	if (_p3.ctor === 'ElementStatic') {
+		return 'String';
+	} else {
+		var num = _elm_lang$core$List$length(_p3._0.placeholders);
+		return A2(
+			_elm_lang$core$String$join,
+			' -> ',
+			A2(_elm_lang$core$List$repeat, num + 1, 'String'));
+	}
+};
+var _iosphere$elm_i18n$Localized_Writer_Element$typeDeclaration = function (element) {
+	return A2(
+		_elm_lang$core$Basics_ops['++'],
+		A2(
+			_iosphere$elm_i18n$Localized$elementMeta,
+			function (_) {
+				return _.key;
+			},
+			element),
+		A2(
+			_elm_lang$core$Basics_ops['++'],
+			' : ',
+			_iosphere$elm_i18n$Localized_Writer_Element$placeholders(element)));
+};
+
+var _iosphere$elm_i18n$Localized_Switch$removeLocale = F2(
+	function (langs, element) {
+		return A3(_elm_lang$core$List$foldr, _iosphere$elm_i18n$Localized$elementRemoveLang, element, langs);
+	});
+var _iosphere$elm_i18n$Localized_Switch$mainModule = function (languages) {
+	var name = 'Translation';
+	var mod = {
+		ctor: '_Tuple2',
+		_0: name,
+		_1: {ctor: '[]'}
+	};
+	return {
+		ctor: '_Tuple2',
+		_0: name,
+		_1: A2(
+			_elm_lang$core$Basics_ops['++'],
+			_iosphere$elm_i18n$Localized_Writer_Module$head(mod),
+			A2(
+				_elm_lang$core$Basics_ops['++'],
+				'type Language = ',
+				A2(
+					_elm_lang$core$Basics_ops['++'],
+					A2(_elm_lang$core$String$join, ' | ', languages),
+					'\n')))
+	};
+};
+var _iosphere$elm_i18n$Localized_Switch$elementSource = F2(
+	function (languages, element) {
+		var placeholders = _iosphere$elm_i18n$Localized_Writer_Element$placeholders(element);
+		var moduleName = A2(
+			_iosphere$elm_i18n$Localized$elementMeta,
+			function (_) {
+				return _.moduleName;
+			},
+			element);
+		var name = A2(
+			_iosphere$elm_i18n$Localized$elementMeta,
+			function (_) {
+				return _.key;
+			},
+			element);
+		return A2(
+			_elm_lang$core$Basics_ops['++'],
+			name,
+			A2(
+				_elm_lang$core$Basics_ops['++'],
+				' : Language -> ',
+				A2(
+					_elm_lang$core$Basics_ops['++'],
+					placeholders,
+					A2(
+						_elm_lang$core$Basics_ops['++'],
+						'\n',
+						A2(
+							_elm_lang$core$Basics_ops['++'],
+							name,
+							A2(
+								_elm_lang$core$Basics_ops['++'],
+								' language =\n',
+								A2(
+									_elm_lang$core$Basics_ops['++'],
+									A2(_elm_lang$core$Basics_ops['++'], _iosphere$elm_i18n$Localized_Writer_Element$tab, 'case language of\n'),
+									A2(
+										_elm_lang$core$String$join,
+										'\n',
+										A2(
+											_elm_lang$core$List$map,
+											function (l) {
+												return A2(
+													_elm_lang$core$Basics_ops['++'],
+													A2(_elm_lang$core$Basics_ops['++'], _iosphere$elm_i18n$Localized_Writer_Element$tab, _iosphere$elm_i18n$Localized_Writer_Element$tab),
+													A2(
+														_elm_lang$core$Basics_ops['++'],
+														l,
+														A2(
+															_elm_lang$core$Basics_ops['++'],
+															' -> ',
+															A2(
+																_elm_lang$core$Basics_ops['++'],
+																moduleName,
+																A2(
+																	_elm_lang$core$Basics_ops['++'],
+																	'.',
+																	A2(
+																		_elm_lang$core$Basics_ops['++'],
+																		l,
+																		A2(_elm_lang$core$Basics_ops['++'], '.', name)))))));
+											},
+											languages)))))))));
+	});
+var _iosphere$elm_i18n$Localized_Switch$switchSource = F2(
+	function (languages, mod) {
+		var _p0 = mod;
+		var moduleName = _p0._0;
+		return {
+			ctor: '_Tuple2',
+			_0: moduleName,
+			_1: A2(
+				_elm_lang$core$Basics_ops['++'],
+				_iosphere$elm_i18n$Localized_Writer_Module$head(mod),
+				A2(
+					_elm_lang$core$Basics_ops['++'],
+					_iosphere$elm_i18n$Localized_Writer_Module$importModuleExposingAll(
+						{
+							ctor: '_Tuple2',
+							_0: 'Translation',
+							_1: {ctor: '[]'}
+						}),
+					A2(
+						_elm_lang$core$Basics_ops['++'],
+						A2(
+							_elm_lang$core$String$join,
+							'',
+							A2(
+								_elm_lang$core$List$map,
+								function (_p1) {
+									return _iosphere$elm_i18n$Localized_Writer_Module$importModule(
+										_iosphere$elm_i18n$Localized$namedModule(
+											A2(_iosphere$elm_i18n$Localized$languageModuleName, moduleName, _p1)));
+								},
+								languages)),
+						A2(
+							_elm_lang$core$Basics_ops['++'],
+							'\n\n',
+							A2(
+								_iosphere$elm_i18n$Localized_Writer_Module$elements,
+								_iosphere$elm_i18n$Localized_Switch$elementSource(languages),
+								mod)))))
+		};
+	});
+var _iosphere$elm_i18n$Localized_Switch$indexBy = F2(
+	function (keymaker, elements) {
+		return A3(
+			_elm_lang$core$List$foldr,
+			F2(
+				function (e, d) {
+					return A3(
+						_elm_lang$core$Dict$update,
+						keymaker(e),
+						function (v) {
+							var _p2 = v;
+							if (_p2.ctor === 'Nothing') {
+								return _elm_lang$core$Maybe$Just(
+									{
+										ctor: '::',
+										_0: e,
+										_1: {ctor: '[]'}
+									});
+							} else {
+								return _elm_lang$core$Maybe$Just(
+									{ctor: '::', _0: e, _1: _p2._0});
+							}
+						},
+						d);
+				}),
+			_elm_lang$core$Dict$empty,
+			elements);
+	});
+var _iosphere$elm_i18n$Localized_Switch$member = F2(
+	function (e, list) {
+		var sameElement = F2(
+			function (e1, e2) {
+				var _p3 = {ctor: '_Tuple2', _0: e1, _1: e2};
+				if (_p3._0.ctor === 'ElementStatic') {
+					if (_p3._1.ctor === 'ElementFormat') {
+						return false;
+					} else {
+						var _p5 = _p3._1._0;
+						var _p4 = _p3._0._0;
+						return _elm_lang$core$Native_Utils.eq(_p4.meta.moduleName, _p5.meta.moduleName) && _elm_lang$core$Native_Utils.eq(_p4.meta.key, _p5.meta.key);
+					}
+				} else {
+					if (_p3._1.ctor === 'ElementStatic') {
+						return false;
+					} else {
+						var _p7 = _p3._1._0;
+						var _p6 = _p3._0._0;
+						return _elm_lang$core$Native_Utils.eq(_p6.meta.moduleName, _p7.meta.moduleName) && _elm_lang$core$Native_Utils.eq(_p6.meta.key, _p7.meta.key);
+					}
+				}
+			});
+		return A2(
+			_elm_lang$core$List$any,
+			sameElement(e),
+			list);
+	});
+var _iosphere$elm_i18n$Localized_Switch$flatten2D = function (list) {
+	return A3(
+		_elm_lang$core$List$foldr,
+		F2(
+			function (x, y) {
+				return A2(_elm_lang$core$Basics_ops['++'], x, y);
+			}),
+		{ctor: '[]'},
+		list);
+};
+var _iosphere$elm_i18n$Localized_Switch$u = F2(
+	function (list, have) {
+		u:
+		while (true) {
+			var _p8 = list;
+			if (_p8.ctor === '::') {
+				var _p10 = _p8._1;
+				var _p9 = _p8._0;
+				if (A2(_iosphere$elm_i18n$Localized_Switch$member, _p9, have)) {
+					var _v3 = _p10,
+						_v4 = have;
+					list = _v3;
+					have = _v4;
+					continue u;
+				} else {
+					var _v5 = _p10,
+						_v6 = {ctor: '::', _0: _p9, _1: have};
+					list = _v5;
+					have = _v6;
+					continue u;
+				}
+			} else {
+				return have;
+			}
+		}
+	});
+var _iosphere$elm_i18n$Localized_Switch$unique = function (elements) {
+	return A2(
+		_iosphere$elm_i18n$Localized_Switch$u,
+		elements,
+		{ctor: '[]'});
+};
+var _iosphere$elm_i18n$Localized_Switch$generate = F2(
+	function (languages, sources) {
+		return {
+			ctor: '::',
+			_0: _iosphere$elm_i18n$Localized_Switch$mainModule(languages),
+			_1: A2(
+				_elm_lang$core$List$map,
+				_iosphere$elm_i18n$Localized_Switch$switchSource(languages),
+				_elm_lang$core$Dict$toList(
+					A2(
+						_iosphere$elm_i18n$Localized_Switch$indexBy,
+						_iosphere$elm_i18n$Localized$elementMeta(
+							function (_) {
+								return _.moduleName;
+							}),
+						_iosphere$elm_i18n$Localized_Switch$unique(
+							A2(
+								_elm_lang$core$List$map,
+								_iosphere$elm_i18n$Localized_Switch$removeLocale(languages),
+								_iosphere$elm_i18n$Localized_Switch$flatten2D(
+									A2(_elm_lang$core$List$map, _iosphere$elm_i18n$Localized_Parser$parse, sources)))))))
+		};
+	});
+
+var _iosphere$elm_i18n$Localized_Writer$comment = function (string) {
+	return _elm_lang$core$String$isEmpty(string) ? '' : A2(
+		_elm_lang$core$Basics_ops['++'],
+		'{-| ',
+		A2(_elm_lang$core$Basics_ops['++'], string, '\n-}\n'));
+};
+var _iosphere$elm_i18n$Localized_Writer$element = function (element) {
+	var c = A2(
+		_iosphere$elm_i18n$Localized$elementMeta,
+		function (_) {
+			return _.comment;
+		},
+		element);
+	return A2(
+		_elm_lang$core$Basics_ops['++'],
+		_iosphere$elm_i18n$Localized_Writer$comment(c),
+		A2(
+			_elm_lang$core$Basics_ops['++'],
+			_iosphere$elm_i18n$Localized_Writer_Element$typeDeclaration(element),
 			A2(
 				_elm_lang$core$Basics_ops['++'],
 				'\n',
 				A2(
-					_elm_lang$core$String$join,
-					'\n',
-					A2(_elm_lang$core$List$indexedMap, _iosphere$elm_i18n$Localized_Writer$formatComponentsImplementation, format.components)))));
-};
-var _iosphere$elm_i18n$Localized_Writer$functionFromElement = function (element) {
-	var _p1 = element;
-	if (_p1.ctor === 'ElementStatic') {
-		return _iosphere$elm_i18n$Localized_Writer$functionStatic(_p1._0);
-	} else {
-		return _iosphere$elm_i18n$Localized_Writer$functionFormat(_p1._0);
-	}
-};
-var _iosphere$elm_i18n$Localized_Writer$moduleImplementation = F2(
-	function (name, elements) {
-		return A2(
-			_elm_lang$core$Basics_ops['++'],
-			'module ',
-			A2(
-				_elm_lang$core$Basics_ops['++'],
-				name,
-				A2(
 					_elm_lang$core$Basics_ops['++'],
-					' exposing (..)\n\n{-| -}\n\n\n',
-					A3(
-						_elm_lang$core$Basics$flip,
-						_elm_lang$core$String$append,
+					_iosphere$elm_i18n$Localized_Writer_Element$head(element),
+					A2(
+						_elm_lang$core$Basics_ops['++'],
 						'\n',
-						_elm_lang$core$String$trim(
-							A2(
-								_elm_lang$core$String$join,
-								'\n\n\n',
-								A2(_elm_lang$core$List$map, _iosphere$elm_i18n$Localized_Writer$functionFromElement, elements)))))));
-	});
-var _iosphere$elm_i18n$Localized_Writer$generate = _elm_lang$core$List$map(
-	function (_p2) {
-		var _p3 = _p2;
-		var _p4 = _p3._0;
-		return {
-			ctor: '_Tuple2',
-			_0: _p4,
-			_1: A2(_iosphere$elm_i18n$Localized_Writer$moduleImplementation, _p4, _p3._1)
-		};
-	});
+						_iosphere$elm_i18n$Localized_Writer_Element$body(element))))));
+};
+var _iosphere$elm_i18n$Localized_Writer$moduleImplementation = function (mod) {
+	var _p0 = mod;
+	var moduleName = _p0._0;
+	return {
+		ctor: '_Tuple2',
+		_0: moduleName,
+		_1: A2(_iosphere$elm_i18n$Localized_Writer_Module$implementation, _iosphere$elm_i18n$Localized_Writer$element, mod)
+	};
+};
+var _iosphere$elm_i18n$Localized_Writer$generate = _elm_lang$core$List$map(_iosphere$elm_i18n$Localized_Writer$moduleImplementation);
 
 var _iosphere$elm_i18n$PO_Template$placeholderCommentPrefix = 'i18n: placeholders: ';
 var _iosphere$elm_i18n$PO_Template$placeholder = function (placeholder) {
@@ -10336,8 +10697,19 @@ var _iosphere$elm_i18n$PO_Import$generate = function (poString) {
 		keysInModules);
 };
 
+var _iosphere$elm_i18n$Main$addLanguageToModuleName = function (lang) {
+	return _elm_lang$core$Tuple$mapFirst(
+		A2(_elm_lang$core$Basics$flip, _iosphere$elm_i18n$Localized$languageModuleName, lang));
+};
+var _iosphere$elm_i18n$Main$slashifyModuleName = _elm_lang$core$Tuple$mapFirst(
+	function (_p0) {
+		return A2(
+			_elm_lang$core$String$join,
+			'/',
+			A2(_elm_lang$core$String$split, '.', _p0));
+	});
 var _iosphere$elm_i18n$Main$update = F2(
-	function (_p0, model) {
+	function (_p1, model) {
 		return {ctor: '_Tuple2', _0: model, _1: _elm_lang$core$Platform_Cmd$none};
 	});
 var _iosphere$elm_i18n$Main$exportResult = _elm_lang$core$Native_Platform.outgoingPort(
@@ -10348,8 +10720,8 @@ var _iosphere$elm_i18n$Main$exportResult = _elm_lang$core$Native_Platform.outgoi
 var _iosphere$elm_i18n$Main$operationExport = F2(
 	function (source, format) {
 		var exportFunction = function () {
-			var _p1 = format;
-			if (_p1.ctor === 'CSV') {
+			var _p2 = format;
+			if (_p2.ctor === 'CSV') {
 				return _iosphere$elm_i18n$CSV_Export$generate;
 			} else {
 				return _iosphere$elm_i18n$PO_Export$generate;
@@ -10368,37 +10740,54 @@ var _iosphere$elm_i18n$Main$importResult = _elm_lang$core$Native_Platform.outgoi
 				return [v._0, v._1];
 			});
 	});
-var _iosphere$elm_i18n$Main$operationImport = F2(
-	function (csv, format) {
+var _iosphere$elm_i18n$Main$operationImport = F3(
+	function (csv, mlangs, format) {
 		var importFunction = function () {
-			var _p2 = format;
-			if (_p2.ctor === 'CSV') {
+			var _p3 = format;
+			if (_p3.ctor === 'CSV') {
 				return _iosphere$elm_i18n$CSV_Import$generate;
 			} else {
 				return _iosphere$elm_i18n$PO_Import$generate;
 			}
 		}();
+		var lang = A2(
+			_elm_lang$core$Maybe$withDefault,
+			'Klingon',
+			_elm_lang$core$List$head(
+				A2(
+					_elm_lang$core$Maybe$withDefault,
+					{ctor: '[]'},
+					mlangs)));
 		return _iosphere$elm_i18n$Main$importResult(
 			A2(
 				_elm_lang$core$List$map,
-				_elm_lang$core$Tuple$mapFirst(
-					function (_p3) {
-						return A2(
-							_elm_lang$core$String$join,
-							'/',
-							A2(_elm_lang$core$String$split, '.', _p3));
-					}),
+				_iosphere$elm_i18n$Main$slashifyModuleName,
 				_iosphere$elm_i18n$Localized_Writer$generate(
-					importFunction(
-						A2(
-							_elm_lang$core$Maybe$withDefault,
-							'',
-							_elm_lang$core$List$head(csv))))));
+					A2(
+						_elm_lang$core$List$map,
+						_iosphere$elm_i18n$Main$addLanguageToModuleName(lang),
+						importFunction(
+							A2(
+								_elm_lang$core$Maybe$withDefault,
+								'',
+								_elm_lang$core$List$head(csv)))))));
+	});
+var _iosphere$elm_i18n$Main$operationGenerateSwitch = F2(
+	function (sources, mlangs) {
+		var locales = A2(
+			_elm_lang$core$Maybe$withDefault,
+			{ctor: '[]'},
+			mlangs);
+		return _iosphere$elm_i18n$Main$importResult(
+			A2(
+				_elm_lang$core$List$map,
+				_iosphere$elm_i18n$Main$slashifyModuleName,
+				A2(_iosphere$elm_i18n$Localized_Switch$generate, locales, sources)));
 	});
 var _iosphere$elm_i18n$Main$Model = {};
-var _iosphere$elm_i18n$Main$Flags = F3(
-	function (a, b, c) {
-		return {sources: a, operation: b, format: c};
+var _iosphere$elm_i18n$Main$Flags = F4(
+	function (a, b, c, d) {
+		return {sources: a, operation: b, format: c, languages: d};
 	});
 var _iosphere$elm_i18n$Main$PO = {ctor: 'PO'};
 var _iosphere$elm_i18n$Main$CSV = {ctor: 'CSV'};
@@ -10408,6 +10797,9 @@ var _iosphere$elm_i18n$Main$formatFromString = function (maybeFormat) {
 		formatString,
 		_elm_lang$core$Maybe$Just('PO')) ? _iosphere$elm_i18n$Main$PO : _iosphere$elm_i18n$Main$CSV;
 };
+var _iosphere$elm_i18n$Main$GenSwitch = function (a) {
+	return {ctor: 'GenSwitch', _0: a};
+};
 var _iosphere$elm_i18n$Main$Import = function (a) {
 	return {ctor: 'Import', _0: a};
 };
@@ -10416,23 +10808,40 @@ var _iosphere$elm_i18n$Main$Export = function (a) {
 };
 var _iosphere$elm_i18n$Main$operationFromString = F2(
 	function (operation, formatString) {
-		return (_elm_lang$core$Native_Utils.eq(operation, 'import') ? _iosphere$elm_i18n$Main$Import : _iosphere$elm_i18n$Main$Export)(
+		return function () {
+			var _p4 = operation;
+			switch (_p4) {
+				case 'import':
+					return _iosphere$elm_i18n$Main$Import;
+				case 'export':
+					return _iosphere$elm_i18n$Main$Export;
+				default:
+					return _iosphere$elm_i18n$Main$GenSwitch;
+			}
+		}()(
 			_iosphere$elm_i18n$Main$formatFromString(formatString));
 	});
 var _iosphere$elm_i18n$Main$init = function (flags) {
-	var _p4 = A2(_iosphere$elm_i18n$Main$operationFromString, flags.operation, flags.format);
-	if (_p4.ctor === 'Export') {
-		return {
-			ctor: '_Tuple2',
-			_0: {},
-			_1: A2(_iosphere$elm_i18n$Main$operationExport, flags.sources, _p4._0)
-		};
-	} else {
-		return {
-			ctor: '_Tuple2',
-			_0: {},
-			_1: A2(_iosphere$elm_i18n$Main$operationImport, flags.sources, _p4._0)
-		};
+	var _p5 = A2(_iosphere$elm_i18n$Main$operationFromString, flags.operation, flags.format);
+	switch (_p5.ctor) {
+		case 'Export':
+			return {
+				ctor: '_Tuple2',
+				_0: {},
+				_1: A2(_iosphere$elm_i18n$Main$operationExport, flags.sources, _p5._0)
+			};
+		case 'Import':
+			return {
+				ctor: '_Tuple2',
+				_0: {},
+				_1: A3(_iosphere$elm_i18n$Main$operationImport, flags.sources, flags.languages, _p5._0)
+			};
+		default:
+			return {
+				ctor: '_Tuple2',
+				_0: {},
+				_1: A2(_iosphere$elm_i18n$Main$operationGenerateSwitch, flags.sources, flags.languages)
+			};
 	}
 };
 var _iosphere$elm_i18n$Main$main = _elm_lang$core$Platform$programWithFlags(
@@ -10446,19 +10855,39 @@ var _iosphere$elm_i18n$Main$main = _elm_lang$core$Platform$programWithFlags(
 		function (format) {
 			return A2(
 				_elm_lang$core$Json_Decode$andThen,
-				function (operation) {
+				function (languages) {
 					return A2(
 						_elm_lang$core$Json_Decode$andThen,
-						function (sources) {
-							return _elm_lang$core$Json_Decode$succeed(
-								{format: format, operation: operation, sources: sources});
+						function (operation) {
+							return A2(
+								_elm_lang$core$Json_Decode$andThen,
+								function (sources) {
+									return _elm_lang$core$Json_Decode$succeed(
+										{format: format, languages: languages, operation: operation, sources: sources});
+								},
+								A2(
+									_elm_lang$core$Json_Decode$field,
+									'sources',
+									_elm_lang$core$Json_Decode$list(_elm_lang$core$Json_Decode$string)));
 						},
-						A2(
-							_elm_lang$core$Json_Decode$field,
-							'sources',
-							_elm_lang$core$Json_Decode$list(_elm_lang$core$Json_Decode$string)));
+						A2(_elm_lang$core$Json_Decode$field, 'operation', _elm_lang$core$Json_Decode$string));
 				},
-				A2(_elm_lang$core$Json_Decode$field, 'operation', _elm_lang$core$Json_Decode$string));
+				A2(
+					_elm_lang$core$Json_Decode$field,
+					'languages',
+					_elm_lang$core$Json_Decode$oneOf(
+						{
+							ctor: '::',
+							_0: _elm_lang$core$Json_Decode$null(_elm_lang$core$Maybe$Nothing),
+							_1: {
+								ctor: '::',
+								_0: A2(
+									_elm_lang$core$Json_Decode$map,
+									_elm_lang$core$Maybe$Just,
+									_elm_lang$core$Json_Decode$list(_elm_lang$core$Json_Decode$string)),
+								_1: {ctor: '[]'}
+							}
+						})));
 		},
 		A2(
 			_elm_lang$core$Json_Decode$field,
