@@ -91,7 +91,7 @@ init flags =
         Import format ->
             ( {}, operationImport flags.sources flags.languages format )
 
-        GenSwitch format ->
+        GenSwitch _ ->
             ( {}, operationGenerateSwitch flags.sources flags.languages )
 
 

@@ -10,7 +10,7 @@ elm modules implementing the localized elements.
 
 import Localized
 import Localized.Writer.Module
-import Localized.Writer.Element exposing (tab)
+import Localized.Writer.Element
 
 
 {-| Generate elm-source code for a list of modules and their associated

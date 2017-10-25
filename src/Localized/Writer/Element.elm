@@ -1,4 +1,12 @@
-module Localized.Writer.Element exposing (..)
+module Localized.Writer.Element
+    exposing
+        ( typeDeclaration
+        , placeholders
+        , body
+        , head
+        , tab
+        , formatComponentsImplementation
+        )
 
 import Localized
 
@@ -42,7 +50,7 @@ head : Localized.Element -> Localized.SourceCode
 head element =
     (Localized.elementMeta .key element)
         ++ (case element of
-                Localized.ElementStatic static ->
+                Localized.ElementStatic _ ->
                     ""
 
                 Localized.ElementFormat format ->

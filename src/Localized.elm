@@ -91,7 +91,9 @@ type alias Meta =
 It contains a single string value.
 -}
 type alias Static =
-    { meta : Meta, value : Value }
+    { meta : Meta
+    , value : Value
+    }
 
 
 {-| A formatted string can contain placeholders and static components. This

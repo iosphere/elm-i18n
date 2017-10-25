@@ -98,7 +98,11 @@ switchSource languages mod =
         ( moduleName
         , Localized.Writer.Module.head mod
             ++ Localized.Writer.Module.importModuleExposingAll ( "Translation", [] )
-            ++ (String.join "" <| List.map (Localized.Writer.Module.importModule << Localized.namedModule << (Localized.languageModuleName moduleName)) languages)
+            ++ (String.join "" <|
+                    List.map
+                        (Localized.Writer.Module.importModule << Localized.namedModule << Localized.languageModuleName moduleName)
+                        languages
+               )
             ++ "\n\n"
             ++ Localized.Writer.Module.elements (elementSource languages) mod
         )
@@ -151,7 +155,7 @@ mainModule languages =
         ( name
         , Localized.Writer.Module.head mod
             ++ "type Language = "
-            ++ (String.join " | " languages)
+            ++ String.join " | " languages
             ++ "\n"
         )
 
