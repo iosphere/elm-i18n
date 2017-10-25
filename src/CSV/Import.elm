@@ -15,7 +15,7 @@ elements.
 
 import Csv
 import Dict
-import Localized exposing (..)
+import Localized
 import Set
 
 
@@ -29,7 +29,7 @@ You will usually use this output to create elm code:
     |> Localized.Writer.write
 
 -}
-generate : String -> List Module
+generate : String -> List Localized.Module
 generate csv =
     case Csv.parse csv of
         Result.Ok lines ->
@@ -40,7 +40,7 @@ generate csv =
                 |> always []
 
 
-generateForCsv : Csv.Csv -> List Module
+generateForCsv : Csv.Csv -> List Localized.Module
 generateForCsv lines =
     let
         modules =
@@ -74,7 +74,7 @@ generateForCsv lines =
             modules
 
 
-generateForModule : List (List String) -> List Element
+generateForModule : List (List String) -> List Localized.Element
 generateForModule lines =
     List.filterMap fromLine lines
 
@@ -94,12 +94,12 @@ moduleNameForLine columns =
             Nothing
 
 
-linesForModule : ModuleName -> List (List String) -> List (List String)
+linesForModule : Localized.ModuleName -> List (List String) -> List (List String)
 linesForModule moduleName lines =
     List.filter (\line -> moduleNameForLine line == Just moduleName) lines
 
 
-fromLine : List String -> Maybe Element
+fromLine : List String -> Maybe Localized.Element
 fromLine columns =
     case columns of
         modulename :: key :: comment :: placeholders :: value :: xs ->
@@ -109,7 +109,7 @@ fromLine columns =
             Nothing
 
 
-code : ModuleName -> Key -> Comment -> String -> Value -> Element
+code : Localized.ModuleName -> Localized.Key -> Localized.Comment -> String -> Localized.Value -> Localized.Element
 code modulename key comment placeholderString value =
     let
         placeholders =
@@ -126,7 +126,7 @@ code modulename key comment placeholderString value =
             formatElement modulename key comment placeholders value
 
 
-formatElement : ModuleName -> Key -> Comment -> List Placeholder -> Value -> Element
+formatElement : Localized.ModuleName -> Localized.Key -> Localized.Comment -> List Localized.Placeholder -> Localized.Value -> Localized.Element
 formatElement modulename key comment placeholders value =
     let
         components =
@@ -139,20 +139,20 @@ formatElement modulename key comment placeholders value =
                             -- "p}} Goodbye " -> ["p", " Goodbye "]
                             String.split "}}" candidate
                                 |> withoutEmptyStrings
-                                -- ["p", " Goodbye "] -> [FormatComponentPlaceholder "p", FormatComponentStatic " Goodbye "]
+                                -- ["p", " Goodbye "] -> [FormatComponentPlaceholder "p", Localized.FormatComponentStatic " Goodbye "]
                                 |> List.indexedMap
                                     (\index submatch ->
                                         if index % 2 == 0 then
-                                            FormatComponentPlaceholder (String.trim submatch)
+                                            Localized.FormatComponentPlaceholder (String.trim submatch)
                                         else
-                                            FormatComponentStatic submatch
+                                            Localized.FormatComponentStatic submatch
                                     )
                         else
-                            [ FormatComponentStatic candidate ]
+                            [ Localized.FormatComponentStatic candidate ]
                     )
                 |> List.concat
     in
-        ElementFormat
+        Localized.ElementFormat
             { meta =
                 { moduleName = modulename
                 , key = key
@@ -163,9 +163,9 @@ formatElement modulename key comment placeholders value =
             }
 
 
-staticElement : ModuleName -> Key -> Comment -> Value -> Element
+staticElement : Localized.ModuleName -> Localized.Key -> Localized.Comment -> Localized.Value -> Localized.Element
 staticElement modulename key comment value =
-    ElementStatic
+    Localized.ElementStatic
         { meta =
             { moduleName = modulename
             , key = key

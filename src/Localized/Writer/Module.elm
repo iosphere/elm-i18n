@@ -1,21 +1,21 @@
 module Localized.Writer.Module exposing (..)
 
-{-| Provides code generation for Modules
+{-| Provides code generation for Localized.Modules
 -}
 
-import Localized exposing (..)
+import Localized
 
 
-{-| Return the complete implementation for the Module, needs a function to implement each Element.
+{-| Return the complete implementation for the Localized.Module, needs a function to implement each Localized.Element.
 -}
-implementation : (Element -> SourceCode) -> Module -> SourceCode
+implementation : (Localized.Element -> Localized.SourceCode) -> Localized.Module -> Localized.SourceCode
 implementation functionImplementation mod =
     head mod
         ++ "\n"
         ++ elements functionImplementation mod
 
 
-elements : (Element -> SourceCode) -> Module -> SourceCode
+elements : (Localized.Element -> Localized.SourceCode) -> Localized.Module -> Localized.SourceCode
 elements functionImplementation ( name, elements ) =
     (List.map functionImplementation elements
         |> String.join "\n\n\n"
@@ -24,19 +24,19 @@ elements functionImplementation ( name, elements ) =
     )
 
 
-head : Module -> SourceCode
+head : Localized.Module -> Localized.SourceCode
 head ( name, _ ) =
     "module "
         ++ name
         ++ " exposing (..)\n\n{-| -}\n\n"
 
 
-importModule : Module -> SourceCode
+importModule : Localized.Module -> Localized.SourceCode
 importModule ( name, _ ) =
     "import " ++ name ++ "\n"
 
 
-importModuleExposingAll : Module -> SourceCode
+importModuleExposingAll : Localized.Module -> Localized.SourceCode
 importModuleExposingAll ( name, _ ) =
     "import "
         ++ name

@@ -10,7 +10,7 @@ in the CSV and PO submodules.
 import CSV.Export
 import CSV.Import
 import Json.Decode
-import Localized exposing (..)
+import Localized
 import Localized.Parser as Localized
 import Localized.Writer
 import Localized.Switch
@@ -114,7 +114,7 @@ operationExport source format =
         exportResult exportValue
 
 
-operationImport : List String -> Maybe (List LangCode) -> Format -> Cmd Never
+operationImport : List String -> Maybe (List Localized.LangCode) -> Format -> Cmd Never
 operationImport csv mlangs format =
     let
         lang =
@@ -137,7 +137,7 @@ operationImport csv mlangs format =
             |> importResult
 
 
-operationGenerateSwitch : List SourceCode -> Maybe (List LangCode) -> Cmd Never
+operationGenerateSwitch : List Localized.SourceCode -> Maybe (List Localized.LangCode) -> Cmd Never
 operationGenerateSwitch sources mlangs =
     let
         locales =
@@ -153,11 +153,11 @@ update _ model =
     ( model, Cmd.none )
 
 
-slashifyModuleName : ModuleImplementation -> ModuleImplementation
+slashifyModuleName : Localized.ModuleImplementation -> Localized.ModuleImplementation
 slashifyModuleName =
     Tuple.mapFirst (String.split "." >> String.join "/")
 
 
-addLanguageToModuleName : LangCode -> Module -> Module
+addLanguageToModuleName : Localized.LangCode -> Localized.Module -> Localized.Module
 addLanguageToModuleName lang =
-    Tuple.mapFirst (flip languageModuleName lang)
+    Tuple.mapFirst (flip Localized.languageModuleName lang)

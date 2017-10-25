@@ -1,24 +1,24 @@
 module Localized.Writer.Element exposing (..)
 
-import Localized exposing (..)
+import Localized
 
 
 {-| Returns types of an translation element, ie. "helloWord : String"
 -}
-typeDeclaration : Element -> SourceCode
+typeDeclaration : Localized.Element -> Localized.SourceCode
 typeDeclaration element =
-    (elementMeta .key element)
+    (Localized.elementMeta .key element)
         ++ " : "
         ++ placeholders element
 
 
-placeholders : Element -> SourceCode
+placeholders : Localized.Element -> Localized.SourceCode
 placeholders element =
     case element of
-        ElementStatic _ ->
+        Localized.ElementStatic _ ->
             "String"
 
-        ElementFormat { placeholders } ->
+        Localized.ElementFormat { placeholders } ->
             let
                 num =
                     List.length placeholders
@@ -26,38 +26,38 @@ placeholders element =
                 String.join " -> " (List.repeat (num + 1) "String")
 
 
-body : Element -> SourceCode
+body : Localized.Element -> Localized.SourceCode
 body element =
     case element of
-        ElementStatic static ->
+        Localized.ElementStatic static ->
             (tab ++ toString static.value)
 
-        ElementFormat format ->
+        Localized.ElementFormat format ->
             (List.indexedMap formatComponentsImplementation format.components
                 |> String.join "\n"
             )
 
 
-head : Element -> SourceCode
+head : Localized.Element -> Localized.SourceCode
 head element =
-    (elementMeta .key element)
+    (Localized.elementMeta .key element)
         ++ (case element of
-                ElementStatic static ->
+                Localized.ElementStatic static ->
                     ""
 
-                ElementFormat format ->
+                Localized.ElementFormat format ->
                     " "
                         ++ String.join "" format.placeholders
            )
         ++ " ="
 
 
-tab : SourceCode
+tab : Localized.SourceCode
 tab =
     "    "
 
 
-formatComponentsImplementation : Int -> FormatComponent -> SourceCode
+formatComponentsImplementation : Int -> Localized.FormatComponent -> Localized.SourceCode
 formatComponentsImplementation index component =
     let
         prefix =
@@ -67,8 +67,8 @@ formatComponentsImplementation index component =
                 tab ++ tab ++ "++ "
     in
         case component of
-            FormatComponentStatic string ->
+            Localized.FormatComponentStatic string ->
                 prefix ++ toString string
 
-            FormatComponentPlaceholder string ->
+            Localized.FormatComponentPlaceholder string ->
                 prefix ++ String.trim string

@@ -1,14 +1,14 @@
 module PO.Export exposing (generate)
 
 {-| The PO export generates PO strings from a list of localized elements
-(Localized.Element). For more information about the PO Format visit:
+(Localized.Element). For more information about the PO Localized.Format visit:
 <https://www.gnu.org/savannah-checkouts/gnu/gettext/manual/html_node/PO-Files.html>
 
 @docs generate
 
 -}
 
-import Localized exposing (..)
+import Localized
 import PO.Template
 
 
@@ -20,24 +20,24 @@ Elm source code into a list of localized elements:
         |> PO.Export.generate
 
 -}
-generate : List Element -> String
+generate : List Localized.Element -> String
 generate elements =
     List.map line elements
         |> String.join "\n\n"
         |> flip String.append "\n"
 
 
-line : Element -> String
+line : Localized.Element -> String
 line element =
     case element of
-        ElementStatic static ->
+        Localized.ElementStatic static ->
             commentLine static.meta.comment
                 ++ "\n"
                 ++ identifier static.meta.moduleName static.meta.key
                 ++ "\n"
                 ++ staticElement static.value
 
-        ElementFormat format ->
+        Localized.ElementFormat format ->
             commentLine format.meta.comment
                 ++ "\n"
                 ++ commentLine (PO.Template.placeholderCommentPrefix ++ String.join " " format.placeholders)
@@ -47,7 +47,7 @@ line element =
                 ++ ("msgstr " ++ formatElement format.components)
 
 
-commentLine : Comment -> String
+commentLine : Localized.Comment -> String
 commentLine comment =
     String.split "\n" comment
         |> String.join "\n#. "
@@ -55,26 +55,26 @@ commentLine comment =
         |> String.trim
 
 
-identifier : ModuleName -> Key -> String
+identifier : Localized.ModuleName -> Localized.Key -> String
 identifier modulename key =
     "msgid \"" ++ modulename ++ "." ++ key ++ "\""
 
 
-staticElement : Value -> String
+staticElement : Localized.Value -> String
 staticElement value =
     "msgstr " ++ toString value
 
 
-formatElement : List FormatComponent -> String
+formatElement : List Localized.FormatComponent -> String
 formatElement list =
     list
         |> List.map
             (\element ->
                 case element of
-                    FormatComponentPlaceholder placeholder ->
+                    Localized.FormatComponentPlaceholder placeholder ->
                         PO.Template.placeholder placeholder
 
-                    FormatComponentStatic string ->
+                    Localized.FormatComponentStatic string ->
                         string
             )
         |> String.join ""

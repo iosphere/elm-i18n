@@ -1,8 +1,11 @@
 module Localized
     exposing
-        ( Element(..)
+        ( Element(ElementStatic, ElementFormat)
         , Format
-        , FormatComponent(..)
+        , FormatComponent
+            ( FormatComponentStatic
+            , FormatComponentPlaceholder
+            )
         , Meta
         , Static
         , ModuleName

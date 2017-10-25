@@ -8,45 +8,45 @@ elm modules implementing the localized elements.
 
 -}
 
-import Localized exposing (..)
-import Localized.Writer.Module as Module
-import Localized.Writer.Element as Element exposing (tab)
+import Localized
+import Localized.Writer.Module
+import Localized.Writer.Element exposing (tab)
 
 
 {-| Generate elm-source code for a list of modules and their associated
 localized elements.
 -}
-generate : List Module -> List ( ModuleName, SourceCode )
+generate : List Localized.Module -> List ( Localized.ModuleName, Localized.SourceCode )
 generate =
     List.map moduleImplementation
 
 
-moduleImplementation : Module -> ( ModuleName, SourceCode )
+moduleImplementation : Localized.Module -> ( Localized.ModuleName, Localized.SourceCode )
 moduleImplementation mod =
     let
         ( moduleName, _ ) =
             mod
     in
         ( moduleName
-        , Module.implementation element mod
+        , Localized.Writer.Module.implementation element mod
         )
 
 
-element : Element -> SourceCode
+element : Localized.Element -> Localized.SourceCode
 element element =
     let
         c =
-            elementMeta .comment element
+            Localized.elementMeta .comment element
     in
         comment c
-            ++ Element.typeDeclaration element
+            ++ Localized.Writer.Element.typeDeclaration element
             ++ "\n"
-            ++ Element.head element
+            ++ Localized.Writer.Element.head element
             ++ "\n"
-            ++ Element.body element
+            ++ Localized.Writer.Element.body element
 
 
-comment : Comment -> SourceCode
+comment : Localized.Comment -> Localized.SourceCode
 comment string =
     if String.isEmpty string then
         ""

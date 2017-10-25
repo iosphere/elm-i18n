@@ -9893,7 +9893,10 @@ var _iosphere$elm_i18n$Localized_Writer_Module$implementation = F2(
 		return A2(
 			_elm_lang$core$Basics_ops['++'],
 			_iosphere$elm_i18n$Localized_Writer_Module$head(mod),
-			A2(_iosphere$elm_i18n$Localized_Writer_Module$elements, functionImplementation, mod));
+			A2(
+				_elm_lang$core$Basics_ops['++'],
+				'\n',
+				A2(_iosphere$elm_i18n$Localized_Writer_Module$elements, functionImplementation, mod)));
 	});
 
 var _iosphere$elm_i18n$Localized_Writer_Element$tab = '    ';

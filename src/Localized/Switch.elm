@@ -7,13 +7,13 @@ module Localized.Switch exposing (generate)
 -}
 
 import Dict exposing (Dict)
-import Localized exposing (..)
+import Localized
 import Localized.Parser as Parser
-import Localized.Writer.Module as Module
-import Localized.Writer.Element as Element exposing (tab)
+import Localized.Writer.Module
+import Localized.Writer.Element exposing (tab)
 
 
-generate : List LangCode -> List SourceCode -> List ( ModuleName, SourceCode )
+generate : List Localized.LangCode -> List Localized.SourceCode -> List ( Localized.ModuleName, Localized.SourceCode )
 generate languages sources =
     mainModule languages
         :: (sources
@@ -21,18 +21,18 @@ generate languages sources =
                 |> flatten2D
                 |> List.map (removeLocale languages)
                 |> unique
-                |> indexBy (elementMeta .moduleName)
+                |> indexBy (Localized.elementMeta .moduleName)
                 |> Dict.toList
                 |> List.map (switchSource languages)
            )
 
 
-unique : List Element -> List Element
+unique : List Localized.Element -> List Localized.Element
 unique elements =
     u elements []
 
 
-u : List Element -> List Element -> List Element
+u : List Localized.Element -> List Localized.Element -> List Localized.Element
 u list have =
     case list of
         e :: rest ->
@@ -50,27 +50,27 @@ flatten2D list =
     List.foldr (++) [] list
 
 
-member : Element -> List Element -> Bool
+member : Localized.Element -> List Localized.Element -> Bool
 member e list =
     let
         sameElement e1 e2 =
             case ( e1, e2 ) of
-                ( ElementFormat _, ElementStatic _ ) ->
+                ( Localized.ElementFormat _, Localized.ElementStatic _ ) ->
                     False
 
-                ( ElementStatic _, ElementFormat _ ) ->
+                ( Localized.ElementStatic _, Localized.ElementFormat _ ) ->
                     False
 
-                ( ElementStatic m1, ElementStatic m2 ) ->
+                ( Localized.ElementStatic m1, Localized.ElementStatic m2 ) ->
                     m1.meta.moduleName == m2.meta.moduleName && m1.meta.key == m2.meta.key
 
-                ( ElementFormat m1, ElementFormat m2 ) ->
+                ( Localized.ElementFormat m1, Localized.ElementFormat m2 ) ->
                     m1.meta.moduleName == m2.meta.moduleName && m1.meta.key == m2.meta.key
     in
         List.any (sameElement e) list
 
 
-indexBy : (Element -> comparable) -> List Element -> Dict comparable (List Element)
+indexBy : (Localized.Element -> comparable) -> List Localized.Element -> Dict comparable (List Localized.Element)
 indexBy keymaker elements =
     elements
         |> List.foldr
@@ -89,32 +89,32 @@ indexBy keymaker elements =
             Dict.empty
 
 
-switchSource : List LangCode -> Module -> ( ModuleName, SourceCode )
+switchSource : List Localized.LangCode -> Localized.Module -> ( Localized.ModuleName, Localized.SourceCode )
 switchSource languages mod =
     let
         ( moduleName, _ ) =
             mod
     in
         ( moduleName
-        , Module.head mod
-            ++ Module.importModuleExposingAll ( "Translation", [] )
-            ++ (String.join "" <| List.map (Module.importModule << namedModule << (languageModuleName moduleName)) languages)
+        , Localized.Writer.Module.head mod
+            ++ Localized.Writer.Module.importModuleExposingAll ( "Translation", [] )
+            ++ (String.join "" <| List.map (Localized.Writer.Module.importModule << Localized.namedModule << (Localized.languageModuleName moduleName)) languages)
             ++ "\n\n"
-            ++ Module.elements (elementSource languages) mod
+            ++ Localized.Writer.Module.elements (elementSource languages) mod
         )
 
 
-elementSource : List LangCode -> Element -> SourceCode
+elementSource : List Localized.LangCode -> Localized.Element -> Localized.SourceCode
 elementSource languages element =
     let
         name =
-            elementMeta .key element
+            Localized.elementMeta .key element
 
         moduleName =
-            elementMeta .moduleName element
+            Localized.elementMeta .moduleName element
 
         placeholders =
-            Element.placeholders element
+            Localized.Writer.Element.placeholders element
     in
         name
             ++ " : Language -> "
@@ -139,7 +139,7 @@ elementSource languages element =
                )
 
 
-mainModule : List LangCode -> ( ModuleName, SourceCode )
+mainModule : List Localized.LangCode -> ( Localized.ModuleName, Localized.SourceCode )
 mainModule languages =
     let
         name =
@@ -149,13 +149,13 @@ mainModule languages =
             ( name, [] )
     in
         ( name
-        , Module.head mod
+        , Localized.Writer.Module.head mod
             ++ "type Language = "
             ++ (String.join " | " languages)
             ++ "\n"
         )
 
 
-removeLocale : List LangCode -> Element -> Element
+removeLocale : List Localized.LangCode -> Localized.Element -> Localized.Element
 removeLocale langs element =
-    langs |> List.foldr elementRemoveLang element
+    langs |> List.foldr Localized.elementRemoveLang element
