@@ -2,6 +2,7 @@ module Translation.Main.En exposing (..)
 
 {-| -}
 
+
 {-| A short greeting.
 -}
 greeting : String

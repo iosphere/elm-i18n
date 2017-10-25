@@ -11,6 +11,7 @@ import Localized exposing (..)
 implementation : (Element -> SourceCode) -> Module -> SourceCode
 implementation functionImplementation mod =
     head mod
+        ++ "\n"
         ++ elements functionImplementation mod
 
 
