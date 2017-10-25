@@ -1,9 +1,9 @@
 module Localized.Switch exposing (generate)
 
 {-|
+
     Reads in all the Translation.elm files and generates a master switch for
     them. Elements only present in one of them will still be added.
-
 -}
 
 import Dict exposing (Dict)

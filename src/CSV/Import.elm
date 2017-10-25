@@ -140,14 +140,13 @@ formatElement modulename key comment placeholders value =
                             String.split "}}" candidate
                                 |> withoutEmptyStrings
                                 -- ["p", " Goodbye "] -> [FormatComponentPlaceholder "p", FormatComponentStatic " Goodbye "]
-                                |>
-                                    List.indexedMap
-                                        (\index submatch ->
-                                            if index % 2 == 0 then
-                                                FormatComponentPlaceholder (String.trim submatch)
-                                            else
-                                                FormatComponentStatic submatch
-                                        )
+                                |> List.indexedMap
+                                    (\index submatch ->
+                                        if index % 2 == 0 then
+                                            FormatComponentPlaceholder (String.trim submatch)
+                                        else
+                                            FormatComponentStatic submatch
+                                    )
                         else
                             [ FormatComponentStatic candidate ]
                     )

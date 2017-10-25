@@ -153,6 +153,7 @@ for our own exports where we write placeholders into the comment using the
 following format:
 
     #. i18n: placeholders: placeh1, placeh2
+
 -}
 placeholdersFromPoComment : String -> List Placeholder
 placeholdersFromPoComment poComment =

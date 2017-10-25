@@ -3,6 +3,7 @@ module Localized.Parser exposing (parse)
 {-| The parser parses elm code (one module) into a list of localized elements.
 
 @docs parse
+
 -}
 
 import Localized exposing (..)

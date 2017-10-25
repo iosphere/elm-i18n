@@ -2,9 +2,10 @@ module PO.Export exposing (generate)
 
 {-| The PO export generates PO strings from a list of localized elements
 (Localized.Element). For more information about the PO Format visit:
-https://www.gnu.org/savannah-checkouts/gnu/gettext/manual/html_node/PO-Files.html
+<https://www.gnu.org/savannah-checkouts/gnu/gettext/manual/html_node/PO-Files.html>
 
 @docs generate
+
 -}
 
 import Localized exposing (..)

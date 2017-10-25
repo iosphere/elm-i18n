@@ -9,6 +9,7 @@ Use Localized.Writer.write to create elm code from the list of localized
 elements.
 
 @docs generate
+
 -}
 
 import Dict exposing (Dict)

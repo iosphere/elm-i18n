@@ -25,6 +25,7 @@ module Localized
 and constants.
 
 @docs Element, Meta, Static, Format, FormatComponent, ModuleName, Key, Comment, Value, Placeholder, Module, ModuleImplementation, SourceCode, LangCode, isEmptyFormatComponent, elementMeta, languageModuleName, elementRemoveLang, namedModule
+
 -}
 
 
@@ -101,6 +102,7 @@ allows us to describe strings that contain dynamic values.
         , FormatComponentPlaceholder "name"
         ]
     }
+
 -}
 type alias Format =
     { meta : Meta

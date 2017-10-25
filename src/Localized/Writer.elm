@@ -5,6 +5,7 @@ module names and associated localized elements and returns the source code for
 elm modules implementing the localized elements.
 
 @docs generate
+
 -}
 
 import Localized exposing (..)
