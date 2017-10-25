@@ -9,10 +9,11 @@ Use Localized.Writer.write to create elm code from the list of localized
 elements.
 
 @docs generate
+
 -}
 
 import Dict exposing (Dict)
-import Localized exposing (FormatComponent)
+import Localized
 import PO.Import.Internal exposing (..)
 
 
@@ -27,7 +28,7 @@ You will usually use this output to create elm code:
     |> Localized.Writer.write
 
 -}
-generate : String -> List ( String, List Localized.Element )
+generate : String -> List Localized.Module
 generate poString =
     let
         keysInModules =
@@ -41,7 +42,7 @@ generate poString =
             keysInModules
 
 
-generateModule : String -> String -> List String -> List Localized.Element
+generateModule : String -> Localized.ModuleName -> List Localized.Key -> List Localized.Element
 generateModule poString moduleName allKeys =
     let
         fullComments =

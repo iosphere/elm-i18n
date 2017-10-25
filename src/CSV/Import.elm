@@ -29,7 +29,7 @@ You will usually use this output to create elm code:
     |> Localized.Writer.write
 
 -}
-generate : String -> List ( String, List Localized.Element )
+generate : String -> List Localized.Module
 generate csv =
     case Csv.parse csv of
         Result.Ok lines ->
@@ -40,7 +40,7 @@ generate csv =
                 |> always []
 
 
-generateForCsv : Csv.Csv -> List ( String, List Localized.Element )
+generateForCsv : Csv.Csv -> List Localized.Module
 generateForCsv lines =
     let
         modules =
@@ -60,18 +60,18 @@ generateForCsv lines =
                     )
                 |> Dict.fromList
     in
-    -- Generate the source code for each module based on the lines
-    -- grouped in the expression above.
-    List.map
-        (\name ->
-            let
-                linesForThisModule =
-                    Dict.get name linesForModules
-                        |> Maybe.withDefault []
-            in
-            ( name, generateForModule linesForThisModule )
-        )
-        modules
+        -- Generate the source code for each module based on the lines
+        -- grouped in the expression above.
+        List.map
+            (\name ->
+                let
+                    linesForThisModule =
+                        Dict.get name linesForModules
+                            |> Maybe.withDefault []
+                in
+                    ( name, generateForModule linesForThisModule )
+            )
+            modules
 
 
 generateForModule : List (List String) -> List Localized.Element
@@ -94,7 +94,7 @@ moduleNameForLine columns =
             Nothing
 
 
-linesForModule : String -> List (List String) -> List (List String)
+linesForModule : Localized.ModuleName -> List (List String) -> List (List String)
 linesForModule moduleName lines =
     List.filter (\line -> moduleNameForLine line == Just moduleName) lines
 
@@ -109,7 +109,7 @@ fromLine columns =
             Nothing
 
 
-code : String -> String -> String -> String -> String -> Localized.Element
+code : Localized.ModuleName -> Localized.Key -> Localized.Comment -> String -> Localized.Value -> Localized.Element
 code modulename key comment placeholderString value =
     let
         placeholders =
@@ -120,13 +120,13 @@ code modulename key comment placeholderString value =
         numPlaceholders =
             List.length placeholders
     in
-    if numPlaceholders == 0 then
-        staticElement modulename key comment value
-    else
-        formatElement modulename key comment placeholders value
+        if numPlaceholders == 0 then
+            staticElement modulename key comment value
+        else
+            formatElement modulename key comment placeholders value
 
 
-formatElement : String -> String -> String -> List String -> String -> Localized.Element
+formatElement : Localized.ModuleName -> Localized.Key -> Localized.Comment -> List Localized.Placeholder -> Localized.Value -> Localized.Element
 formatElement modulename key comment placeholders value =
     let
         components =
@@ -139,7 +139,7 @@ formatElement modulename key comment placeholders value =
                             -- "p}} Goodbye " -> ["p", " Goodbye "]
                             String.split "}}" candidate
                                 |> withoutEmptyStrings
-                                -- ["p", " Goodbye "] -> [FormatComponentPlaceholder "p", FormatComponentStatic " Goodbye "]
+                                -- ["p", " Goodbye "] -> [FormatComponentPlaceholder "p", Localized.FormatComponentStatic " Goodbye "]
                                 |> List.indexedMap
                                     (\index submatch ->
                                         if index % 2 == 0 then
@@ -152,18 +152,18 @@ formatElement modulename key comment placeholders value =
                     )
                 |> List.concat
     in
-    Localized.ElementFormat
-        { meta =
-            { moduleName = modulename
-            , key = key
-            , comment = comment
+        Localized.ElementFormat
+            { meta =
+                { moduleName = modulename
+                , key = key
+                , comment = comment
+                }
+            , placeholders = placeholders
+            , components = components
             }
-        , placeholders = placeholders
-        , components = components
-        }
 
 
-staticElement : String -> String -> String -> String -> Localized.Element
+staticElement : Localized.ModuleName -> Localized.Key -> Localized.Comment -> Localized.Value -> Localized.Element
 staticElement modulename key comment value =
     Localized.ElementStatic
         { meta =

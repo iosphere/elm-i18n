@@ -4,6 +4,7 @@ module CSV.Export exposing (generate)
 (Localized.Element).
 
 @docs generate
+
 -}
 
 import CSV.Template

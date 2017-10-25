@@ -1,10 +1,11 @@
 module PO.Export exposing (generate)
 
 {-| The PO export generates PO strings from a list of localized elements
-(Localized.Element). For more information about the PO Format visit:
-https://www.gnu.org/savannah-checkouts/gnu/gettext/manual/html_node/PO-Files.html
+(Localized.Element). For more information about the PO Localized.Format visit:
+<https://www.gnu.org/savannah-checkouts/gnu/gettext/manual/html_node/PO-Files.html>
 
 @docs generate
+
 -}
 
 import Localized
@@ -46,7 +47,7 @@ line element =
                 ++ ("msgstr " ++ formatElement format.components)
 
 
-commentLine : String -> String
+commentLine : Localized.Comment -> String
 commentLine comment =
     String.split "\n" comment
         |> String.join "\n#. "
@@ -54,12 +55,12 @@ commentLine comment =
         |> String.trim
 
 
-identifier : String -> String -> String
+identifier : Localized.ModuleName -> Localized.Key -> String
 identifier modulename key =
     "msgid \"" ++ modulename ++ "." ++ key ++ "\""
 
 
-staticElement : String -> String
+staticElement : Localized.Value -> String
 staticElement value =
     "msgstr " ++ toString value
 

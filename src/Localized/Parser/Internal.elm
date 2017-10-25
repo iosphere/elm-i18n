@@ -33,7 +33,7 @@ regexFormats key =
         |> Regex.regex
 
 
-findModuleName : String -> String
+findModuleName : Localized.SourceCode -> Localized.ModuleName
 findModuleName source =
     Regex.find (Regex.AtMost 1) regexFindModuleName source
         |> List.head
@@ -44,7 +44,7 @@ findModuleName source =
 {-| Finds all top level string declarations, both constants (`key : String`
 and functions returning strings (e.g. `fun : String -> String`).
 -}
-stringDeclarations : String -> List ( String, List String )
+stringDeclarations : Localized.SourceCode -> List ( Localized.Key, List String )
 stringDeclarations source =
     Regex.find Regex.All regexStringDeclarations source
         |> List.filterMap
@@ -65,7 +65,7 @@ stringDeclarations source =
             )
 
 
-findStaticElementForKey : String -> String -> String -> Maybe Localized.Element
+findStaticElementForKey : Localized.ModuleName -> Localized.SourceCode -> Localized.Key -> Maybe Localized.Element
 findStaticElementForKey moduleName source key =
     let
         maybeValue =
@@ -83,7 +83,7 @@ findStaticElementForKey moduleName source key =
                 Nothing
 
 
-findFormatElementForKey : String -> String -> String -> Maybe Localized.Element
+findFormatElementForKey : Localized.ModuleName -> Localized.SourceCode -> Localized.Key -> Maybe Localized.Element
 findFormatElementForKey moduleName source key =
     let
         regex =
@@ -122,7 +122,7 @@ findFormatElementForKey moduleName source key =
                     |> Just
 
 
-findComment : String -> String -> String
+findComment : Localized.SourceCode -> Localized.Key -> Localized.Comment
 findComment source key =
     let
         match =

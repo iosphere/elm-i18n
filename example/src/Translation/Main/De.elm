@@ -1,4 +1,4 @@
-module Translation.Main exposing (..)
+module Translation.Main.De exposing (..)
 
 {-| -}
 

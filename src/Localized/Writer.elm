@@ -5,106 +5,48 @@ module names and associated localized elements and returns the source code for
 elm modules implementing the localized elements.
 
 @docs generate
+
 -}
 
 import Localized
+import Localized.Writer.Module
+import Localized.Writer.Element
 
 
 {-| Generate elm-source code for a list of modules and their associated
 localized elements.
 -}
-generate : List ( String, List Localized.Element ) -> List ( String, String )
+generate : List Localized.Module -> List ( Localized.ModuleName, Localized.SourceCode )
 generate =
-    List.map
-        (\( modulename, elements ) ->
-            ( modulename, moduleImplementation modulename elements )
+    List.map moduleImplementation
+
+
+moduleImplementation : Localized.Module -> ( Localized.ModuleName, Localized.SourceCode )
+moduleImplementation mod =
+    let
+        ( moduleName, _ ) =
+            mod
+    in
+        ( moduleName
+        , Localized.Writer.Module.implementation element mod
         )
 
 
-moduleImplementation : String -> List Localized.Element -> String
-moduleImplementation name elements =
-    "module "
-        ++ name
-        ++ " exposing (..)\n\n{-| -}\n\n\n"
-        ++ (List.map functionFromElement elements
-                |> String.join "\n\n\n"
-                |> String.trim
-                |> flip String.append "\n"
-           )
-
-
-functionFromElement : Localized.Element -> String
-functionFromElement element =
-    case element of
-        Localized.ElementStatic static ->
-            functionStatic static
-
-        Localized.ElementFormat format ->
-            functionFormat format
-
-
-tab : String
-tab =
-    "    "
-
-
-functionStatic : Localized.Static -> String
-functionStatic staticLocalized =
-    comment staticLocalized.meta.comment
-        ++ signature staticLocalized.meta.key []
-        ++ ("\n" ++ tab ++ toString staticLocalized.value)
-
-
-functionFormat : Localized.Format -> String
-functionFormat format =
-    comment format.meta.comment
-        ++ signature format.meta.key format.placeholders
-        ++ "\n"
-        ++ (List.indexedMap formatComponentsImplementation format.components
-                |> String.join "\n"
-           )
-
-
-formatComponentsImplementation : Int -> Localized.FormatComponent -> String
-formatComponentsImplementation index component =
+element : Localized.Element -> Localized.SourceCode
+element element =
     let
-        prefix =
-            if index == 0 then
-                tab
-            else
-                tab ++ tab ++ "++ "
+        c =
+            Localized.elementMeta .comment element
     in
-        case component of
-            Localized.FormatComponentStatic string ->
-                prefix ++ toString string
-
-            Localized.FormatComponentPlaceholder string ->
-                prefix ++ String.trim string
-
-
-signature : String -> List String -> String
-signature key placeholders =
-    let
-        num =
-            List.length placeholders
-
-        types =
-            if num == 0 then
-                "String"
-            else
-                String.join " -> " (List.repeat (num + 1) "String")
-
-        parameters =
-            if num == 0 then
-                ""
-            else
-                " " ++ String.join " " placeholders
-    in
-        (key ++ " : " ++ types ++ "\n")
-            ++ (key ++ parameters ++ " =")
+        comment c
+            ++ Localized.Writer.Element.typeDeclaration element
+            ++ "\n"
+            ++ Localized.Writer.Element.head element
+            ++ "\n"
+            ++ Localized.Writer.Element.body element
 
 
-comment : String -> String
+comment : Localized.Comment -> Localized.SourceCode
 comment string =
     if String.isEmpty string then
         ""

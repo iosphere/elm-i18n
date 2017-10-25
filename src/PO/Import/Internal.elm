@@ -9,7 +9,7 @@ module PO.Import.Internal
         )
 
 import Dict exposing (Dict)
-import Localized exposing (FormatComponent)
+import Localized
 import Regex exposing (Regex)
 import Set
 import String.Extra as String
@@ -17,7 +17,7 @@ import Utils.Regex
 import PO.Template
 
 
-element : String -> String -> String -> String -> Localized.Element
+element : Localized.ModuleName -> Localized.Key -> Localized.Value -> Localized.Comment -> Localized.Element
 element moduleName key value fullComment =
     let
         comment =
@@ -65,7 +65,7 @@ element moduleName key value fullComment =
 ---- KEYS
 
 
-fullKey : String -> String -> String
+fullKey : Localized.ModuleName -> Localized.Key -> String
 fullKey moduleName key =
     moduleName ++ "." ++ key
 
@@ -73,7 +73,7 @@ fullKey moduleName key =
 {-| Extract a list of all localization keys per module from a PO string file's
 contents.
 -}
-keys : String -> List ( String, List String )
+keys : String -> List ( Localized.ModuleName, List String )
 keys poString =
     let
         matches =
@@ -119,7 +119,7 @@ keys poString =
 file, for all given keys in a module. The dict will contain use the localized
 key for key and the value will be the multiline comment.
 -}
-poComments : String -> String -> List String -> Dict String String
+poComments : String -> Localized.ModuleName -> List Localized.Key -> Dict Localized.Key String
 poComments poString moduleName allKeys =
     allKeys
         |> List.map
@@ -133,7 +133,7 @@ poComments poString moduleName allKeys =
         |> Dict.fromList
 
 
-commentFromPoComment : String -> String
+commentFromPoComment : String -> Localized.Comment
 commentFromPoComment poComment =
     String.trim poComment
         |> String.split "#."
@@ -153,8 +153,9 @@ for our own exports where we write placeholders into the comment using the
 following format:
 
     #. i18n: placeholders: placeh1, placeh2
+
 -}
-placeholdersFromPoComment : String -> List String
+placeholdersFromPoComment : String -> List Localized.Placeholder
 placeholdersFromPoComment poComment =
     let
         placeholdersPrefix =
@@ -184,7 +185,7 @@ placeholdersFromPoComment poComment =
 {-| Extract all values for a module and a given list of keys from a PO file.
 The dict will reference the value by its localization key.
 -}
-values : String -> String -> List String -> Dict String String
+values : String -> Localized.ModuleName -> List Localized.Key -> Dict Localized.Key Localized.Value
 values poString moduleName allKeys =
     allKeys
         |> List.map
@@ -203,18 +204,18 @@ values poString moduleName allKeys =
 placeholder definition is missing form the comment, but ma lead to issues with
 sortine. For this reason, we only use this as a fallback an log an error.
 -}
-placeholdersInValue : String -> List String
+placeholdersInValue : Localized.Value -> List Localized.Placeholder
 placeholdersInValue value =
     Regex.find Regex.All regexForPlaceholder value
         |> List.filterMap (\match -> Utils.Regex.submatchAt 0 (Just match))
 
 
-formatComponentsFromValue : String -> List String -> List Localized.FormatComponent
+formatComponentsFromValue : Localized.Value -> List Localized.Placeholder -> List Localized.FormatComponent
 formatComponentsFromValue value placeholders =
     findPlaceholdersInStaticComponents [ Localized.FormatComponentStatic value ] placeholders
 
 
-findPlaceholdersInStaticComponents : List Localized.FormatComponent -> List String -> List Localized.FormatComponent
+findPlaceholdersInStaticComponents : List Localized.FormatComponent -> List Localized.Placeholder -> List Localized.FormatComponent
 findPlaceholdersInStaticComponents components placeholders =
     case List.head placeholders of
         Nothing ->
@@ -249,13 +250,13 @@ findPlaceholdersInStaticComponents components placeholders =
 ---- REGEX
 
 
-regexComments : String -> Regex
+regexComments : Localized.Key -> Regex
 regexComments key =
     -- Find all lines preceeding `msgid "key"` that start with `#.`
     Regex.regex ("((?:#\\.[^\\n]*\\n)*)msgid " ++ toString key)
 
 
-regexForValue : String -> Regex
+regexForValue : Localized.Key -> Regex
 regexForValue key =
     -- Find all lines succeeding `msgid "key" \nmsgstr` until the two successive white lines
     Regex.regex

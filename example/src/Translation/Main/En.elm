@@ -1,4 +1,4 @@
-module Translation.Main exposing (..)
+module Translation.Main.En exposing (..)
 
 {-| -}
 
@@ -10,9 +10,6 @@ greeting =
     "Hello"
 
 
-{-| A personalized greeting. Note to transaltor: Use {{name}} as a placeholder
-for the user's name.
--}
 greetingWithName : String -> String
 greetingWithName name =
     "Hello, "
