@@ -105,13 +105,14 @@ function handleExport(resultString) {
  * @param  {[[String]]} results A list of (module name, file content) tuples.
  */
 function handleImport(results) {
+    let rootDir = path.normalize(argv.root);
     let importDir = path.join(currentDir, argv.importOutput, argv.root, argv.language);
     fs.ensureDirSync(importDir);
     console.log("Writing elm-files files to:", importDir);
     results.forEach(function(result) {
         let moduleName = result[0];
-        if (moduleName.indexOf(argv.root) === 0) {
-            moduleName = moduleName.substr(argv.root.length + 1)
+        if (moduleName.indexOf(rootDir) === 0) {
+            moduleName = moduleName.substr(rootDir.length)
         }
         let filePath = path.join(importDir, moduleName + ".elm");
         fs.ensureDirSync(path.dirname(filePath));
